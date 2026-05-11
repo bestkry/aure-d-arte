@@ -577,6 +577,70 @@ input { font-family: inherit; }
 /* ========== SCROLL REVEAL ========== */
 .reveal { opacity: 0; transform: translateY(30px); }
 
+/* Letter-by-letter reveal for titles */
+.letter-reveal { overflow: hidden; }
+.letter-reveal .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%) rotate(4deg);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--char-index, 0) * 35ms);
+}
+.letter-reveal .whitespace { display: inline-block; width: 0.25em; }
+.letter-reveal.revealed .char {
+  opacity: 1;
+  transform: translateY(0) rotate(0);
+}
+
+/* ========== CURTAIN VIEW TRANSITION ========== */
+.view-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+.view-curtain .curtain-panel {
+  flex: 1;
+  background: #0a0a0a;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+.view-curtain .curtain-panel:last-child { transform-origin: bottom; }
+.view-curtain.closing { pointer-events: all; }
+.view-curtain.closing .curtain-panel {
+  transform: scaleY(1);
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.view-curtain.opening .curtain-panel {
+  transform: scaleY(0);
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1) 0.05s;
+}
+.view-curtain .curtain-mark {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9001;
+  text-indent: 0.5em;
+}
+.view-curtain.closing .curtain-mark {
+  opacity: 1;
+  transition: opacity 0.25s ease 0.35s;
+}
+.view-curtain.opening .curtain-mark {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
 /* ========== SHOP VIEW ========== */
 .shop-view {
   padding-top: 72px;
@@ -1205,6 +1269,13 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <div class="cursor-dot" aria-hidden="true"></div>
 <div class="cursor-ring" aria-hidden="true"></div>
 
+<!-- VIEW CURTAIN (transition between views) -->
+<div class="view-curtain" id="viewCurtain" aria-hidden="true">
+  <div class="curtain-panel"></div>
+  <div class="curtain-mark" id="curtainMark">Aure D'arte</div>
+  <div class="curtain-panel"></div>
+</div>
+
 <!-- LOADING SCREEN -->
 <div class="loading-screen" id="loadingScreen" aria-label="Intro video">
   <video
@@ -1350,7 +1421,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <!-- GALLERY -->
 <section class="gallery-section" id="collection">
   <p class="section-label reveal"><span data-lang="en">Curated Selection</span><span data-lang="pl">Wyselekcjonowana Kolekcja</span></p>
-  <h2 class="section-title reveal">Most Wanted</h2>
+  <h2 class="section-title letter-reveal" data-letter-reveal>Most Wanted</h2>
   <div class="gallery-grid" id="galleryGrid"></div>
   <div class="gallery-cta-wrap reveal">
     <a href="#" class="btn-outline" onclick="showView('shop'); return false;">
@@ -1367,7 +1438,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
     </div>
     <div class="featured-content">
       <div class="featured-badge reveal">Featured Artwork</div>
-      <h2 class="featured-title reveal">Echoes of<br>Eternity</h2>
+      <h2 class="featured-title letter-reveal" data-letter-reveal>Echoes of<br>Eternity</h2>
       <p class="featured-desc reveal">
         <span data-lang="en">A haunting meditation on time, memory, and the spaces between worlds. This piece captures the liminal moment where past and future collide — rendered in deep shadow and ethereal light.</span>
         <span data-lang="pl">Niepokojąca medytacja o czasie, pamięci i przestrzeniach między światami. To dzieło uchwyca graniczny moment, w którym przeszłość i przyszłość się zderzają.</span>
@@ -1420,7 +1491,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <!-- NEWSLETTER -->
 <section class="newsletter-section" id="contact">
   <div class="newsletter-inner">
-    <h2 class="newsletter-title reveal"><span data-lang="en">Be the First to Know</span><span data-lang="pl">Dowiedz się Pierwszy</span></h2>
+    <h2 class="newsletter-title letter-reveal" data-letter-reveal><span data-lang="en">Be the First to Know</span><span data-lang="pl">Dowiedz się Pierwszy</span></h2>
     <p class="newsletter-desc reveal"><span data-lang="en">New drops, exclusive previews, and early access.</span><span data-lang="pl">Nowe dropy, ekskluzywne zapowiedzi i wczesny dostęp.</span></p>
     <form class="newsletter-form reveal" onsubmit="event.preventDefault();">
       <input type="email" placeholder="your@email.com" aria-label="Email address" required>
@@ -1437,7 +1508,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <div class="view" id="shopView">
   <div class="shop-view">
     <div class="shop-header">
-      <h1><span data-lang="en">The Collection</span><span data-lang="pl">Kolekcja</span></h1>
+      <h1 class="letter-reveal" data-letter-reveal><span data-lang="en">The Collection</span><span data-lang="pl">Kolekcja</span></h1>
       <p><span data-lang="en">15 curated works · Limited editions of 250</span><span data-lang="pl">15 wyselekcjonowanych dzieł · Limitowane edycje po 250</span></p>
     </div>
     <div class="shop-filters">
@@ -1572,7 +1643,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
     <span data-lang="en">Back to Shop</span><span data-lang="pl">Wróć do Sklepu</span>
   </button>
-  <h1 class="checkout-heading"><span data-lang="en">Checkout</span><span data-lang="pl">Kasa</span></h1>
+  <h1 class="checkout-heading letter-reveal" data-letter-reveal><span data-lang="en">Checkout</span><span data-lang="pl">Kasa</span></h1>
   <div class="checkout-layout">
     <!-- Shipping Form -->
     <div>
@@ -1768,25 +1839,56 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
-/* ========== VIEW SWITCHING ========== */
-function showView(view) {
+/* ========== VIEW SWITCHING with CURTAIN TRANSITION ========== */
+let _viewTransitioning = false;
+function _swapView(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.header-nav a').forEach(a => a.classList.remove('active'));
-
   if (view === 'checkout') {
     document.getElementById('checkoutView').classList.add('active');
     renderCheckoutSummary();
-    window.scrollTo(0, 0);
   } else if (view === 'shop') {
     document.getElementById('shopView').classList.add('active');
-    document.querySelector('[data-nav="shop"]').classList.add('active');
-    window.scrollTo(0, 0);
+    const navShop = document.querySelector('[data-nav="shop"]');
+    if (navShop) navShop.classList.add('active');
   } else {
     document.getElementById('homeView').classList.add('active');
-    document.querySelector('[data-nav="home"]').classList.add('active');
+    const navHome = document.querySelector('[data-nav="home"]');
+    if (navHome) navHome.classList.add('active');
   }
-  // Re-trigger GSAP scroll triggers
+  window.scrollTo(0, 0);
+  // Re-trigger GSAP scroll triggers and letter-reveal in new view
   if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+  // Reset letter-reveal in newly shown view so they re-animate
+  setTimeout(() => {
+    document.querySelectorAll('.view.active [data-letter-reveal]').forEach(el => {
+      el.classList.remove('revealed');
+      if (window._letterRevealObserver) {
+        window._letterRevealObserver.unobserve(el);
+        window._letterRevealObserver.observe(el);
+      }
+    });
+  }, 30);
+}
+
+function showView(view) {
+  if (_viewTransitioning) return;
+  const curtain = document.getElementById('viewCurtain');
+  // Skip curtain if not yet in DOM or for very first paint
+  if (!curtain) { _swapView(view); return; }
+  _viewTransitioning = true;
+  curtain.classList.remove('opening');
+  curtain.classList.add('closing');
+  // After curtain fully closes, swap view
+  setTimeout(() => {
+    _swapView(view);
+    curtain.classList.remove('closing');
+    curtain.classList.add('opening');
+    setTimeout(() => {
+      curtain.classList.remove('opening');
+      _viewTransitioning = false;
+    }, 650);
+  }, 580);
 }
 
 /* ========== PRODUCT MODAL ========== */
@@ -2156,6 +2258,61 @@ function initAnimations() {
       scrollTrigger: { trigger: el, start: 'top 88%', once: true }
     });
   });
+
+  // ===== Letter-by-letter reveal for titles =====
+  function splitTitleIntoChars(el) {
+    if (el.dataset.letterSplit === 'done') return;
+    el.dataset.letterSplit = 'done';
+    // Walk text nodes inside the element (including spans with data-lang)
+    const walk = (node) => {
+      const children = Array.from(node.childNodes);
+      children.forEach(child => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          const text = child.textContent;
+          if (!text.trim()) return;
+          const frag = document.createDocumentFragment();
+          for (const ch of text) {
+            if (ch === ' ') {
+              const sp = document.createElement('span');
+              sp.className = 'whitespace';
+              sp.innerHTML = '&nbsp;';
+              frag.appendChild(sp);
+            } else {
+              const span = document.createElement('span');
+              span.className = 'char';
+              span.textContent = ch;
+              frag.appendChild(span);
+            }
+          }
+          child.parentNode.replaceChild(frag, child);
+        } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== 'BR') {
+          walk(child);
+        }
+      });
+    };
+    walk(el);
+    // Assign indices for staggered delay
+    el.querySelectorAll('.char').forEach((c, i) => {
+      c.style.setProperty('--char-index', i);
+    });
+  }
+
+  document.querySelectorAll('[data-letter-reveal]').forEach(splitTitleIntoChars);
+
+  const letterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        letterObserver.unobserve(entry.target);
+      } else {
+        // allow re-trigger when view-switched out and back
+        if (!entry.target.classList.contains('revealed')) return;
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+
+  document.querySelectorAll('[data-letter-reveal]').forEach(el => letterObserver.observe(el));
+  window._letterRevealObserver = letterObserver;
 
   document.querySelectorAll('.edition-bar-fill').forEach(bar => {
     const target = bar.getAttribute('data-target');
