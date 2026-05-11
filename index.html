@@ -65,24 +65,105 @@ input { font-family: inherit; }
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: var(--bg-main);
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.8s ease;
+  overflow: hidden;
 }
 .loading-screen.hidden { opacity: 0; pointer-events: none; }
-.loading-logo {
+.loading-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+.loading-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 18%, transparent 70%, rgba(0,0,0,0.65) 100%);
+}
+.loading-brand {
+  position: absolute;
+  top: clamp(1.5rem, 4vw, 2.5rem);
+  left: 50%;
+  transform: translateX(-50%);
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-  letter-spacing: 0.3em;
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+  letter-spacing: 0.45em;
   text-transform: uppercase;
-  color: var(--text-primary);
+  color: rgba(240,239,232,0.85);
   opacity: 0;
-  animation: loadFadeIn 0.8s ease forwards;
+  animation: loadFadeIn 1.2s ease 0.3s forwards;
+  z-index: 2;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+}
+.loading-controls {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vw, 2.5rem);
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
+  z-index: 3;
+  opacity: 0;
+  animation: loadFadeIn 1.2s ease 0.8s forwards;
+}
+.loader-mute {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(240,239,232,0.85);
+  border: 1px solid rgba(240,239,232,0.2);
+  background: rgba(10,10,10,0.4);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.loader-mute:hover {
+  color: var(--gold);
+  border-color: rgba(201,169,110,0.5);
+  background: rgba(10,10,10,0.6);
+}
+.loader-skip {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: rgba(240,239,232,0.85);
+  padding: 12px 22px;
+  border: 1px solid rgba(240,239,232,0.25);
+  background: rgba(10,10,10,0.4);
+  backdrop-filter: blur(8px);
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.loader-skip:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(10,10,10,0.6);
+}
+.loader-skip svg { transition: transform 0.3s ease; }
+.loader-skip:hover svg { transform: translateX(3px); }
+.loader-progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 1px;
+  background: var(--gold);
+  width: 0%;
+  z-index: 3;
+  transition: width 0.2s linear;
 }
 @keyframes loadFadeIn { to { opacity: 1; } }
+@media (max-width: 640px) {
+  .loader-skip { padding: 10px 16px; font-size: 0.6rem; letter-spacing: 0.2em; }
+  .loading-brand { font-size: 0.7rem; letter-spacing: 0.35em; }
+}
 
 /* ========== GRAIN OVERLAY ========== */
 .grain-overlay {
@@ -1013,8 +1094,37 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <div class="cursor-ring" aria-hidden="true"></div>
 
 <!-- LOADING SCREEN -->
-<div class="loading-screen" aria-hidden="true">
-  <div class="loading-logo">Aure D'arte</div>
+<div class="loading-screen" id="loadingScreen" aria-label="Intro video">
+  <video
+    class="loading-video"
+    id="loadingVideo"
+    src="assets/video/intro.mp4"
+    poster="assets/video/intro-poster.jpg"
+    autoplay
+    muted
+    playsinline
+    preload="auto"
+    aria-hidden="true"
+  ></video>
+  <div class="loading-vignette" aria-hidden="true"></div>
+  <div class="loading-brand">Aure D'arte</div>
+  <div class="loading-controls">
+    <button class="loader-mute" id="loaderMute" aria-label="Toggle sound" type="button">
+      <svg id="loaderMuteIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <line x1="23" y1="9" x2="17" y2="15"/>
+        <line x1="17" y1="9" x2="23" y2="15"/>
+      </svg>
+    </button>
+    <button class="loader-skip" id="loaderSkip" type="button" aria-label="Skip intro">
+      <span data-lang="en">Skip</span><span data-lang="pl">Pomiń</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="13 17 18 12 13 7"/>
+        <polyline points="6 17 11 12 6 7"/>
+      </svg>
+    </button>
+  </div>
+  <div class="loader-progress" id="loaderProgress" aria-hidden="true"></div>
 </div>
 
 <!-- TOAST -->
@@ -1742,10 +1852,95 @@ function closeMobileMenu() {
   document.body.style.overflow = '';
 }
 
-/* ========== LOADING SCREEN ========== */
-window.addEventListener('load', () => {
-  setTimeout(() => { document.querySelector('.loading-screen').classList.add('hidden'); }, 1400);
-});
+/* ========== LOADING SCREEN (video intro) ========== */
+(function initIntroLoader() {
+  const screen = document.getElementById('loadingScreen');
+  const video = document.getElementById('loadingVideo');
+  const muteBtn = document.getElementById('loaderMute');
+  const muteIcon = document.getElementById('loaderMuteIcon');
+  const skipBtn = document.getElementById('loaderSkip');
+  const progress = document.getElementById('loaderProgress');
+  if (!screen || !video) return;
+
+  let dismissed = false;
+
+  function setMuteIcon(muted) {
+    if (muted) {
+      muteIcon.innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+    } else {
+      muteIcon.innerHTML = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/>';
+    }
+  }
+
+  function dismissLoader() {
+    if (dismissed) return;
+    dismissed = true;
+    try { video.pause(); } catch (e) {}
+    screen.classList.add('hidden');
+    document.body.style.overflow = '';
+    setTimeout(() => { screen.style.display = 'none'; }, 900);
+  }
+
+  // Lock scroll during intro
+  document.body.style.overflow = 'hidden';
+
+  // Try to unmute right after autoplay starts (some browsers allow it)
+  video.addEventListener('playing', () => {
+    try {
+      video.muted = false;
+      video.volume = 1.0;
+    } catch (e) {}
+    // Verify after a tick — if browser muted it back, leave it muted
+    setTimeout(() => setMuteIcon(video.muted), 60);
+  }, { once: true });
+
+  // Fallback: ensure autoplay even if 'playing' is delayed
+  video.play().catch(() => {
+    // Autoplay blocked entirely — skip the intro gracefully
+    dismissLoader();
+  });
+
+  // Progress bar
+  video.addEventListener('timeupdate', () => {
+    if (video.duration && isFinite(video.duration)) {
+      const pct = (video.currentTime / video.duration) * 100;
+      progress.style.width = pct + '%';
+    }
+  });
+
+  // End of video
+  video.addEventListener('ended', dismissLoader);
+
+  // Safety timeout (in case video fails) — dismiss after 45s no matter what
+  setTimeout(dismissLoader, 45000);
+
+  // Mute toggle — also acts as the user-gesture that unlocks audio
+  muteBtn.addEventListener('click', () => {
+    video.muted = !video.muted;
+    if (!video.muted) video.volume = 1.0;
+    setMuteIcon(video.muted);
+  });
+
+  // Skip
+  skipBtn.addEventListener('click', dismissLoader);
+
+  // Keyboard: Esc or Space skips
+  document.addEventListener('keydown', (e) => {
+    if (dismissed) return;
+    if (e.key === 'Escape') dismissLoader();
+  });
+
+  // Click anywhere on video also tries to unmute (one-time gesture)
+  video.addEventListener('click', () => {
+    if (video.muted) {
+      video.muted = false;
+      video.volume = 1.0;
+      setMuteIcon(false);
+    }
+  });
+
+  setMuteIcon(true);
+})();
 
 /* ========== LANGUAGE TOGGLE ========== */
 const langBtn = document.getElementById('langToggle');
