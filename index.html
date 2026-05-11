@@ -159,10 +159,122 @@ input { font-family: inherit; }
   z-index: 3;
   transition: width 0.2s linear;
 }
+
+/* Play gate — shown before user clicks to start intro */
+.loader-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  cursor: pointer;
+  transition: opacity 0.6s ease;
+}
+.loader-gate.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.loader-gate-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.35;
+  filter: blur(2px) brightness(0.6);
+  pointer-events: none;
+}
+.loader-gate-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  text-align: center;
+  opacity: 0;
+  animation: loadFadeIn 1.4s ease 0.2s forwards;
+}
+.loader-gate-eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.loader-gate-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.loader-gate-sub {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(240,239,232,0.55);
+  max-width: 500px;
+  line-height: 1.8;
+}
+.loader-play {
+  width: clamp(72px, 9vw, 92px);
+  height: clamp(72px, 9vw, 92px);
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: rgba(10,10,10,0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, box-shadow 0.4s ease;
+  position: relative;
+}
+.loader-play::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.3);
+  animation: playPulse 2.4s ease-out infinite;
+}
+.loader-play::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.3);
+  animation: playPulse 2.4s ease-out infinite 1.2s;
+}
+@keyframes playPulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+.loader-play:hover {
+  background: var(--gold);
+  color: #0a0a0a;
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(201,169,110,0.3);
+}
+.loader-play svg { margin-left: 4px; }
+.loader-gate-hint {
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(240,239,232,0.4);
+  margin-top: 0.5rem;
+}
 @keyframes loadFadeIn { to { opacity: 1; } }
 @media (max-width: 640px) {
   .loader-skip { padding: 10px 16px; font-size: 0.6rem; letter-spacing: 0.2em; }
   .loading-brand { font-size: 0.7rem; letter-spacing: 0.35em; }
+  .loader-gate-sub { font-size: 0.6rem; letter-spacing: 0.2em; padding: 0 1.5rem; }
+  .loader-gate-eyebrow { font-size: 0.55rem; letter-spacing: 0.35em; }
 }
 
 /* ========== GRAIN OVERLAY ========== */
@@ -1100,13 +1212,34 @@ html[lang="pl"] [data-lang="en"] { display: none; }
     id="loadingVideo"
     src="assets/video/intro.mp4"
     poster="assets/video/intro-poster.jpg"
-    autoplay
-    muted
     playsinline
     preload="auto"
     aria-hidden="true"
   ></video>
   <div class="loading-vignette" aria-hidden="true"></div>
+
+  <!-- Play gate: shown until user clicks PLAY -->
+  <div class="loader-gate" id="loaderGate" role="button" tabindex="0" aria-label="Play intro">
+    <img class="loader-gate-poster" src="assets/video/intro-poster.jpg" alt="" aria-hidden="true">
+    <div class="loader-gate-inner">
+      <span class="loader-gate-eyebrow">Aure D'arte</span>
+      <h1 class="loader-gate-title">
+        <span data-lang="en">An Invitation</span><span data-lang="pl">Zaproszenie</span>
+      </h1>
+      <p class="loader-gate-sub">
+        <span data-lang="en">Step into the world of curated darkness — limited editions of 250</span><span data-lang="pl">Wejdź w świat starannie wybranego mroku — limitowane edycje po 250 sztuk</span>
+      </p>
+      <button class="loader-play" id="loaderPlay" type="button" aria-label="Play intro with sound">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <polygon points="6 4 20 12 6 20 6 4"/>
+        </svg>
+      </button>
+      <span class="loader-gate-hint">
+        <span data-lang="en">Click to enter · with sound</span><span data-lang="pl">Kliknij aby wejść · z dźwiękiem</span>
+      </span>
+    </div>
+  </div>
+
   <div class="loading-brand">Aure D'arte</div>
   <div class="loading-controls">
     <button class="loader-mute" id="loaderMute" aria-label="Toggle sound" type="button">
@@ -1852,17 +1985,20 @@ function closeMobileMenu() {
   document.body.style.overflow = '';
 }
 
-/* ========== LOADING SCREEN (video intro) ========== */
+/* ========== LOADING SCREEN (video intro with play gate) ========== */
 (function initIntroLoader() {
   const screen = document.getElementById('loadingScreen');
   const video = document.getElementById('loadingVideo');
+  const gate = document.getElementById('loaderGate');
+  const playBtn = document.getElementById('loaderPlay');
   const muteBtn = document.getElementById('loaderMute');
   const muteIcon = document.getElementById('loaderMuteIcon');
   const skipBtn = document.getElementById('loaderSkip');
   const progress = document.getElementById('loaderProgress');
-  if (!screen || !video) return;
+  if (!screen || !video || !gate) return;
 
   let dismissed = false;
+  let started = false;
 
   function setMuteIcon(muted) {
     if (muted) {
@@ -1881,23 +2017,30 @@ function closeMobileMenu() {
     setTimeout(() => { screen.style.display = 'none'; }, 900);
   }
 
+  function startIntro() {
+    if (started) return;
+    started = true;
+    // User clicked — we have a gesture, audio is unlocked
+    video.muted = false;
+    video.volume = 1.0;
+    setMuteIcon(false);
+    video.play().catch(() => {
+      // If for some reason play fails, just dismiss
+      dismissLoader();
+    });
+    // Fade out the gate
+    gate.classList.add('hidden');
+    setTimeout(() => { gate.style.display = 'none'; }, 700);
+  }
+
   // Lock scroll during intro
   document.body.style.overflow = 'hidden';
 
-  // Try to unmute right after autoplay starts (some browsers allow it)
-  video.addEventListener('playing', () => {
-    try {
-      video.muted = false;
-      video.volume = 1.0;
-    } catch (e) {}
-    // Verify after a tick — if browser muted it back, leave it muted
-    setTimeout(() => setMuteIcon(video.muted), 60);
-  }, { once: true });
-
-  // Fallback: ensure autoplay even if 'playing' is delayed
-  video.play().catch(() => {
-    // Autoplay blocked entirely — skip the intro gracefully
-    dismissLoader();
+  // Click on PLAY button (or anywhere on the gate) starts the intro
+  playBtn.addEventListener('click', (e) => { e.stopPropagation(); startIntro(); });
+  gate.addEventListener('click', startIntro);
+  gate.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startIntro(); }
   });
 
   // Progress bar
@@ -1908,13 +2051,10 @@ function closeMobileMenu() {
     }
   });
 
-  // End of video
+  // End of video — auto dismiss
   video.addEventListener('ended', dismissLoader);
 
-  // Safety timeout (in case video fails) — dismiss after 45s no matter what
-  setTimeout(dismissLoader, 45000);
-
-  // Mute toggle — also acts as the user-gesture that unlocks audio
+  // Mute toggle
   muteBtn.addEventListener('click', () => {
     video.muted = !video.muted;
     if (!video.muted) video.volume = 1.0;
@@ -1924,19 +2064,10 @@ function closeMobileMenu() {
   // Skip
   skipBtn.addEventListener('click', dismissLoader);
 
-  // Keyboard: Esc or Space skips
+  // Keyboard: Esc skips entire loader (works on gate or during playback)
   document.addEventListener('keydown', (e) => {
     if (dismissed) return;
     if (e.key === 'Escape') dismissLoader();
-  });
-
-  // Click anywhere on video also tries to unmute (one-time gesture)
-  video.addEventListener('click', () => {
-    if (video.muted) {
-      video.muted = false;
-      video.volume = 1.0;
-      setMuteIcon(false);
-    }
   });
 
   setMuteIcon(true);
