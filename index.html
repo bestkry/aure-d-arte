@@ -890,6 +890,160 @@ input { font-family: inherit; }
 .product-fav-btn.active { color: var(--gold); border-color: var(--gold); background: rgba(201,169,110,0.06); }
 .product-fav-btn.active svg { fill: currentColor; }
 
+/* ========== CLOTHING VIEW ========== */
+#clothingView { padding-top: 0; min-height: 100vh; }
+
+/* Hero baner */
+.clothing-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  overflow: hidden;
+  background: #000;
+}
+.clothing-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+.clothing-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.35) 35%, rgba(10,10,10,0.75) 100%);
+  z-index: 2;
+}
+.clothing-hero-content {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #f0efe8;
+}
+.clothing-hero-eyebrow {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  opacity: 0.95;
+}
+.clothing-hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  line-height: 0.95;
+  letter-spacing: 0.08em;
+  margin: 0 0 1.5rem;
+  text-transform: uppercase;
+}
+.clothing-hero-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  max-width: 540px;
+  margin: 0 auto 2.5rem;
+  color: #d9d6cc;
+  line-height: 1.5;
+}
+.clothing-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.1rem 2.4rem;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold);
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+.clothing-hero-cta:hover {
+  background: var(--gold);
+  color: #0a0a0a;
+}
+.clothing-hero-cta svg { transition: transform 0.4s ease; }
+.clothing-hero-cta:hover svg { transform: translateY(3px); }
+
+.clothing-hero-scroll {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(180deg, transparent 0%, var(--gold) 50%, transparent 100%);
+  animation: scrollLine 2.4s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0%, 100% { opacity: 0.4; transform: translateX(-50%) scaleY(1); }
+  50% { opacity: 1; transform: translateX(-50%) scaleY(1.15); }
+}
+
+/* Clothing grid section */
+.clothing-section {
+  padding: 6rem 3rem 8rem;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+.clothing-section-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+.clothing-section-eyebrow {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.clothing-section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  letter-spacing: 0.04em;
+  margin: 0 0 1rem;
+  color: #f0efe8;
+}
+.clothing-section-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: #7a7975;
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.clothing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  margin-top: 2rem;
+}
+@media (max-width: 1024px) { .clothing-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) {
+  .clothing-grid { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .clothing-section { padding: 4rem 1.5rem 6rem; }
+}
+@media (max-width: 768px) {
+  .clothing-hero { height: 85vh; min-height: 520px; }
+}
+
 /* ========== SHOP VIEW ========== */
 .shop-view {
   padding-top: 72px;
@@ -1692,6 +1846,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
   <nav class="header-nav" aria-label="Main navigation">
     <a href="#collection" data-nav="home" class="active" onclick="showView('home'); return false;"><span data-lang="en">Collection</span><span data-lang="pl">Kolekcja</span></a>
     <a href="#" data-nav="shop" onclick="showView('shop'); return false;"><span data-lang="en">Shop</span><span data-lang="pl">Sklep</span></a>
+    <a href="#" data-nav="clothing" onclick="showView('clothing'); return false;"><span data-lang="en">Clothing</span><span data-lang="pl">Ciuchy</span></a>
     <a href="#" data-nav="saved" onclick="showView('saved'); return false;"><span data-lang="en">Saved</span><span data-lang="pl">Ulubione</span></a>
     <a href="#about" data-nav="home" onclick="showView('home'); return false;"><span data-lang="en">About</span><span data-lang="pl">O nas</span></a>
     <a href="#contact" data-nav="home" onclick="showView('home'); return false;"><span data-lang="en">Contact</span><span data-lang="pl">Kontakt</span></a>
@@ -1717,6 +1872,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
   <a href="#" class="mobile-link" onclick="showView('home'); closeMobileMenu(); return false;"><span data-lang="en">Collection</span><span data-lang="pl">Kolekcja</span></a>
   <a href="#" class="mobile-link" onclick="showView('shop'); closeMobileMenu(); return false;"><span data-lang="en">Shop</span><span data-lang="pl">Sklep</span></a>
+  <a href="#" class="mobile-link" onclick="showView('clothing'); closeMobileMenu(); return false;"><span data-lang="en">Clothing</span><span data-lang="pl">Ciuchy</span></a>
   <a href="#" class="mobile-link" onclick="showView('saved'); closeMobileMenu(); return false;"><span data-lang="en">Saved</span><span data-lang="pl">Ulubione</span></a>
   <a href="#" class="mobile-link" onclick="showView('home'); closeMobileMenu(); return false;"><span data-lang="en">About</span><span data-lang="pl">O nas</span></a>
   <a href="#" class="mobile-link" onclick="showView('home'); closeMobileMenu(); return false;"><span data-lang="en">Contact</span><span data-lang="pl">Kontakt</span></a>
@@ -1908,10 +2064,10 @@ html[lang="pl"] [data-lang="en"] { display: none; }
           <div class="size-options" id="sizeOptions"></div>
         </div>
 
-        <div class="product-divider"></div>
+        <div class="product-divider" id="frameDivider"></div>
 
         <!-- Frame -->
-        <div>
+        <div id="frameSection">
           <p class="config-label"><span data-lang="en">Choose Frame</span><span data-lang="pl">Wybierz Ramę</span></p>
           <div class="frame-options" id="frameOptions"></div>
         </div>
@@ -2089,6 +2245,51 @@ html[lang="pl"] [data-lang="en"] { display: none; }
   </div>
 </div>
 
+<!-- CLOTHING / CIUCHY VIEW -->
+<div class="view" id="clothingView">
+  <!-- HERO BANNER (full screen with video) -->
+  <section class="clothing-hero">
+    <video class="clothing-hero-video" id="clothingHeroVideo"
+           autoplay muted loop playsinline preload="metadata"
+           poster="assets/video/clothing-poster.jpg">
+      <source src="assets/video/clothing-hero.mp4" type="video/mp4">
+    </video>
+    <div class="clothing-hero-overlay"></div>
+    <div class="clothing-hero-content">
+      <div class="clothing-hero-eyebrow">
+        <span data-lang="en">Aure D'arte — First Drop</span><span data-lang="pl">Aure D'arte — Pierwszy Drop</span>
+      </div>
+      <h1 class="clothing-hero-title letter-reveal" data-letter-reveal>
+        <span data-lang="en">Clothing</span><span data-lang="pl">Ciuchy</span>
+      </h1>
+      <p class="clothing-hero-tagline">
+        <span data-lang="en">Wearable extensions of the gallery. Limited heavyweight pieces, made to outlive trends.</span><span data-lang="pl">Galeria do noszenia. Limitowane ciężkie sztuki, które przetrwają trendy.</span>
+      </p>
+      <button class="clothing-hero-cta" onclick="document.getElementById('clothingSection').scrollIntoView({behavior:'smooth'})">
+        <span data-lang="en">Shop the drop</span><span data-lang="pl">Zobacz drop</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <div class="clothing-hero-scroll" aria-hidden="true"></div>
+  </section>
+
+  <!-- GRID -->
+  <section class="clothing-section" id="clothingSection">
+    <div class="clothing-section-header">
+      <div class="clothing-section-eyebrow">
+        <span data-lang="en">Drop 01 · Hoodies</span><span data-lang="pl">Drop 01 · Bluzy</span>
+      </div>
+      <h2 class="clothing-section-title letter-reveal" data-letter-reveal>
+        <span data-lang="en">Heavyweight</span><span data-lang="pl">Heavyweight</span>
+      </h2>
+      <p class="clothing-section-sub">
+        <span data-lang="en">Six limited editions of 250 — once they're gone, they're gone.</span><span data-lang="pl">Sześć limitowanych edycji po 250 sztuk — gdy znikną, znikną na zawsze.</span>
+      </p>
+    </div>
+    <div class="clothing-grid shop-grid" id="clothingGrid"></div>
+  </section>
+</div>
+
 <!-- Order Success Overlay -->
 <div class="order-success" id="orderSuccess">
   <div class="order-success-icon">
@@ -2137,11 +2338,31 @@ const allArtworks = [
   { id:15, name:"Eternal Revenant",    category:"Surrealism",  price:579, edition:"27/250",  seed:"eternal-revenant", desc:"Returning endlessly, never arriving. The revenant walks through layers of time, each step a new epoch.", images: ["assets/eternal-revenant.jpg"] },
 ];
 
+/* ========== CLOTHING DATA (6 hoodies) ========== */
+// id offset 100 so it never collides with artwork ids
+const allClothing = [
+  { id:101, name:"Obsidian Hoodie",       category:"Hoodie",   price:499, edition:"47/250",  seed:"obsidian-hoodie",      desc:"Heavyweight 480gsm cotton fleece in deepest obsidian. Embroidered AD monogram at the chest, tonal stitching throughout.",  desc_pl:"Ciężka bluza 480gsm z bawełnianego fleece'u w głębokim obsydianie. Haftowany monogram AD na piersi, tonalne przeszycia.",  images: ["assets/clothing/obsidian-hoodie.jpg"] },
+  { id:102, name:"Crimson Cult Crewneck", category:"Crewneck", price:449, edition:"73/250",  seed:"crimson-cult",          desc:"Crewneck silhouette in burnt crimson. Reverse weave construction, double-needle stitching at every seam.",                    desc_pl:"Crewneck w spalonym karmazynie. Konstrukcja reverse weave, podwójne szwy na każdym łączeniu.",                                images: ["assets/clothing/crimson-cult.jpg"] },
+  { id:103, name:"Void Pullover",         category:"Hoodie",   price:549, edition:"18/250",  seed:"void-pullover",         desc:"Oversized pullover hoodie cut from boxed pattern. Drawstrings in matte gold cord, kangaroo pocket lined.",                  desc_pl:"Oversize pullover w boxowym kroju. Sznurki w matowo-złotym kordzie, podszywana kieszonka kangurka.",                            images: ["assets/clothing/void-pullover.jpg"] },
+  { id:104, name:"Saint's Lament Hoodie", category:"Hoodie",   price:599, edition:"240/250", seed:"saints-lament",         desc:"Statement piece. Hand-applied screenprint of a kneeling figure on the back panel. Distressed treatment at the cuffs.",      desc_pl:"Statement piece. Ręcznie aplikowany sitodruk klęczącej postaci na tył. Przetarcia przy mankietach.",                          images: ["assets/clothing/saints-lament.jpg"] },
+  { id:105, name:"Phantom Zip-Up",        category:"Zip-Up",   price:529, edition:"91/250",  seed:"phantom-zip",           desc:"Full-zip hoodie with hidden YKK metal zipper. Internal media pocket, ergonomic hood pattern.",                              desc_pl:"Pełny zamek YKK ukryty za plisem. Wewnętrzna kieszonka na telefon, ergonomiczny krej kaptura.",                                images: ["assets/clothing/phantom-zip.jpg"] },
+  { id:106, name:"Reverie Heavyweight",   category:"Hoodie",   price:479, edition:"32/250",  seed:"reverie-heavyweight",   desc:"Cropped boxy fit in stone-washed black. Made from heavy 510gsm french terry, garment-dyed for that lived-in feel.",        desc_pl:"Cropped boxy fit w sprany czerni. Z ciężkiego french terry 510gsm, barwiony po uszyciu — efekt 'znoszonej' faktury.",       images: ["assets/clothing/reverie-heavyweight.jpg"] },
+];
+
 const sizes = [
   { label: "S", dims: "30 × 30", unit: "cm", multiplier: 0.7 },
   { label: "M", dims: "30 × 40", unit: "cm", multiplier: 0.85 },
   { label: "L", dims: "50 × 40", unit: "cm", multiplier: 1.0 },
   { label: "XL", dims: "70 × 40", unit: "cm", multiplier: 1.35 },
+];
+
+/* Apparel sizes — used when current product is clothing */
+const apparelSizes = [
+  { label: "S",   dims: "Small",       unit: "EU 46", multiplier: 1.0 },
+  { label: "M",   dims: "Medium",      unit: "EU 48", multiplier: 1.0 },
+  { label: "L",   dims: "Large",       unit: "EU 50", multiplier: 1.0 },
+  { label: "XL",  dims: "Extra Large", unit: "EU 52", multiplier: 1.0 },
+  { label: "XXL", dims: "2X Large",    unit: "EU 54", multiplier: 1.0 },
 ];
 
 const frames = [
@@ -2285,6 +2506,36 @@ function renderShopGrid(filter) {
 }
 renderShopGrid('all');
 
+/* Clothing grid */
+function renderClothingGrid() {
+  const grid = document.getElementById('clothingGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  allClothing.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'shop-item';
+    card.onclick = (e) => {
+      if (e.target.closest('.shop-item-fav')) return;
+      openProductModal(item.id);
+    };
+    card.innerHTML = buildShopCardInner(item);
+    const favBtn = card.querySelector('.shop-item-fav');
+    if (favBtn) {
+      favBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        Wishlist.toggle(item.id);
+        favBtn.classList.toggle('active', Wishlist.has(item.id));
+        favBtn.classList.remove('pop');
+        void favBtn.offsetWidth;
+        favBtn.classList.add('pop');
+        updateFavCountUI();
+      });
+    }
+    grid.appendChild(card);
+  });
+}
+renderClothingGrid();
+
 /* Saved view grid */
 function renderSavedGrid() {
   const savedGrid = document.getElementById('savedGrid');
@@ -2300,7 +2551,7 @@ function renderSavedGrid() {
   savedGrid.style.display = 'grid';
   emptyEl.style.display = 'none';
   ids.forEach(id => {
-    const art = allArtworks.find(a => a.id === id);
+    const art = allArtworks.find(a => a.id === id) || allClothing.find(c => c.id === id);
     if (!art) return;
     const item = document.createElement('div');
     item.className = 'shop-item';
@@ -2348,6 +2599,14 @@ function _swapView(view) {
     const navSaved = document.querySelector('[data-nav="saved"]');
     if (navSaved) navSaved.classList.add('active');
     renderSavedGrid();
+  } else if (view === 'clothing') {
+    document.getElementById('clothingView').classList.add('active');
+    const navClothing = document.querySelector('[data-nav="clothing"]');
+    if (navClothing) navClothing.classList.add('active');
+    // Restart hero video each time we land on view
+    const v = document.getElementById('clothingHeroVideo');
+    if (v) { try { v.currentTime = 0; v.play().catch(()=>{}); } catch(e){} }
+    window.scrollTo({ top: 0, behavior: 'instant' });
   } else {
     document.getElementById('homeView').classList.add('active');
     const navHome = document.querySelector('[data-nav="home"]');
@@ -2390,9 +2649,11 @@ function showView(view) {
 
 /* ========== PRODUCT MODAL ========== */
 function openProductModal(id) {
-  currentProduct = allArtworks.find(a => a.id === id);
+  // Look in artworks first, then clothing
+  currentProduct = allArtworks.find(a => a.id === id) || allClothing.find(c => c.id === id);
   if (!currentProduct) return;
-  selectedSize = 2;
+  currentProduct.isApparel = !!allClothing.find(c => c.id === id);
+  selectedSize = currentProduct.isApparel ? 1 : 2; // M default for apparel, L for art
   selectedFrame = 0;
 
   // Main image
@@ -2424,16 +2685,29 @@ function openProductModal(id) {
   // Text
   document.getElementById('modalTitle').textContent = currentProduct.name;
   document.getElementById('modalCat').textContent = currentProduct.category + ' · Ed. ' + currentProduct.edition;
-  document.getElementById('modalDesc').textContent = currentProduct.desc;
+  const isPL = document.documentElement.lang === 'pl';
+  const descText = isPL && currentProduct.desc_pl ? currentProduct.desc_pl : currentProduct.desc;
+  document.getElementById('modalDesc').textContent = descText;
   document.getElementById('modalEdition').textContent = currentProduct.edition;
 
   // Edition bar
   const edNum = parseInt(currentProduct.edition.split('/')[0]);
   document.getElementById('modalEditionFill').style.width = (edNum / 250 * 100) + '%';
 
+  // Show/hide Frame section depending on product type
+  const frameSection = document.getElementById('frameSection');
+  const frameDivider = document.getElementById('frameDivider');
+  if (currentProduct.isApparel) {
+    frameSection.style.display = 'none';
+    frameDivider.style.display = 'none';
+  } else {
+    frameSection.style.display = '';
+    frameDivider.style.display = '';
+  }
+
   // Render sizes
   renderSizes();
-  renderFrames();
+  if (!currentProduct.isApparel) renderFrames();
   updateModalPrice();
   updateProductFavBtn();
 
@@ -2489,7 +2763,8 @@ function closeProductModal() {
 function renderSizes() {
   const cont = document.getElementById('sizeOptions');
   cont.innerHTML = '';
-  sizes.forEach((s, i) => {
+  const list = (currentProduct && currentProduct.isApparel) ? apparelSizes : sizes;
+  list.forEach((s, i) => {
     const btn = document.createElement('button');
     btn.className = 'size-option' + (i === selectedSize ? ' active' : '');
     btn.onclick = () => { selectedSize = i; renderSizes(); updateModalPrice(); };
@@ -2518,6 +2793,9 @@ function renderFrames() {
 
 function getTotal() {
   if (!currentProduct) return 0;
+  if (currentProduct.isApparel) {
+    return Math.round(currentProduct.price * apparelSizes[selectedSize].multiplier);
+  }
   return Math.round(currentProduct.price * sizes[selectedSize].multiplier) + frames[selectedFrame].price;
 }
 
@@ -2530,16 +2808,18 @@ function updateModalPrice() {
 function addToCart() {
   if (!currentProduct) return;
   const hasRealImg = currentProduct.images && currentProduct.images.length > 0;
+  const sizeList = currentProduct.isApparel ? apparelSizes : sizes;
   const item = {
     id: Date.now(),
     artworkId: currentProduct.id,
     name: currentProduct.name,
     seed: currentProduct.seed,
     image: hasRealImg ? currentProduct.images[0] : null,
-    size: sizes[selectedSize].dims + ' ' + sizes[selectedSize].unit,
-    sizeLabel: sizes[selectedSize].label,
-    frame: frames[selectedFrame].name,
+    size: sizeList[selectedSize].dims + ' ' + sizeList[selectedSize].unit,
+    sizeLabel: sizeList[selectedSize].label,
+    frame: currentProduct.isApparel ? '—' : frames[selectedFrame].name,
     price: getTotal(),
+    isApparel: !!currentProduct.isApparel,
   };
   cart.push(item);
   updateCartUI();
@@ -3082,7 +3362,7 @@ function renderRecentBar() {
   }
   items.innerHTML = '';
   ids.forEach(id => {
-    const art = allArtworks.find(a => a.id === id);
+    const art = allArtworks.find(a => a.id === id) || allClothing.find(c => c.id === id);
     if (!art) return;
     const src = art.images ? art.images[0] : `https://picsum.photos/seed/${art.seed}/96/120`;
     const thumb = document.createElement('div');
