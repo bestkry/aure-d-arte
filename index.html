@@ -309,6 +309,12 @@ input { font-family: inherit; }
   transition: background 0.4s ease, border-color 0.4s ease;
   border-bottom: 1px solid transparent;
 }
+.header::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.55) 60%, rgba(10,10,10,0) 100%);
+  transition: opacity 0.4s ease;
+}
+.header.scrolled::before { opacity: 0; }
 .header.scrolled {
   background: rgba(10,10,10,0.85);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -323,9 +329,12 @@ input { font-family: inherit; }
 .header-nav { display: flex; align-items: center; gap: 2.5rem; }
 .header-nav a {
   font-family: var(--font-body); font-weight: 500; font-size: 0.7rem;
-  letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted);
-  transition: color var(--transition-interactive); position: relative;
+  letter-spacing: 0.18em; text-transform: uppercase; color: #c8c7c0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+  transition: color var(--transition-interactive), text-shadow 0.4s ease; position: relative;
 }
+.header.scrolled .header-nav a { color: var(--text-muted); text-shadow: none; }
+.header.scrolled .header-nav a.active { color: var(--text-primary); }
 .header-nav a::after {
   content: ''; position: absolute; bottom: -4px; left: 0;
   width: 0; height: 1px; background: var(--gold);
@@ -340,10 +349,12 @@ input { font-family: inherit; }
 
 .lang-toggle {
   font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--text-muted); font-weight: 500; padding: 6px 12px;
-  border: 1px solid var(--border);
-  transition: color var(--transition-interactive), border-color var(--transition-interactive);
+  color: #c8c7c0; font-weight: 500; padding: 6px 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+  transition: color var(--transition-interactive), border-color var(--transition-interactive), text-shadow 0.4s ease;
 }
+.header.scrolled .lang-toggle { color: var(--text-muted); border-color: var(--border); text-shadow: none; }
 .lang-toggle:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.15); }
 
 /* Cart button */
@@ -403,7 +414,9 @@ input { font-family: inherit; }
 .hero-bg img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
 .hero-gradient {
   position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(to top, rgba(10,10,10,1) 0%, rgba(10,10,10,0.7) 30%, rgba(10,10,10,0.3) 60%, rgba(10,10,10,0.15) 100%);
+  background:
+    linear-gradient(to top, rgba(10,10,10,1) 0%, rgba(10,10,10,0.78) 30%, rgba(10,10,10,0.45) 55%, rgba(10,10,10,0.55) 100%),
+    linear-gradient(to bottom, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.25) 140px, rgba(10,10,10,0) 220px);
 }
 .hero-content { position: relative; z-index: 2; text-align: center; padding: 0 1.5rem; }
 .hero-title {
