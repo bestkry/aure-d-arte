@@ -2048,13 +2048,13 @@ html[lang="pl"] [data-lang="en"] { display: none; }
   </a>
 
   <nav class="header-nav" aria-label="Main navigation">
-    <a href="#collection" data-nav="home" class="active" onclick="showView('home'); return false;"><span data-lang="en">Collection</span><span data-lang="pl">Kolekcja</span></a>
+    <a href="#collection" data-nav="home" class="active" onclick="showView('home','collection'); return false;"><span data-lang="en">Collection</span><span data-lang="pl">Kolekcja</span></a>
     <a href="#" data-nav="shop" onclick="showView('shop'); return false;"><span data-lang="en">Shop</span><span data-lang="pl">Sklep</span></a>
     <a href="#" data-nav="clothing" onclick="showView('clothing'); return false;"><span data-lang="en">Clothing</span><span data-lang="pl">Ciuchy</span></a>
     <a href="#" data-nav="saved" onclick="showView('saved'); return false;"><span data-lang="en">Saved</span><span data-lang="pl">Ulubione</span></a>
-    <a href="#about" data-nav="home" onclick="showView('home'); return false;"><span data-lang="en">About</span><span data-lang="pl">O nas</span></a>
-    <a href="#faq" data-nav="home" onclick="showView('home'); return false;"><span data-lang="en">FAQ</span><span data-lang="pl">FAQ</span></a>
-    <a href="#contact" data-nav="home" onclick="showView('home'); return false;"><span data-lang="en">Contact</span><span data-lang="pl">Kontakt</span></a>
+    <a href="#about" data-nav="home" onclick="showView('home','about'); return false;"><span data-lang="en">About</span><span data-lang="pl">O nas</span></a>
+    <a href="#faq" data-nav="home" onclick="showView('home','faq'); return false;"><span data-lang="en">FAQ</span><span data-lang="pl">FAQ</span></a>
+    <a href="#contact" data-nav="home" onclick="showView('home','contact'); return false;"><span data-lang="en">Contact</span><span data-lang="pl">Kontakt</span></a>
   </nav>
 
   <div class="header-right">
@@ -2075,13 +2075,13 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-  <a href="#" class="mobile-link" onclick="showView('home'); closeMobileMenu(); return false;"><span data-lang="en">Collection</span><span data-lang="pl">Kolekcja</span></a>
+  <a href="#" class="mobile-link" onclick="showView('home','collection'); closeMobileMenu(); return false;"><span data-lang="en">Collection</span><span data-lang="pl">Kolekcja</span></a>
   <a href="#" class="mobile-link" onclick="showView('shop'); closeMobileMenu(); return false;"><span data-lang="en">Shop</span><span data-lang="pl">Sklep</span></a>
   <a href="#" class="mobile-link" onclick="showView('clothing'); closeMobileMenu(); return false;"><span data-lang="en">Clothing</span><span data-lang="pl">Ciuchy</span></a>
   <a href="#" class="mobile-link" onclick="showView('saved'); closeMobileMenu(); return false;"><span data-lang="en">Saved</span><span data-lang="pl">Ulubione</span></a>
-  <a href="#about" class="mobile-link" onclick="showView('home'); closeMobileMenu(); return false;"><span data-lang="en">About</span><span data-lang="pl">O nas</span></a>
-  <a href="#faq" class="mobile-link" onclick="showView('home'); closeMobileMenu(); return false;"><span data-lang="en">FAQ</span><span data-lang="pl">FAQ</span></a>
-  <a href="#" class="mobile-link" onclick="showView('home'); closeMobileMenu(); return false;"><span data-lang="en">Contact</span><span data-lang="pl">Kontakt</span></a>
+  <a href="#about" class="mobile-link" onclick="showView('home','about'); closeMobileMenu(); return false;"><span data-lang="en">About</span><span data-lang="pl">O nas</span></a>
+  <a href="#faq" class="mobile-link" onclick="showView('home','faq'); closeMobileMenu(); return false;"><span data-lang="en">FAQ</span><span data-lang="pl">FAQ</span></a>
+  <a href="#" class="mobile-link" onclick="showView('home','contact'); closeMobileMenu(); return false;"><span data-lang="en">Contact</span><span data-lang="pl">Kontakt</span></a>
 </div>
 
 <!-- ============================================================ -->
@@ -2944,7 +2944,6 @@ function _swapView(view) {
     // Restart hero video each time we land on view
     const v = document.getElementById('clothingHeroVideo');
     if (v) { try { v.currentTime = 0; v.play().catch(()=>{}); } catch(e){} }
-    window.scrollTo({ top: 0, behavior: 'instant' });
   } else {
     document.getElementById('homeView').classList.add('active');
     const navHome = document.querySelector('[data-nav="home"]');
@@ -2953,9 +2952,34 @@ function _swapView(view) {
     const hv = document.getElementById('heroBgVideo');
     if (hv) { try { hv.currentTime = 0; hv.play().catch(()=>{}); } catch(e){} }
   }
-  window.scrollTo(0, 0);
+  // Reset scroll to top in a Lenis-aware way, then optionally jump to a section
+  if (window._lenis) {
+    window._lenis.scrollTo(0, { immediate: true, force: true });
+  } else {
+    window.scrollTo(0, 0);
+  }
   // Re-trigger GSAP scroll triggers and letter-reveal in new view
   if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+  if (_pendingAnchor) {
+    const targetId = _pendingAnchor; _pendingAnchor = null;
+    // Scroll to the section, then correct again after layout fully settles
+    // (hero video, lazy images and ScrollTrigger.refresh can shift offsets).
+    const goTo = (smooth) => {
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      if (window._lenis) {
+        const top = target.getBoundingClientRect().top + window._lenis.scroll - 64;
+        window._lenis.scrollTo(Math.max(0, top), { duration: smooth ? 0.9 : 0, immediate: !smooth, force: true });
+      } else {
+        target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' });
+      }
+    };
+    // Initial smooth approach
+    setTimeout(() => { if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh(); goTo(true); }, 200);
+    // Accurate correction passes after reveal animations + media settle layout
+    setTimeout(() => { if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh(); goTo(false); }, 900);
+    setTimeout(() => { goTo(false); }, 1500);
+  }
   // Reset letter-reveal in newly shown view so they re-animate
   setTimeout(() => {
     document.querySelectorAll('.view.active [data-letter-reveal]').forEach(el => {
@@ -2968,8 +2992,10 @@ function _swapView(view) {
   }, 30);
 }
 
-function showView(view) {
+let _pendingAnchor = null;
+function showView(view, anchor) {
   if (_viewTransitioning) return;
+  _pendingAnchor = anchor || null;
   const curtain = document.getElementById('viewCurtain');
   // Skip curtain if not yet in DOM or for very first paint
   if (!curtain) { _swapView(view); return; }
@@ -3552,11 +3578,16 @@ function initFancyEffects() {
     document.querySelectorAll('.wipe').forEach(el => el.classList.add('revealed'));
   }
 
-  /* ===== #3 Lenis smooth scroll + velocity skew ===== */
-  let skewTargets = [];
+  /* ===== #3 Lenis smooth scroll (light + responsive) ===== */
   if (typeof Lenis !== 'undefined' && !reduced) {
-    const lenis = new Lenis({ duration: 1.1, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+    const lenis = new Lenis({
+      lerp: 0.12,            // snappier response, less "floaty" lag
+      wheelMultiplier: 1.1,  // keep wheel feeling close to native
+      smoothWheel: true,
+      syncTouch: false       // native scrolling on touch devices
+    });
     window._lenis = lenis;
+
     // Sync with GSAP ScrollTrigger
     lenis.on('scroll', () => { if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.update(); });
     function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
@@ -3568,26 +3599,30 @@ function initFancyEffects() {
       if (locked) lenis.stop(); else lenis.start();
     });
     lockObserver.observe(document.body, { attributes: true, attributeFilter: ['style'] });
-    // Start paused if intro/loading screen is still locking scroll
     if (getComputedStyle(document.body).overflow === 'hidden') lenis.stop();
 
-    // Velocity-based skew on gallery + client images
-    skewTargets = Array.from(document.querySelectorAll('.gallery-item img, .space-item img'));
-    lenis.on('scroll', (e) => {
-      const v = Math.max(-12, Math.min(12, (e.velocity || 0) * 0.6));
-      skewTargets.forEach(img => {
-        if (img.closest(':hover')) return; // don't fight hover transform
-        img.style.transform = `skewY(${v * 0.18}deg) scale(1.01)`;
+    // Light velocity skew: batched in one rAF write, only on fine-pointer desktops,
+    // and only applied to images currently near the viewport (cheap, no layout thrash).
+    if (finePointer) {
+      const skewTargets = Array.from(document.querySelectorAll('.gallery-item img, .space-item img'));
+      let pendingSkew = 0, skewQueued = false, settleTimer;
+      function applySkew() {
+        skewQueued = false;
+        const s = pendingSkew;
+        for (const img of skewTargets) {
+          const r = img.getBoundingClientRect();
+          if (r.bottom < -200 || r.top > window.innerHeight + 200) continue; // skip off-screen
+          if (img.matches(':hover')) continue;
+          img.style.transform = s ? `skewY(${s}deg)` : '';
+        }
+      }
+      lenis.on('scroll', (e) => {
+        pendingSkew = Math.max(-2, Math.min(2, (e.velocity || 0) * 0.05));
+        if (!skewQueued) { skewQueued = true; requestAnimationFrame(applySkew); }
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(() => { pendingSkew = 0; requestAnimationFrame(applySkew); }, 140);
       });
-    });
-    // settle back when idle
-    let settleTimer;
-    lenis.on('scroll', () => {
-      clearTimeout(settleTimer);
-      settleTimer = setTimeout(() => {
-        skewTargets.forEach(img => { if (!img.closest(':hover')) img.style.transform = ''; });
-      }, 120);
-    });
+    }
   }
 
   /* ===== #1 Magnetic buttons ===== */
