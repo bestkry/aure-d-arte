@@ -21,8 +21,6 @@
 <link href="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting-cells.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting.min.js" defer></script>
 
-<!-- Lenis smooth scroll -->
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
 
 <style>
 /* ========== RESET & BASE ========== */
@@ -2967,11 +2965,11 @@ function _swapView(view) {
     const goTo = (smooth) => {
       const target = document.getElementById(targetId);
       if (!target) return;
+      const top = Math.max(0, target.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - 64);
       if (window._lenis) {
-        const top = target.getBoundingClientRect().top + window._lenis.scroll - 64;
-        window._lenis.scrollTo(Math.max(0, top), { duration: smooth ? 0.9 : 0, immediate: !smooth, force: true });
+        window._lenis.scrollTo(top, { duration: smooth ? 0.9 : 0, immediate: !smooth, force: true });
       } else {
-        target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' });
+        window.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'auto' });
       }
     };
     // Initial smooth approach
@@ -3578,52 +3576,10 @@ function initFancyEffects() {
     document.querySelectorAll('.wipe').forEach(el => el.classList.add('revealed'));
   }
 
-  /* ===== #3 Lenis smooth scroll (light + responsive) ===== */
-  if (typeof Lenis !== 'undefined' && !reduced) {
-    const lenis = new Lenis({
-      lerp: 0.12,            // snappier response, less "floaty" lag
-      wheelMultiplier: 1.1,  // keep wheel feeling close to native
-      smoothWheel: true,
-      syncTouch: false       // native scrolling on touch devices
-    });
-    window._lenis = lenis;
-
-    // Sync with GSAP ScrollTrigger
-    lenis.on('scroll', () => { if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.update(); });
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
-
-    // Pause Lenis whenever a modal/lightbox/menu locks body scroll (overflow:hidden)
-    const lockObserver = new MutationObserver(() => {
-      const locked = getComputedStyle(document.body).overflow === 'hidden';
-      if (locked) lenis.stop(); else lenis.start();
-    });
-    lockObserver.observe(document.body, { attributes: true, attributeFilter: ['style'] });
-    if (getComputedStyle(document.body).overflow === 'hidden') lenis.stop();
-
-    // Light velocity skew: batched in one rAF write, only on fine-pointer desktops,
-    // and only applied to images currently near the viewport (cheap, no layout thrash).
-    if (finePointer) {
-      const skewTargets = Array.from(document.querySelectorAll('.gallery-item img, .space-item img'));
-      let pendingSkew = 0, skewQueued = false, settleTimer;
-      function applySkew() {
-        skewQueued = false;
-        const s = pendingSkew;
-        for (const img of skewTargets) {
-          const r = img.getBoundingClientRect();
-          if (r.bottom < -200 || r.top > window.innerHeight + 200) continue; // skip off-screen
-          if (img.matches(':hover')) continue;
-          img.style.transform = s ? `skewY(${s}deg)` : '';
-        }
-      }
-      lenis.on('scroll', (e) => {
-        pendingSkew = Math.max(-2, Math.min(2, (e.velocity || 0) * 0.05));
-        if (!skewQueued) { skewQueued = true; requestAnimationFrame(applySkew); }
-        clearTimeout(settleTimer);
-        settleTimer = setTimeout(() => { pendingSkew = 0; requestAnimationFrame(applySkew); }, 140);
-      });
-    }
-  }
+  /* ===== #3 Smooth scroll DISABLED — using the browser's native default scroll =====
+     Lenis is intentionally not initialized so the page behaves like a normal site.
+     showView() checks `window._lenis`; with it absent it falls back to native
+     window.scrollTo / scrollIntoView, so section navigation still works. */
 
   /* ===== #1 Magnetic buttons ===== */
   if (finePointer && !reduced) {
