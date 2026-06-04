@@ -21,6 +21,9 @@
 <link href="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting-cells.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/splitting@1.0.6/dist/splitting.min.js" defer></script>
 
+<!-- Lenis smooth scroll -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+
 <style>
 /* ========== RESET & BASE ========== */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -286,20 +289,117 @@ input { font-family: inherit; }
   opacity: 0.035;
 }
 
-/* ========== CUSTOM CURSOR ========== */
+/* ========== CUSTOM CURSOR (diamond + dot) ========== */
 .cursor-dot {
-  position: fixed; width: 6px; height: 6px; background: var(--gold); border-radius: 50%;
+  position: fixed; top: 0; left: 0; width: 5px; height: 5px;
+  background: var(--gold); border-radius: 50%;
   pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
-  transition: transform 0.1s ease; mix-blend-mode: difference;
+  transition: width 0.25s cubic-bezier(0.16,1,0.3,1), height 0.25s cubic-bezier(0.16,1,0.3,1), background 0.25s ease;
 }
 .cursor-ring {
-  position: fixed; width: 36px; height: 36px; border: 1px solid rgba(201,169,110,0.4); border-radius: 50%;
-  pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+  position: fixed; top: 0; left: 0; width: 30px; height: 30px;
+  border: 1px solid rgba(201,169,110,0.55);
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%) rotate(45deg);
+  transition: width 0.35s cubic-bezier(0.16,1,0.3,1), height 0.35s cubic-bezier(0.16,1,0.3,1),
+              border-color 0.35s ease, border-width 0.35s ease, background 0.35s ease;
 }
-.cursor-dot.hover, .cursor-ring.hover { transform: translate(-50%, -50%) scale(1.5); }
-.cursor-ring.hover { width: 50px; height: 50px; border-color: rgba(201,169,110,0.7); }
+/* slow idle rotation of the diamond */
+.cursor-ring { animation: cursorSpin 8s linear infinite; }
+@keyframes cursorSpin {
+  from { transform: translate(-50%, -50%) rotate(45deg); }
+  to   { transform: translate(-50%, -50%) rotate(405deg); }
+}
+/* hover state: diamond grows + fills faintly, dot shrinks to a pinpoint */
+.cursor-ring.hover {
+  width: 56px; height: 56px;
+  border-color: rgba(201,169,110,0.85);
+  background: rgba(201,169,110,0.06);
+  animation-duration: 2.5s;
+}
+.cursor-dot.hover { width: 3px; height: 3px; background: #f0efe8; }
+/* click feedback */
+.cursor-ring.down { width: 22px; height: 22px; border-color: var(--gold); border-width: 1.5px; }
 @media (pointer: coarse), (max-width: 768px) { .cursor-dot, .cursor-ring { display: none; } }
+@media (prefers-reduced-motion: reduce) { .cursor-ring { animation: none; } }
+
+/* ========== NEW EFFECTS ========== */
+/* #1 Magnetic buttons — JS moves an inner wrapper; the element itself eases back */
+[data-magnetic] { will-change: transform; }
+
+/* #2 Gallery hover distortion (RGB split + skew glitch) */
+.gallery-item img, .space-item img {
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), filter 0.5s ease;
+}
+.gallery-item:hover img {
+  transform: scale(1.06) skewX(-0.6deg);
+  filter: drop-shadow(2px 0 0 rgba(201,169,110,0.28)) drop-shadow(-2px 0 0 rgba(80,120,200,0.22)) contrast(1.04);
+}
+.space-item:hover img {
+  transform: scale(1.05) skewX(-0.5deg);
+  filter: drop-shadow(2px 0 0 rgba(201,169,110,0.22)) drop-shadow(-2px 0 0 rgba(80,120,200,0.18));
+}
+/* scanline shimmer that sweeps across on hover */
+.gallery-item::after {
+  content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(115deg, transparent 40%, rgba(201,169,110,0.10) 50%, transparent 60%);
+  background-size: 250% 100%; background-position: 150% 0;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.gallery-item:hover::after {
+  opacity: 1; animation: cardSheen 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes cardSheen { from { background-position: 150% 0; } to { background-position: -150% 0; } }
+
+/* #4 Live edition counter — gold flash pulse */
+.gallery-edition { transition: color 0.3s ease; }
+.gallery-edition.tick { animation: editionTick 1.1s ease; }
+@keyframes editionTick {
+  0% { color: var(--text-primary); }
+  20% { color: var(--gold); text-shadow: 0 0 12px rgba(201,169,110,0.7); }
+  100% { color: inherit; text-shadow: none; }
+}
+/* Floating live-sale toast (reuses dark luxe styling) */
+.sale-pulse {
+  position: fixed; left: 24px; bottom: 24px; z-index: 8500;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px; background: rgba(17,17,17,0.92);
+  border: 1px solid var(--border); backdrop-filter: blur(8px);
+  font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.06em;
+  color: var(--text-primary); max-width: 280px;
+  transform: translateY(140%); opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.6s ease;
+}
+.sale-pulse.show { transform: translateY(0); opacity: 1; }
+.sale-pulse .sale-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+  flex-shrink: 0; box-shadow: 0 0 0 0 rgba(201,169,110,0.6);
+  animation: salePing 1.8s ease-out infinite;
+}
+@keyframes salePing {
+  0% { box-shadow: 0 0 0 0 rgba(201,169,110,0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(201,169,110,0); }
+  100% { box-shadow: 0 0 0 0 rgba(201,169,110,0); }
+}
+.sale-pulse .sale-name { color: var(--gold); }
+@media (max-width: 600px) { .sale-pulse { left: 12px; right: 12px; bottom: 12px; max-width: none; } }
+
+/* #6 Gallery clip-path reveal (rising curtain wipe) */
+.gallery-item.wipe { clip-path: inset(0 0 100% 0); }
+.gallery-item.wipe.revealed {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1s cubic-bezier(0.76,0,0.24,1);
+}
+.space-item.wipe { clip-path: inset(100% 0 0 0); }
+.space-item.wipe.revealed {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1s cubic-bezier(0.76,0,0.24,1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery-item.wipe, .space-item.wipe { clip-path: none !important; }
+  .gallery-item:hover img, .space-item:hover img { filter: none; transform: scale(1.04); }
+  .gallery-item::after { display: none; }
+}
 
 /* ========== HEADER ========== */
 .header {
@@ -484,8 +584,7 @@ input { font-family: inherit; }
   gap: clamp(1rem, 2vw, 1.5rem); max-width: 1200px; margin: 0 auto;
 }
 .gallery-item { position: relative; aspect-ratio: 3/4; overflow: hidden; background: var(--bg-card); cursor: pointer; }
-.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
-.gallery-item:hover img { transform: scale(1.04); }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; will-change: transform, filter; }
 .gallery-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0) 60%);
@@ -702,25 +801,39 @@ input { font-family: inherit; }
 .view-curtain .curtain-mark {
   position: absolute;
   top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1rem, 1.6vw, 1.3rem);
-  letter-spacing: 0.5em;
-  text-transform: uppercase;
-  color: var(--gold);
+  transform: translate(-50%, -50%) scale(0.92);
+  display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
   opacity: 0;
   pointer-events: none;
   z-index: 9001;
-  text-indent: 0.5em;
+}
+.view-curtain .curtain-monogram {
+  width: 46px; height: 46px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(201,169,110,0.5);
+  position: relative;
+}
+.view-curtain .curtain-monogram::before {
+  content: ''; position: absolute; inset: 4px;
+  border: 1px solid rgba(201,169,110,0.25);
+}
+.view-curtain .curtain-monogram span {
+  font-family: var(--font-display); font-weight: 300; font-size: 1.05rem;
+  letter-spacing: 0.1em; color: var(--gold);
+}
+.view-curtain .curtain-word {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(0.8rem, 1.4vw, 1rem);
+  letter-spacing: 0.55em; text-transform: uppercase;
+  color: var(--gold); text-indent: 0.55em;
 }
 .view-curtain.closing .curtain-mark {
-  opacity: 1;
-  transition: opacity 0.25s ease 0.35s;
+  opacity: 1; transform: translate(-50%, -50%) scale(1);
+  transition: opacity 0.3s ease 0.3s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.3s;
 }
 .view-curtain.opening .curtain-mark {
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  opacity: 0; transform: translate(-50%, -50%) scale(0.92);
+  transition: opacity 0.2s ease, transform 0.3s ease;
 }
 
 /* ========== CUSTOM GALLERY CURSOR ========== */
@@ -1815,6 +1928,12 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <div class="cursor-ring" aria-hidden="true"></div>
 <div class="gallery-cursor" id="galleryCursor" aria-hidden="true"></div>
 
+<!-- LIVE SALE PULSE (#4) -->
+<div class="sale-pulse" id="salePulse" aria-hidden="true">
+  <span class="sale-dot"></span>
+  <span class="sale-pulse-text"></span>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Image lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Close">
@@ -1849,7 +1968,10 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <!-- VIEW CURTAIN (transition between views) -->
 <div class="view-curtain" id="viewCurtain" aria-hidden="true">
   <div class="curtain-panel"></div>
-  <div class="curtain-mark" id="curtainMark">Aure D'arte</div>
+  <div class="curtain-mark" id="curtainMark">
+    <span class="curtain-monogram"><span>AD</span></span>
+    <span class="curtain-word">Aure D'arte</span>
+  </div>
   <div class="curtain-panel"></div>
 </div>
 
@@ -1981,7 +2103,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
       <span data-lang="en">Exclusive AI Art · Limited Editions · Made for the Bold</span>
       <span data-lang="pl">Ekskluzywna Sztuka AI · Limitowane Edycje · Stworzone dla Odważnych</span>
     </p>
-    <a href="#" class="hero-cta" onclick="showView('shop'); return false;">
+    <a href="#" class="hero-cta" data-magnetic onclick="showView('shop'); return false;">
       <span data-lang="en">Explore Collection</span>
       <span data-lang="pl">Zobacz Kolekcję</span>
     </a>
@@ -2013,7 +2135,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
   <h2 class="section-title letter-reveal" data-letter-reveal>Most Wanted</h2>
   <div class="gallery-grid" id="galleryGrid"></div>
   <div class="gallery-cta-wrap reveal">
-    <a href="#" class="btn-outline" onclick="showView('shop'); return false;">
+    <a href="#" class="btn-outline" data-magnetic onclick="showView('shop'); return false;">
       <span data-lang="en">View All Artworks</span><span data-lang="pl">Zobacz Wszystkie Dzieła</span>
     </a>
   </div>
@@ -2037,7 +2159,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
         <div class="edition-bar"><div class="edition-bar-fill" data-target="74.8"></div></div>
       </div>
       <div class="featured-price reveal">499 <span>PLN</span></div>
-      <a href="#" class="btn-solid reveal" onclick="showView('shop'); return false;">
+      <a href="#" class="btn-solid reveal" data-magnetic onclick="showView('shop'); return false;">
         <span data-lang="en">Add to Collection</span><span data-lang="pl">Dodaj do Kolekcji</span>
       </a>
     </div>
@@ -2064,42 +2186,42 @@ html[lang="pl"] [data-lang="en"] { display: none; }
   <p class="section-label reveal"><span data-lang="en">From Our Collectors</span><span data-lang="pl">Od Naszych Kolekcjonerów</span></p>
   <h2 class="section-title letter-reveal" data-letter-reveal><span data-lang="en">In Your Space</span><span data-lang="pl">W Twojej Przestrzeni</span></h2>
   <div class="space-grid">
-    <div class="space-item reveal">
+    <div class="space-item reveal wipe">
       <img src="assets/velvet-abyss-print.jpg" alt="Velvet Abyss displayed in a collector's home" loading="lazy">
       <div class="space-item-caption">
         <span class="space-item-handle">@noir.interior</span>
         <span class="space-item-work">Velvet Abyss</span>
       </div>
     </div>
-    <div class="space-item reveal">
+    <div class="space-item reveal wipe">
       <img src="assets/throne-shadows.jpg" alt="Throne of Shadows in a living room setting" loading="lazy">
       <div class="space-item-caption">
         <span class="space-item-handle">@m.kowalska</span>
         <span class="space-item-work">Throne of Shadows</span>
       </div>
     </div>
-    <div class="space-item reveal">
+    <div class="space-item reveal wipe">
       <img src="assets/last-sovereign.jpg" alt="The Last Sovereign framed on a gallery wall" loading="lazy">
       <div class="space-item-caption">
         <span class="space-item-handle">@studio.void</span>
         <span class="space-item-work">The Last Sovereign</span>
       </div>
     </div>
-    <div class="space-item reveal">
+    <div class="space-item reveal wipe">
       <img src="assets/obsidian-garden.jpg" alt="Obsidian Garden in a minimalist interior" loading="lazy">
       <div class="space-item-caption">
         <span class="space-item-handle">@dark.aesthetic</span>
         <span class="space-item-work">Obsidian Garden</span>
       </div>
     </div>
-    <div class="space-item reveal">
+    <div class="space-item reveal wipe">
       <img src="assets/crimson-reverie.jpg" alt="Crimson Reverie hung above a desk" loading="lazy">
       <div class="space-item-caption">
         <span class="space-item-handle">@a.nowak.art</span>
         <span class="space-item-work">Crimson Reverie</span>
       </div>
     </div>
-    <div class="space-item reveal">
+    <div class="space-item reveal wipe">
       <img src="assets/silent-monarch.jpg" alt="Silent Monarch in a curated reading nook" loading="lazy">
       <div class="space-item-caption">
         <span class="space-item-handle">@quietluxe</span>
@@ -2108,7 +2230,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
     </div>
   </div>
   <div class="gallery-cta-wrap reveal" style="text-align:center; margin-top: clamp(2.5rem, 5vw, 3.5rem);">
-    <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="btn-outline">
+    <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="btn-outline" data-magnetic>
       <span data-lang="en">Tag #AureInYourSpace</span><span data-lang="pl">Oznacz #AureInYourSpace</span>
     </a>
   </div>
@@ -2639,7 +2761,7 @@ const homeGalleryData = allArtworks.slice(0, 8);
 const grid = document.getElementById('galleryGrid');
 homeGalleryData.forEach(art => {
   const item = document.createElement('div');
-  item.className = 'gallery-item reveal';
+  item.className = 'gallery-item reveal wipe';
   item.onclick = () => { showView('shop'); setTimeout(() => openProductModal(art.id), 300); };
   const mainSrc = art.images ? art.images[0] : `https://picsum.photos/seed/${art.seed}/600/800`;
   item.innerHTML = `
@@ -3254,13 +3376,15 @@ if (window.matchMedia('(pointer: fine)').matches && cursorDot && cursorRing) {
   }
   animateRing();
   document.addEventListener('mouseover', e => {
-    const t = e.target.closest('a, button, .gallery-item, .shop-item');
+    const t = e.target.closest('a, button, .gallery-item, .shop-item, .faq-question, .space-item, [data-magnetic]');
     if (t) { cursorDot.classList.add('hover'); cursorRing.classList.add('hover'); }
   });
   document.addEventListener('mouseout', e => {
-    const t = e.target.closest('a, button, .gallery-item, .shop-item');
+    const t = e.target.closest('a, button, .gallery-item, .shop-item, .faq-question, .space-item, [data-magnetic]');
     if (t) { cursorDot.classList.remove('hover'); cursorRing.classList.remove('hover'); }
   });
+  document.addEventListener('mousedown', () => cursorRing.classList.add('down'));
+  document.addEventListener('mouseup', () => cursorRing.classList.remove('down'));
 }
 
 /* ========== GSAP ANIMATIONS ========== */
@@ -3405,6 +3529,130 @@ function initAnimations() {
       }
     });
   });
+
+  initFancyEffects();
+}
+
+/* ============================================================ */
+/* NEW INTERACTIVE EFFECTS                                       */
+/* ============================================================ */
+function initFancyEffects() {
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ===== #6 Clip-path reveal for gallery + client cards (via ScrollTrigger) ===== */
+  if (typeof ScrollTrigger !== 'undefined' && !reduced) {
+    document.querySelectorAll('.gallery-item.wipe, .space-item.wipe').forEach((el, i) => {
+      ScrollTrigger.create({
+        trigger: el, start: 'top 90%', once: true,
+        onEnter: () => { el.classList.add('revealed'); }
+      });
+    });
+  } else {
+    document.querySelectorAll('.wipe').forEach(el => el.classList.add('revealed'));
+  }
+
+  /* ===== #3 Lenis smooth scroll + velocity skew ===== */
+  let skewTargets = [];
+  if (typeof Lenis !== 'undefined' && !reduced) {
+    const lenis = new Lenis({ duration: 1.1, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
+    window._lenis = lenis;
+    // Sync with GSAP ScrollTrigger
+    lenis.on('scroll', () => { if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.update(); });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    // Pause Lenis whenever a modal/lightbox/menu locks body scroll (overflow:hidden)
+    const lockObserver = new MutationObserver(() => {
+      const locked = getComputedStyle(document.body).overflow === 'hidden';
+      if (locked) lenis.stop(); else lenis.start();
+    });
+    lockObserver.observe(document.body, { attributes: true, attributeFilter: ['style'] });
+    // Start paused if intro/loading screen is still locking scroll
+    if (getComputedStyle(document.body).overflow === 'hidden') lenis.stop();
+
+    // Velocity-based skew on gallery + client images
+    skewTargets = Array.from(document.querySelectorAll('.gallery-item img, .space-item img'));
+    lenis.on('scroll', (e) => {
+      const v = Math.max(-12, Math.min(12, (e.velocity || 0) * 0.6));
+      skewTargets.forEach(img => {
+        if (img.closest(':hover')) return; // don't fight hover transform
+        img.style.transform = `skewY(${v * 0.18}deg) scale(1.01)`;
+      });
+    });
+    // settle back when idle
+    let settleTimer;
+    lenis.on('scroll', () => {
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(() => {
+        skewTargets.forEach(img => { if (!img.closest(':hover')) img.style.transform = ''; });
+      }, 120);
+    });
+  }
+
+  /* ===== #1 Magnetic buttons ===== */
+  if (finePointer && !reduced) {
+    document.querySelectorAll('[data-magnetic]').forEach(el => {
+      const strength = 0.35;
+      el.style.transition = 'transform 0.4s cubic-bezier(0.16,1,0.3,1)';
+      el.addEventListener('mousemove', (e) => {
+        const r = el.getBoundingClientRect();
+        const mx = e.clientX - (r.left + r.width / 2);
+        const my = e.clientY - (r.top + r.height / 2);
+        el.style.transform = `translate(${mx * strength}px, ${my * strength}px)`;
+      });
+      el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+    });
+  }
+
+  /* ===== #4 Live edition counter (FOMO) ===== */
+  if (!reduced) {
+    const liveData = [
+      { name: 'Crimson Reverie' }, { name: 'The Last Sovereign' },
+      { name: 'Velvet Abyss' }, { name: 'Obsidian Garden' },
+      { name: 'Neon Requiem' }, { name: 'Throne of Shadows' },
+      { name: 'Silent Monarch' }, { name: 'Lucid Phantom' }
+    ];
+    const pulse = document.getElementById('salePulse');
+    const pulseText = pulse ? pulse.querySelector('.sale-pulse-text') : null;
+
+    function bumpEdition() {
+      // Pick a random visible gallery edition label and tick it up by 1
+      const eds = Array.from(document.querySelectorAll('.gallery-edition'));
+      if (eds.length) {
+        const el = eds[Math.floor(Math.random() * eds.length)];
+        const m = el.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+        if (m) {
+          let sold = parseInt(m[1]); const total = parseInt(m[2]);
+          if (sold < total - 1) {
+            sold += 1;
+            el.textContent = `Ed. ${sold}/${total}`;
+            el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick');
+          }
+        }
+      }
+    }
+
+    function showSalePulse() {
+      if (!pulse || !pulseText) return;
+      const isPL = document.documentElement.lang === 'pl';
+      const item = liveData[Math.floor(Math.random() * liveData.length)];
+      const label = isPL ? 'W\u0142a\u015bnie sprzedano' : 'Just sold';
+      pulseText.innerHTML = `${label}: <span class="sale-name">${item.name}</span>`;
+      pulse.classList.add('show');
+      setTimeout(() => pulse.classList.remove('show'), 4200);
+    }
+
+    // Run periodically with a little randomness (only when tab visible)
+    function scheduleNext() {
+      const delay = 9000 + Math.random() * 8000;
+      setTimeout(() => {
+        if (!document.hidden) { bumpEdition(); showSalePulse(); }
+        scheduleNext();
+      }, delay);
+    }
+    setTimeout(scheduleNext, 6000);
+  }
 }
 
 /* ========== CHECKOUT ========== */
