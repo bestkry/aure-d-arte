@@ -565,11 +565,58 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
 }
 .artwork-breadcrumb:hover { color: var(--gold); }
 .artwork-hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 3.5rem; align-items: start; }
-.artwork-hero-media {
-  position: relative; overflow: hidden; background: var(--bg-card);
-  border: 1px solid var(--border); box-shadow: var(--shadow-soft, 0 30px 80px rgba(0,0,0,0.5));
+/* ===== 3D rotatable frame ===== */
+.artwork-hero-media { position: relative; }
+.artwork-frame-stage { perspective: 1500px; perspective-origin: 50% 40%; }
+.artwork-frame {
+  position: relative; transform-style: preserve-3d; will-change: transform;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Ornate gold frame */
+  padding: clamp(14px, 2.2vw, 26px);
+  background:
+    linear-gradient(135deg, #d9bd86 0%, #b08d4c 22%, #8c6a32 50%, #c9a96e 78%, #e7d2a4 100%);
+  box-shadow:
+    0 40px 90px -30px rgba(0,0,0,0.75),
+    0 0 0 1px rgba(0,0,0,0.35),
+    inset 0 0 0 2px rgba(255,255,255,0.18),
+    inset 0 0 22px rgba(0,0,0,0.35);
+  border-radius: 3px;
 }
-.artwork-hero-media img { width: 100%; height: auto; display: block; }
+html[data-theme="light"] .artwork-frame {
+  box-shadow:
+    0 40px 80px -34px rgba(0,0,0,0.45),
+    0 0 0 1px rgba(0,0,0,0.18),
+    inset 0 0 0 2px rgba(255,255,255,0.4),
+    inset 0 0 22px rgba(0,0,0,0.22);
+}
+/* Inner bevel ridge of the frame */
+.artwork-frame::after {
+  content: ''; position: absolute; inset: clamp(10px, 1.6vw, 18px);
+  border: 2px solid rgba(0,0,0,0.30);
+  box-shadow: inset 0 0 14px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.25);
+  pointer-events: none; z-index: 4;
+}
+.artwork-frame-mat {
+  position: relative; overflow: hidden; background: var(--bg-card);
+  transform: translateZ(18px); /* artwork sits deeper than frame for parallax */
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+}
+.artwork-frame-mat img { width: 100%; height: auto; display: block; }
+/* Light sheen sweeping across the glass */
+.artwork-frame-glare {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,0.38) 0%, rgba(255,255,255,0) 50%);
+  transition: opacity 0.4s ease;
+}
+.artwork-frame.rotating .artwork-frame-glare { opacity: 1; }
+.artwork-frame-hint {
+  position: absolute; left: 50%; bottom: -2rem; transform: translateX(-50%);
+  font-family: var(--font-body); font-size: 0.66rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-faint);
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  opacity: 0; transition: opacity 0.5s ease; pointer-events: none;
+}
+.artwork-hero-media:hover .artwork-frame-hint { opacity: 0.7; }
 .artwork-hero-info { position: sticky; top: 6rem; }
 .artwork-eyebrow {
   font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
@@ -1474,6 +1521,36 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
   filter: brightness(1.05) contrast(1.03);
 }
 .shop-item:hover { transform: translateY(-3px); }
+
+/* ===== 3D tilt on cards (JS-driven) ===== */
+.shop-grid { perspective: 1400px; }
+.shop-item.tilt-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
+  will-change: transform;
+}
+/* When tilt is active, JS owns the transform — neutralise the translateY hover */
+.shop-item.tilt-3d:hover { transform: none; }
+.shop-item.tilt-3d.tilting {
+  transition: box-shadow 0.45s ease;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,169,110,0.10);
+}
+html[data-theme="light"] .shop-item.tilt-3d.tilting {
+  box-shadow: 0 30px 60px -22px rgba(0,0,0,0.28), 0 0 0 1px rgba(154,123,63,0.14);
+}
+/* Lift inner content slightly out of the card plane for depth */
+.shop-item.tilt-3d .shop-item-image { transform: translateZ(0); }
+.shop-item.tilt-3d .shop-item-badge,
+.shop-item.tilt-3d .shop-item-fav { transform: translateZ(40px); }
+.shop-item.tilt-3d .shop-item-quick span { transform: translateZ(28px); }
+/* Moving glare/light sheen */
+.shop-item .tilt-glare {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  opacity: 0; mix-blend-mode: overlay;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 45%);
+  transition: opacity 0.4s ease;
+}
+.shop-item.tilt-3d.tilting .tilt-glare { opacity: 1; }
 
 .shop-item-badge {
   position: absolute; top: 12px; left: 12px;
@@ -2830,8 +2907,19 @@ html[lang="pl"] [data-lang="en"] { display: none; }
     </button>
 
     <div class="artwork-hero">
-      <div class="artwork-hero-media">
-        <img id="artworkHeroImg" src="" alt="" />
+      <div class="artwork-hero-media" id="artworkHeroMedia">
+        <div class="artwork-frame-stage">
+          <div class="artwork-frame" id="artworkFrame3d">
+            <div class="artwork-frame-mat">
+              <img id="artworkHeroImg" src="" alt="" />
+              <div class="artwork-frame-glare"></div>
+            </div>
+          </div>
+          <span class="artwork-frame-hint">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/></svg>
+            <span data-lang="en">Move to rotate</span><span data-lang="pl">Poruszaj, by obrócić</span>
+          </span>
+        </div>
       </div>
       <div class="artwork-hero-info">
         <div class="artwork-eyebrow" id="artworkCat"></div>
@@ -3201,6 +3289,7 @@ function renderShopGrid(filter) {
     }
     shopGrid.appendChild(item);
   });
+  if (window.initCardTilt) initCardTilt();
 }
 renderShopGrid('all');
 
@@ -3231,6 +3320,7 @@ function renderClothingGrid() {
     }
     grid.appendChild(card);
   });
+  if (window.initCardTilt) initCardTilt();
 }
 renderClothingGrid();
 
@@ -3269,6 +3359,7 @@ function renderSavedGrid() {
     }
     savedGrid.appendChild(item);
   });
+  if (window.initCardTilt) initCardTilt();
 }
 
 /* Filters */
@@ -3579,6 +3670,7 @@ function renderArtworkPage() {
   renderArtworkFrames();
   updateArtworkPageSpecs();
   renderArtworkRelated();
+  if (window.initArtworkFrameTilt) initArtworkFrameTilt();
 }
 
 function renderArtworkSizes() {
@@ -3671,6 +3763,7 @@ function renderArtworkRelated() {
     }
     cont.appendChild(item);
   });
+  if (window.initCardTilt) initCardTilt();
 }
 
 /* ========== CART ========== */
@@ -4088,6 +4181,91 @@ function initAnimations() {
 }
 
 /* ============================================================ */
+/* #7 3D CARD TILT — idempotent, re-callable after grid renders   */
+/* ============================================================ */
+function initCardTilt() {
+  if (!window._enableCardTilt) return;
+  const MAX = 9;            // max rotation in degrees
+  const cards = document.querySelectorAll('.shop-item:not([data-tilt-bound])');
+  cards.forEach(card => {
+    card.setAttribute('data-tilt-bound', '1');
+    card.classList.add('tilt-3d');
+    // Inject glare layer once, inside the image wrapper
+    const imgWrap = card.querySelector('.shop-item-image');
+    if (imgWrap && !imgWrap.querySelector('.tilt-glare')) {
+      const g = document.createElement('div');
+      g.className = 'tilt-glare';
+      imgWrap.appendChild(g);
+    }
+    const glare = card.querySelector('.tilt-glare');
+    let raf = null;
+
+    function onMove(e) {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;   // 0..1
+      const py = (e.clientY - r.top) / r.height;   // 0..1
+      const rotY = (px - 0.5) * (MAX * 2);
+      const rotX = (0.5 - py) * (MAX * 2);
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        card.style.transform =
+          `perspective(1400px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(8px)`;
+        if (glare) {
+          glare.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+          glare.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+        }
+      });
+    }
+    function onEnter() { card.classList.add('tilting'); }
+    function onLeave() {
+      if (raf) cancelAnimationFrame(raf);
+      card.classList.remove('tilting');
+      card.style.transform = '';
+    }
+    card.addEventListener('mouseenter', onEnter);
+    card.addEventListener('mousemove', onMove);
+    card.addEventListener('mouseleave', onLeave);
+  });
+}
+
+/* ============================================================ */
+/* #8 3D ROTATABLE FRAME on the artwork page                     */
+/* ============================================================ */
+function initArtworkFrameTilt() {
+  if (!window._enableCardTilt) return;        // reuse same fine-pointer + reduced guard
+  const media = document.getElementById('artworkHeroMedia');
+  const frame = document.getElementById('artworkFrame3d');
+  if (!media || !frame || media.getAttribute('data-tilt-bound')) return;
+  media.setAttribute('data-tilt-bound', '1');
+  const glare = frame.querySelector('.artwork-frame-glare');
+  const MAX = 14;   // a touch more dramatic than cards
+  let raf = null;
+
+  media.addEventListener('mouseenter', () => frame.classList.add('rotating'));
+  media.addEventListener('mousemove', (e) => {
+    const r = media.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    const rotY = (px - 0.5) * (MAX * 2);
+    const rotX = (0.5 - py) * (MAX * 2);
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      frame.style.transform =
+        `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
+      if (glare) {
+        glare.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+        glare.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+      }
+    });
+  });
+  media.addEventListener('mouseleave', () => {
+    if (raf) cancelAnimationFrame(raf);
+    frame.classList.remove('rotating');
+    frame.style.transform = '';
+  });
+}
+
+/* ============================================================ */
 /* NEW INTERACTIVE EFFECTS                                       */
 /* ============================================================ */
 function initFancyEffects() {
@@ -4110,6 +4288,10 @@ function initFancyEffects() {
      Lenis is intentionally not initialized so the page behaves like a normal site.
      showView() checks `window._lenis`; with it absent it falls back to native
      window.scrollTo / scrollIntoView, so section navigation still works. */
+
+  /* ===== #7 3D tilt on shop cards ===== */
+  window._enableCardTilt = finePointer && !reduced;
+  initCardTilt();
 
   /* ===== #1 Magnetic buttons ===== */
   if (finePointer && !reduced) {
