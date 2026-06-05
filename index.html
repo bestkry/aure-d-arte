@@ -6,6 +6,9 @@
 <title>AURE D'ARTE — Exclusive AI Art · Limited Editions</title>
 <meta name="description" content="Exclusive AI-generated fine art. Limited editions of 250 prints per artwork. Museum-grade quality. Made for the bold.">
 
+<!-- Early theme: apply saved theme before render to prevent flash -->
+<script>(function(){try{var t=localStorage.getItem('ad-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();</script>
+
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,10 +38,58 @@
   --text-faint: #3d3d3a;
   --gold: #c9a96e;
   --border: rgba(255,255,255,0.06);
+  /* surfaces / overlays that flip with the theme */
+  --surface-line: rgba(255,255,255,0.06);
+  --surface-line-strong: rgba(255,255,255,0.12);
+  --overlay-veil: rgba(10,10,10,0.85);
+  --shadow-soft: rgba(0,0,0,0.45);
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-body: 'Satoshi', -apple-system, sans-serif;
   --transition-interactive: 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ===== LIGHT THEME ===== */
+html[data-theme="light"] {
+  --bg-main: #f4f2ec;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #1a1a18;
+  --text-muted: #6a6862;
+  --text-faint: #b8b6ae;
+  --gold: #9a7b3f;
+  --border: rgba(0,0,0,0.10);
+  --surface-line: rgba(0,0,0,0.10);
+  --surface-line-strong: rgba(0,0,0,0.16);
+  --overlay-veil: rgba(244,242,236,0.9);
+  --shadow-soft: rgba(40,36,28,0.14);
+}
+
+/* Smooth cross-fade when switching themes */
+body, .header, .header.scrolled, .view, .footer, .stats-section,
+.faq-section, .space-section, .gallery-item, .shop-item, .product-modal {
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease;
+}
+
+/* ===== LIGHT THEME readability overrides ===== */
+/* The hero keeps its cinematic dark overlay in both themes (it sits over imagery). */
+html[data-theme="light"] .header-nav a { color: #4a4844; text-shadow: none; }
+html[data-theme="light"] .header.scrolled .header-nav a { color: var(--text-muted); }
+html[data-theme="light"] .header.scrolled { background: rgba(255,255,255,0.92); }
+html[data-theme="light"] .header.scrolled::before { opacity: 0; }
+html[data-theme="light"] .lang-toggle,
+html[data-theme="light"] .theme-toggle { color: #4a4844; border-color: rgba(0,0,0,0.2); text-shadow: none; }
+html[data-theme="light"] .header.scrolled .lang-toggle,
+html[data-theme="light"] .header.scrolled .theme-toggle { color: var(--text-muted); border-color: var(--border); }
+html[data-theme="light"] .fav-btn, html[data-theme="light"] .cart-btn { color: #4a4844; }
+html[data-theme="light"] .header.scrolled .fav-btn,
+html[data-theme="light"] .header.scrolled .cart-btn { color: var(--text-primary); }
+html[data-theme="light"] .hamburger span { background: #4a4844; }
+html[data-theme="light"] .product-modal-content { background: var(--bg-elevated); }
+html[data-theme="light"] .product-modal { background: rgba(244,242,236,0.7); }
+html[data-theme="light"] .cart-drawer,
+html[data-theme="light"] .mobile-menu { background: var(--bg-elevated); }
+html[data-theme="light"] .edition-bar { background: rgba(0,0,0,0.08); }
+html[data-theme="light"] .faq-answer-inner a { color: var(--gold); }
 
 html {
   /* native, instant wheel scrolling (no CSS smooth-scroll lag) */
@@ -456,6 +507,122 @@ input { font-family: inherit; }
 }
 .header.scrolled .lang-toggle { color: var(--text-muted); border-color: var(--border); text-shadow: none; }
 .lang-toggle:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.15); }
+
+/* Theme toggle (sun/moon) */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 30px; color: #c8c7c0;
+  border: 1px solid rgba(255,255,255,0.18);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+  transition: color var(--transition-interactive), border-color var(--transition-interactive);
+}
+.theme-toggle:hover { color: var(--gold); border-color: rgba(255,255,255,0.15); }
+.header.scrolled .theme-toggle { color: var(--text-muted); border-color: var(--border); text-shadow: none; }
+.theme-toggle svg { width: 16px; height: 16px; }
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+html[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+/* ===== Footer legal links ===== */
+.footer-links { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+.footer-links a {
+  font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); transition: color var(--transition-interactive);
+}
+.footer-links a:hover { color: var(--gold); }
+.footer-links-sep { color: var(--text-faint); font-size: 0.7rem; }
+
+/* ===== Legal pages ===== */
+.legal-page { max-width: 820px; margin: 0 auto; padding: 7rem 1.5rem 5rem; }
+.legal-body { margin-top: 1.5rem; }
+.legal-updated { font-family: var(--font-body); font-size: 0.78rem; letter-spacing: 0.08em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 2.5rem; }
+.legal-section { margin-bottom: 2.4rem; }
+.legal-section h2 {
+  font-family: var(--font-display); font-weight: 400; font-size: 1.5rem;
+  color: var(--text-primary); margin-bottom: 0.7rem; letter-spacing: 0.01em;
+}
+.legal-section p {
+  font-family: var(--font-body); font-weight: 300; font-size: 0.95rem; line-height: 1.85;
+  color: var(--text-muted);
+}
+.legal-section a { color: var(--gold); border-bottom: 1px solid rgba(201,169,110,0.35); }
+.legal-section a:hover { border-bottom-color: var(--gold); }
+.legal-back {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem;
+  font-family: var(--font-body); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); border: 1px solid var(--border); padding: 0.7rem 1.3rem;
+  transition: color var(--transition-interactive), border-color var(--transition-interactive);
+}
+.legal-back:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ===== Single artwork page ===== */
+.artwork-page { max-width: 1200px; margin: 0 auto; padding: 6.5rem 1.5rem 5rem; }
+.artwork-breadcrumb {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2.5rem;
+  font-family: var(--font-body); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); transition: color var(--transition-interactive);
+}
+.artwork-breadcrumb:hover { color: var(--gold); }
+.artwork-hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 3.5rem; align-items: start; }
+.artwork-hero-media {
+  position: relative; overflow: hidden; background: var(--bg-card);
+  border: 1px solid var(--border); box-shadow: var(--shadow-soft, 0 30px 80px rgba(0,0,0,0.5));
+}
+.artwork-hero-media img { width: 100%; height: auto; display: block; }
+.artwork-hero-info { position: sticky; top: 6rem; }
+.artwork-eyebrow {
+  font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.9rem;
+}
+.artwork-title {
+  font-family: var(--font-display); font-weight: 400; font-size: clamp(2.2rem, 4vw, 3.4rem);
+  line-height: 1.05; color: var(--text-primary); margin-bottom: 1rem;
+}
+.artwork-edition-badge {
+  display: inline-flex; align-items: center; gap: 0.45rem; margin-bottom: 1.5rem;
+  font-family: var(--font-body); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.artwork-edition-badge .pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+  animation: editionPulse 2s ease-in-out infinite;
+}
+.artwork-desc {
+  font-family: var(--font-body); font-weight: 300; font-size: 1rem; line-height: 1.85;
+  color: var(--text-muted); margin-bottom: 2rem;
+}
+.artwork-specs {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);
+  border: 1px solid var(--border); margin-bottom: 2.2rem;
+}
+.artwork-spec { background: var(--bg-elevated); padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.artwork-spec-label { font-family: var(--font-body); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+.artwork-spec-value { font-family: var(--font-body); font-size: 0.92rem; color: var(--text-primary); }
+.artwork-spec-value.artwork-price { font-family: var(--font-display); font-size: 1.4rem; color: var(--gold); }
+.artwork-spec-value .currency { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.1em; }
+.artwork-config { margin-bottom: 1.6rem; }
+.artwork-related { margin-top: 5rem; }
+.artwork-related-title {
+  font-family: var(--font-display); font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.4rem);
+  color: var(--text-primary); text-align: center; margin-bottom: 2.5rem;
+}
+@media (max-width: 900px) {
+  .artwork-hero { grid-template-columns: 1fr; gap: 2rem; }
+  .artwork-hero-info { position: static; top: auto; }
+}
+@media (max-width: 480px) {
+  .artwork-specs { grid-template-columns: 1fr; }
+}
+
+/* Modal: view full page link */
+.modal-fullpage-link {
+  display: inline-flex; align-items: center; gap: 0.4rem; margin: 0.25rem 0 0.5rem;
+  font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold); transition: opacity var(--transition-interactive);
+}
+.modal-fullpage-link:hover { opacity: 0.7; }
+.product-modal[data-apparel="true"] .modal-fullpage-link { display: none; }
 
 /* Cart button */
 .cart-btn {
@@ -2060,6 +2227,10 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 
   <div class="header-right">
     <button class="lang-toggle" aria-label="Switch language" id="langToggle">EN</button>
+    <button class="theme-toggle" aria-label="Toggle light/dark theme" id="themeToggle" data-magnetic>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
     <button class="fav-btn" aria-label="Saved artworks" onclick="showView('saved')" id="favBtn">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
       <span class="fav-count" id="favCount">0</span>
@@ -2388,6 +2559,10 @@ html[lang="pl"] [data-lang="en"] { display: none; }
         </div>
         <h2 class="product-detail-title" id="modalTitle"></h2>
         <p class="product-detail-cat" id="modalCat"></p>
+        <a class="modal-fullpage-link" id="modalFullPage" href="#" onclick="openArtworkPageFromModal(); return false;">
+          <span data-lang="en">View full page</span><span data-lang="pl">Zobacz pełną stronę</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
         <p class="product-detail-desc" id="modalDesc"></p>
 
         <div class="product-divider"></div>
@@ -2644,10 +2819,194 @@ html[lang="pl"] [data-lang="en"] { display: none; }
   </button>
 </div>
 
+<!-- ============================================================ -->
+<!-- SINGLE ARTWORK VIEW (immersive full page) -->
+<!-- ============================================================ -->
+<div class="view" id="artworkView">
+  <div class="artwork-page">
+    <button class="artwork-breadcrumb" onclick="showView('shop')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      <span data-lang="en">Back to collection</span><span data-lang="pl">Powrót do kolekcji</span>
+    </button>
+
+    <div class="artwork-hero">
+      <div class="artwork-hero-media">
+        <img id="artworkHeroImg" src="" alt="" />
+      </div>
+      <div class="artwork-hero-info">
+        <div class="artwork-eyebrow" id="artworkCat"></div>
+        <h1 class="artwork-title" id="artworkTitle"></h1>
+        <div class="artwork-edition-badge">
+          <span class="pulse"></span>
+          <span data-lang="en">Limited edition ·</span><span data-lang="pl">Limitowana edycja ·</span>
+          <span id="artworkEdition"></span>
+        </div>
+        <p class="artwork-desc" id="artworkDesc"></p>
+
+        <div class="artwork-specs">
+          <div class="artwork-spec">
+            <span class="artwork-spec-label"><span data-lang="en">Dimensions</span><span data-lang="pl">Wymiary</span></span>
+            <span class="artwork-spec-value" id="artworkDims"></span>
+          </div>
+          <div class="artwork-spec">
+            <span class="artwork-spec-label"><span data-lang="en">Medium</span><span data-lang="pl">Technika</span></span>
+            <span class="artwork-spec-value"><span data-lang="en">Archival giclée print</span><span data-lang="pl">Druk giclée archiwalny</span></span>
+          </div>
+          <div class="artwork-spec">
+            <span class="artwork-spec-label"><span data-lang="en">Frame</span><span data-lang="pl">Rama</span></span>
+            <span class="artwork-spec-value" id="artworkFrame"></span>
+          </div>
+          <div class="artwork-spec">
+            <span class="artwork-spec-label"><span data-lang="en">Price</span><span data-lang="pl">Cena</span></span>
+            <span class="artwork-spec-value artwork-price" id="artworkPrice"></span>
+          </div>
+        </div>
+
+        <!-- Size selector -->
+        <div class="artwork-config">
+          <p class="config-label"><span data-lang="en">Select Size</span><span data-lang="pl">Wybierz Rozmiar</span></p>
+          <div class="size-options" id="artworkSizeOptions"></div>
+        </div>
+        <!-- Frame selector -->
+        <div class="artwork-config">
+          <p class="config-label"><span data-lang="en">Choose Frame</span><span data-lang="pl">Wybierz Ramę</span></p>
+          <div class="frame-options" id="artworkFrameOptions"></div>
+        </div>
+
+        <button class="add-to-cart-btn" onclick="addArtworkPageToCart()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span data-lang="en">Add to Cart</span><span data-lang="pl">Dodaj do Koszyka</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Related works -->
+    <div class="artwork-related">
+      <h2 class="artwork-related-title">
+        <span data-lang="en">More from the collection</span><span data-lang="pl">Więcej z kolekcji</span>
+      </h2>
+      <div class="shop-grid" id="artworkRelated"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- LEGAL VIEW: PRIVACY POLICY (RODO) -->
+<!-- ============================================================ -->
+<div class="view" id="privacyView">
+  <div class="legal-page">
+    <div class="shop-header">
+      <h1 class="shop-heading letter-reveal" data-letter-reveal>
+        <span data-lang="en">Privacy Policy</span><span data-lang="pl">Polityka Prywatności</span>
+      </h1>
+      <p class="shop-subheading">
+        <span data-lang="en">How we protect and process your personal data — GDPR compliant</span><span data-lang="pl">Jak chronimy i przetwarzamy Twoje dane osobowe — zgodnie z RODO</span>
+      </p>
+    </div>
+    <div class="legal-body">
+      <p class="legal-updated"><span data-lang="en">Last updated: June 2026</span><span data-lang="pl">Ostatnia aktualizacja: czerwiec 2026</span></p>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">1. Data Controller</span><span data-lang="pl">1. Administrator danych</span></h2>
+        <p><span data-lang="en">The controller of your personal data is Aure D'arte ("we", "us"). For any questions regarding the processing of your data, contact us at <a href="mailto:hello@auredarte.com">hello@auredarte.com</a>.</span><span data-lang="pl">Administratorem Twoich danych osobowych jest Aure D'arte ("my"). W sprawach dotyczących przetwarzania danych skontaktuj się z nami pod adresem <a href="mailto:hello@auredarte.com">hello@auredarte.com</a>.</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">2. What Data We Collect</span><span data-lang="pl">2. Jakie dane zbieramy</span></h2>
+        <p><span data-lang="en">We process the data you provide when placing an order or contacting us: first and last name, email address, shipping address, and order details. We do not store payment card data — payments are handled by external payment providers.</span><span data-lang="pl">Przetwarzamy dane podawane przy składaniu zamówienia lub kontakcie: imię i nazwisko, adres e-mail, adres dostawy oraz szczegóły zamówienia. Nie przechowujemy danych kart płatniczych — płatności obsługują zewnętrzni operatorzy płatności.</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">3. Purpose & Legal Basis</span><span data-lang="pl">3. Cel i podstawa prawna</span></h2>
+        <p><span data-lang="en">We process your data to perform the sales contract (Art. 6(1)(b) GDPR), to fulfil legal obligations such as accounting (Art. 6(1)(c) GDPR), and — with your consent — to send marketing communications (Art. 6(1)(a) GDPR).</span><span data-lang="pl">Przetwarzamy dane w celu realizacji umowy sprzedaży (art. 6 ust. 1 lit. b RODO), wypełnienia obowiązków prawnych, np. księgowych (art. 6 ust. 1 lit. c RODO), oraz — za Twoją zgodą — wysyłki komunikacji marketingowej (art. 6 ust. 1 lit. a RODO).</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">4. Data Retention</span><span data-lang="pl">4. Okres przechowywania</span></h2>
+        <p><span data-lang="en">Order data is retained for the period required by tax and accounting law (typically 5 years). Marketing data is processed until you withdraw your consent.</span><span data-lang="pl">Dane zamówień przechowujemy przez okres wymagany przepisami podatkowymi i o rachunkowości (zwykle 5 lat). Dane marketingowe przetwarzamy do momentu wycofania zgody.</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">5. Your Rights</span><span data-lang="pl">5. Twoje prawa</span></h2>
+        <p><span data-lang="en">You have the right to access, rectify, erase, restrict, and port your data, as well as to object to processing and to withdraw consent at any time. You may also lodge a complaint with the supervisory authority (in Poland: the President of the Personal Data Protection Office, UODO).</span><span data-lang="pl">Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia, a także prawo sprzeciwu i wycofania zgody w dowolnym momencie. Masz również prawo wniesienia skargi do organu nadzorczego (w Polsce: Prezes Urzędu Ochrony Danych Osobowych, UODO).</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">6. Cookies & Local Storage</span><span data-lang="pl">6. Pliki cookie i pamięć lokalna</span></h2>
+        <p><span data-lang="en">This site uses your browser's local storage to remember your cart, wishlist, and theme preference. This data stays on your device and is not transmitted to us.</span><span data-lang="pl">Strona korzysta z pamięci lokalnej przeglądarki, aby zapamiętać koszyk, ulubione i preferowany motyw. Dane te pozostają na Twoim urządzeniu i nie są nam przesyłane.</span></p>
+      </section>
+
+      <button class="legal-back" onclick="showView('home')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        <span data-lang="en">Back to home</span><span data-lang="pl">Powrót do strony głównej</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- LEGAL VIEW: TERMS & CONDITIONS (REGULAMIN) -->
+<!-- ============================================================ -->
+<div class="view" id="termsView">
+  <div class="legal-page">
+    <div class="shop-header">
+      <h1 class="shop-heading letter-reveal" data-letter-reveal>
+        <span data-lang="en">Terms &amp; Conditions</span><span data-lang="pl">Regulamin</span>
+      </h1>
+      <p class="shop-subheading">
+        <span data-lang="en">The rules of using our store and placing orders</span><span data-lang="pl">Zasady korzystania ze sklepu i składania zamówień</span>
+      </p>
+    </div>
+    <div class="legal-body">
+      <p class="legal-updated"><span data-lang="en">Last updated: June 2026</span><span data-lang="pl">Ostatnia aktualizacja: czerwiec 2026</span></p>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">1. General Provisions</span><span data-lang="pl">1. Postanowienia ogólne</span></h2>
+        <p><span data-lang="en">This document sets out the rules for using the Aure D'arte online store and for entering into sales contracts for limited-edition fine art prints and apparel.</span><span data-lang="pl">Niniejszy regulamin określa zasady korzystania ze sklepu internetowego Aure D'arte oraz zawierania umów sprzedaży limitowanych wydruków artystycznych i odzieży.</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">2. Products & Editions</span><span data-lang="pl">2. Produkty i edycje</span></h2>
+        <p><span data-lang="en">All artworks are AI-generated fine art, printed in strictly limited editions of 250 pieces. Each piece ships with a certificate of authenticity. Colours may vary slightly depending on your display.</span><span data-lang="pl">Wszystkie dzieła to sztuka generowana przez AI, drukowana w ściśle limitowanych edycjach po 250 sztuk. Każda sztuka jest dostarczana z certyfikatem autentyczności. Kolory mogą się nieznacznie różnić w zależności od ekranu.</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">3. Orders & Prices</span><span data-lang="pl">3. Zamówienia i ceny</span></h2>
+        <p><span data-lang="en">Prices are shown in PLN and include applicable VAT. A sales contract is concluded once the order is confirmed. We reserve the right to refuse an order in case of evident pricing errors.</span><span data-lang="pl">Ceny podane są w PLN i zawierają należny podatek VAT. Umowa sprzedaży zostaje zawarta z chwilą potwierdzenia zamówienia. Zastrzegamy sobie prawo do odmowy realizacji zamówienia w przypadku oczywistych błędów cenowych.</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">4. Shipping</span><span data-lang="pl">4. Dostawa</span></h2>
+        <p><span data-lang="en">Orders are carefully packaged and shipped within 5 business days. Free worldwide shipping is included on all artwork orders.</span><span data-lang="pl">Zamówienia są starannie pakowane i wysyłane w ciągu 5 dni roboczych. Wszystkie zamówienia na dzieła objęte są darmową wysyłką na cały świat.</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">5. Right of Withdrawal</span><span data-lang="pl">5. Prawo odstąpienia od umowy</span></h2>
+        <p><span data-lang="en">As a consumer, you may withdraw from the contract within 14 days of receiving the goods without giving a reason, by sending a statement to <a href="mailto:hello@auredarte.com">hello@auredarte.com</a>. Returned items must be undamaged and in original packaging.</span><span data-lang="pl">Jako konsument masz prawo odstąpić od umowy w terminie 14 dni od otrzymania towaru bez podawania przyczyny, przesyłając oświadczenie na adres <a href="mailto:hello@auredarte.com">hello@auredarte.com</a>. Zwracane przedmioty muszą być nieuszkodzone i w oryginalnym opakowaniu.</span></p>
+      </section>
+
+      <section class="legal-section">
+        <h2><span data-lang="en">6. Complaints</span><span data-lang="pl">6. Reklamacje</span></h2>
+        <p><span data-lang="en">If a product is defective, please contact us within a reasonable time. We will respond to your complaint within 14 days under the applicable warranty (rękojmia) rules.</span><span data-lang="pl">Jeśli produkt jest wadliwy, skontaktuj się z nami w rozsądnym terminie. Odpowiemy na reklamację w ciągu 14 dni na zasadach rękojmi przewidzianych przepisami prawa.</span></p>
+      </section>
+
+      <button class="legal-back" onclick="showView('home')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        <span data-lang="en">Back to home</span><span data-lang="pl">Powrót do strony głównej</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- FOOTER (always visible) -->
 <footer class="footer" role="contentinfo">
   <div class="footer-inner">
     <div class="footer-logo">Aure D'arte</div>
+    <nav class="footer-links" aria-label="Legal">
+      <a href="#" onclick="showView('privacy'); return false;"><span data-lang="en">Privacy Policy</span><span data-lang="pl">Polityka Prywatności</span></a>
+      <span class="footer-links-sep" aria-hidden="true">·</span>
+      <a href="#" onclick="showView('terms'); return false;"><span data-lang="en">Terms &amp; Conditions</span><span data-lang="pl">Regulamin</span></a>
+    </nav>
     <div class="footer-socials">
       <a href="#" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg></a>
       <a href="#" aria-label="TikTok" target="_blank" rel="noopener noreferrer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg></a>
@@ -2938,6 +3297,14 @@ function _swapView(view) {
     const navSaved = document.querySelector('[data-nav="saved"]');
     if (navSaved) navSaved.classList.add('active');
     renderSavedGrid();
+  } else if (view === 'artwork') {
+    document.getElementById('artworkView').classList.add('active');
+    const navShopA = document.querySelector('[data-nav="shop"]');
+    if (navShopA) navShopA.classList.add('active');
+  } else if (view === 'privacy') {
+    document.getElementById('privacyView').classList.add('active');
+  } else if (view === 'terms') {
+    document.getElementById('termsView').classList.add('active');
   } else if (view === 'clothing') {
     document.getElementById('clothingView').classList.add('active');
     const navClothing = document.querySelector('[data-nav="clothing"]');
@@ -3065,6 +3432,7 @@ function openProductModal(id) {
   // Show/hide Frame section depending on product type
   const frameSection = document.getElementById('frameSection');
   const frameDivider = document.getElementById('frameDivider');
+  document.getElementById('productModal').setAttribute('data-apparel', currentProduct.isApparel ? 'true' : 'false');
   if (currentProduct.isApparel) {
     frameSection.style.display = 'none';
     frameDivider.style.display = 'none';
@@ -3170,6 +3538,139 @@ function getTotal() {
 function updateModalPrice() {
   const total = getTotal();
   document.getElementById('modalPrice').innerHTML = total + ' <span class="currency">PLN</span>';
+}
+
+/* ========== SINGLE ARTWORK PAGE ========== */
+let artworkPageProduct = null;
+let artworkPageSize = 2; // L default
+let artworkPageFrame = 0;
+
+function openArtworkPageFromModal() {
+  if (!currentProduct || currentProduct.isApparel) return;
+  const id = currentProduct.id;
+  closeProductModal();
+  setTimeout(() => openArtworkPage(id), 250);
+}
+
+function openArtworkPage(id) {
+  const art = allArtworks.find(a => a.id === id);
+  if (!art) return;
+  artworkPageProduct = art;
+  artworkPageSize = 2;
+  artworkPageFrame = 0;
+  showView('artwork');
+  // Populate after the curtain swap so layout is ready
+  setTimeout(() => renderArtworkPage(), 620);
+}
+
+function renderArtworkPage() {
+  const art = artworkPageProduct;
+  if (!art) return;
+  const hasReal = art.images && art.images.length > 0;
+  const img = document.getElementById('artworkHeroImg');
+  img.src = hasReal ? art.images[0] : `https://picsum.photos/seed/${art.seed}/900/1100`;
+  img.alt = art.name;
+  document.getElementById('artworkTitle').textContent = art.name;
+  document.getElementById('artworkCat').textContent = art.category;
+  document.getElementById('artworkEdition').textContent = art.edition;
+  const descEl = document.getElementById('artworkDesc');
+  descEl.textContent = (currentLang === 'pl' && art.desc_pl) ? art.desc_pl : art.desc;
+  renderArtworkSizes();
+  renderArtworkFrames();
+  updateArtworkPageSpecs();
+  renderArtworkRelated();
+}
+
+function renderArtworkSizes() {
+  const cont = document.getElementById('artworkSizeOptions');
+  cont.innerHTML = '';
+  sizes.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'size-option' + (i === artworkPageSize ? ' active' : '');
+    btn.onclick = () => { artworkPageSize = i; renderArtworkSizes(); updateArtworkPageSpecs(); };
+    btn.innerHTML = `
+      <span class="size-label">${s.label}</span>
+      <span class="size-dims">${s.dims}</span>
+      <span class="size-unit">${s.unit}</span>`;
+    cont.appendChild(btn);
+  });
+}
+
+function renderArtworkFrames() {
+  const cont = document.getElementById('artworkFrameOptions');
+  cont.innerHTML = '';
+  frames.forEach((f, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'frame-option ' + f.class + (i === artworkPageFrame ? ' active' : '');
+    btn.onclick = () => { artworkPageFrame = i; renderArtworkFrames(); updateArtworkPageSpecs(); };
+    btn.innerHTML = `
+      <div class="frame-preview"><div class="frame-preview-inner"></div></div>
+      <span class="frame-option-name">${f.name}</span>
+      <span class="frame-option-price">${f.price === 0 ? 'Included' : '+' + f.price + ' PLN'}</span>`;
+    cont.appendChild(btn);
+  });
+}
+
+function updateArtworkPageSpecs() {
+  const art = artworkPageProduct;
+  if (!art) return;
+  const s = sizes[artworkPageSize];
+  const total = Math.round(art.price * s.multiplier) + frames[artworkPageFrame].price;
+  document.getElementById('artworkDims').textContent = s.dims + ' ' + s.unit;
+  document.getElementById('artworkFrame').textContent = frames[artworkPageFrame].name;
+  document.getElementById('artworkPrice').innerHTML = total + ' <span class="currency">PLN</span>';
+}
+
+function addArtworkPageToCart() {
+  const art = artworkPageProduct;
+  if (!art) return;
+  const hasRealImg = art.images && art.images.length > 0;
+  const s = sizes[artworkPageSize];
+  const total = Math.round(art.price * s.multiplier) + frames[artworkPageFrame].price;
+  cart.push({
+    id: Date.now(),
+    artworkId: art.id,
+    name: art.name,
+    seed: art.seed,
+    image: hasRealImg ? art.images[0] : null,
+    size: s.dims + ' ' + s.unit,
+    sizeLabel: s.label,
+    frame: frames[artworkPageFrame].name,
+    price: total,
+    isApparel: false,
+  });
+  updateCartUI();
+  showToast(art.name + ' added to cart');
+}
+
+function renderArtworkRelated() {
+  const cont = document.getElementById('artworkRelated');
+  if (!cont) return;
+  cont.innerHTML = '';
+  const related = allArtworks
+    .filter(a => a.id !== artworkPageProduct.id && a.category === artworkPageProduct.category)
+    .concat(allArtworks.filter(a => a.id !== artworkPageProduct.id && a.category !== artworkPageProduct.category))
+    .slice(0, 3);
+  related.forEach(art => {
+    const item = document.createElement('div');
+    item.className = 'shop-item';
+    item.onclick = (e) => {
+      if (e.target.closest('.shop-item-fav')) return;
+      openArtworkPage(art.id);
+    };
+    item.innerHTML = buildShopCardInner(art);
+    const favBtn = item.querySelector('.shop-item-fav');
+    if (favBtn) {
+      favBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        Wishlist.toggle(art.id);
+        favBtn.classList.toggle('active', Wishlist.has(art.id));
+        favBtn.classList.remove('pop'); void favBtn.offsetWidth; favBtn.classList.add('pop');
+        updateFavCountUI();
+      });
+    }
+    cont.appendChild(item);
+  });
 }
 
 /* ========== CART ========== */
@@ -3370,6 +3871,23 @@ langBtn.addEventListener('click', () => {
   const openAnswer = document.querySelector('.faq-item.open .faq-answer');
   if (openAnswer) requestAnimationFrame(() => { openAnswer.style.maxHeight = openAnswer.scrollHeight + 'px'; });
 });
+
+/* ========== THEME TOGGLE (light / dark) ========== */
+const themeBtn = document.getElementById('themeToggle');
+function applyTheme(theme) {
+  if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  if (themeBtn) themeBtn.setAttribute('aria-pressed', theme === 'light');
+}
+if (themeBtn) {
+  // Sync button state with theme already applied by the early head script
+  themeBtn.setAttribute('aria-pressed', document.documentElement.getAttribute('data-theme') === 'light');
+  themeBtn.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem('ad-theme', next); } catch (e) {}
+  });
+}
 
 /* ========== HEADER SCROLL ========== */
 window.addEventListener('scroll', () => {
