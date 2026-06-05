@@ -995,6 +995,157 @@ html[data-theme="light"] .artwork-frame {
   transform: translateY(0) rotate(0);
 }
 
+/* ========== GOLD PARTICLE TRAIL (cursor) ========== */
+.gold-trail-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998; /* below custom cursor (9999) and modals as needed */
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.gold-trail-canvas.trail-ready { opacity: 1; }
+@media (pointer: coarse), (max-width: 768px) { .gold-trail-canvas { display: none; } }
+@media (prefers-reduced-motion: reduce) { .gold-trail-canvas { display: none; } }
+
+/* ========== SCROLL-TO-REVEAL STORY (collection) ========== */
+.collection-story {
+  max-width: 720px;
+  margin: 0 auto clamp(2.5rem, 5vw, 4rem);
+  text-align: center;
+}
+.collection-story .story-line {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.4rem, 3.4vw, 2.4rem);
+  line-height: 1.4;
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(6px);
+  transition: opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1), filter 1s cubic-bezier(0.16,1,0.3,1);
+  transition-delay: calc(var(--story-i, 0) * 90ms);
+}
+.collection-story .story-line.revealed {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+.collection-story .story-line em {
+  font-style: italic;
+  color: var(--gold);
+}
+@media (prefers-reduced-motion: reduce) {
+  .collection-story .story-line { opacity: 1; transform: none; filter: none; }
+}
+
+/* ========== EASTER EGG OVERLAY (Konami) ========== */
+.egg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(5,5,5,0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.egg-overlay.active { display: flex; opacity: 1; }
+.egg-card {
+  position: relative;
+  max-width: 560px;
+  width: 100%;
+  background: linear-gradient(160deg, #131210, #0a0a0a);
+  border: 1px solid rgba(201,169,110,0.4);
+  border-radius: 4px;
+  padding: clamp(2rem, 5vw, 3.2rem);
+  text-align: center;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,169,110,0.08);
+  transform: translateY(24px) scale(0.97);
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.egg-overlay.active .egg-card { transform: translateY(0) scale(1); }
+.egg-card .egg-kicker {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 1rem;
+}
+.egg-card .egg-art {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  margin: 0 auto 1.4rem;
+  display: block;
+  border: 1px solid rgba(201,169,110,0.25);
+  border-radius: 2px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.egg-card h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  color: var(--text-primary);
+  margin: 0 0 0.6rem;
+}
+.egg-card p {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1.6rem;
+}
+.egg-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  letter-spacing: 0.24em;
+  color: var(--gold);
+  border: 1px dashed rgba(201,169,110,0.6);
+  border-radius: 3px;
+  padding: 0.85rem 1.4rem;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+  user-select: all;
+}
+.egg-code:hover { background: rgba(201,169,110,0.1); }
+.egg-code .egg-copy-hint {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  user-select: none;
+}
+.egg-card .egg-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.3rem;
+  transition: color 0.3s ease;
+}
+.egg-card .egg-close:hover { color: var(--gold); }
+html[data-theme="light"] .egg-card {
+  background: linear-gradient(160deg, #fbf9f3, #f4f2ec);
+}
+
 /* ========== CURTAIN VIEW TRANSITION ========== */
 .view-curtain {
   position: fixed;
@@ -2179,6 +2330,25 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <div class="cursor-dot" aria-hidden="true"></div>
 <div class="cursor-ring" aria-hidden="true"></div>
 <div class="gallery-cursor" id="galleryCursor" aria-hidden="true"></div>
+<canvas class="gold-trail-canvas" id="goldTrail" aria-hidden="true"></canvas>
+
+<!-- EASTER EGG OVERLAY (Konami) -->
+<div class="egg-overlay" id="eggOverlay" role="dialog" aria-modal="true" aria-label="Hidden artwork">
+  <div class="egg-card">
+    <button class="egg-close" id="eggClose" aria-label="Close">&times;</button>
+    <p class="egg-kicker"><span data-lang="en">You found the hidden vault</span><span data-lang="pl">Odnalazłeś ukryty skarbiec</span></p>
+    <img class="egg-art" id="eggArt" src="assets/void-architect.jpg" alt="Secret artwork" loading="lazy">
+    <h3 id="eggTitle">The Forbidden Sovereign</h3>
+    <p>
+      <span data-lang="en">A piece never listed in the public collection — revealed only to those who know the code. As thanks, take this discount on any artwork.</span>
+      <span data-lang="pl">Dzieło, które nigdy nie trafiło do publicznej kolekcji — odsłaniane tylko dla tych, którzy znają kod. W ramach podziękowania, ten rabat na dowolne dzieło.</span>
+    </p>
+    <div class="egg-code" id="eggCode" title="Click to copy">
+      <span>KONAMI15</span>
+      <span class="egg-copy-hint" id="eggCopyHint"><span data-lang="en">click to copy</span><span data-lang="pl">kliknij, by skopiować</span></span>
+    </div>
+  </div>
+</div>
 
 <!-- LIVE SALE PULSE (#4) -->
 <div class="sale-pulse" id="salePulse" aria-hidden="true">
@@ -2390,6 +2560,13 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <section class="gallery-section" id="collection">
   <p class="section-label reveal"><span data-lang="en">Curated Selection</span><span data-lang="pl">Wyselekcjonowana Kolekcja</span></p>
   <h2 class="section-title letter-reveal" data-letter-reveal>Most Wanted</h2>
+  <div class="collection-story" id="collectionStory" aria-label="Collection introduction">
+    <span class="story-line" style="--story-i:0"><span data-lang="en">Every piece begins as a <em>prompt</em> —</span><span data-lang="pl">Każde dzieło zaczyna się od <em>promptu</em> —</span></span>
+    <span class="story-line" style="--story-i:1"><span data-lang="en">a single line of intent whispered to the machine.</span><span data-lang="pl">jednej linijki intencji wyszeptanej maszynie.</span></span>
+    <span class="story-line" style="--story-i:2"><span data-lang="en">What returns is never random.</span><span data-lang="pl">To, co wraca, nigdy nie jest przypadkowe.</span></span>
+    <span class="story-line" style="--story-i:3"><span data-lang="en">It is <em>chosen</em>, refined, and made <em>finite</em>.</span><span data-lang="pl">Jest <em>wybrane</em>, dopracowane i uczynione <em>skończonym</em>.</span></span>
+    <span class="story-line" style="--story-i:4"><span data-lang="en">These are the ones worth keeping.</span><span data-lang="pl">Oto te, które warto zatrzymać.</span></span>
+  </div>
   <div class="gallery-grid" id="galleryGrid"></div>
   <div class="gallery-cta-wrap reveal">
     <a href="#" class="btn-outline" data-magnetic onclick="showView('shop'); return false;">
@@ -4890,6 +5067,171 @@ function renderRecentBar() {
       cursor.classList.remove('hover-image');
     }
   });
+})();
+
+/* ========== GOLD PARTICLE TRAIL (cursor) ========== */
+(function initGoldTrail() {
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!finePointer || reduced) return;
+  const canvas = document.getElementById('goldTrail');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const GOLD = [201, 169, 110];
+  const particles = [];
+  const MAX = 140;
+  let mx = -100, my = -100, pmx = -100, pmy = -100, hasMoved = false;
+
+  document.addEventListener('mousemove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    if (!hasMoved) { pmx = mx; pmy = my; hasMoved = true; canvas.classList.add('trail-ready'); }
+    // Spawn rate scales with cursor speed
+    const dx = mx - pmx, dy = my - pmy;
+    const speed = Math.hypot(dx, dy);
+    const count = Math.min(4, 1 + Math.floor(speed / 14));
+    for (let i = 0; i < count; i++) {
+      if (particles.length >= MAX) particles.shift();
+      const t = i / count;
+      particles.push({
+        x: pmx + dx * t + (Math.random() - 0.5) * 6,
+        y: pmy + dy * t + (Math.random() - 0.5) * 6,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5 - 0.25, // slight upward drift
+        life: 1,
+        decay: 0.012 + Math.random() * 0.02,
+        size: 0.8 + Math.random() * 2.2,
+        twinkle: Math.random() * Math.PI * 2
+      });
+    }
+    pmx = mx; pmy = my;
+  }, { passive: true });
+
+  let running = true;
+  document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) loop(); });
+
+  function loop() {
+    if (!running) return;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vy += 0.004; // faint gravity
+      p.life -= p.decay;
+      p.twinkle += 0.18;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      const alpha = Math.max(0, p.life) * (0.6 + 0.4 * Math.sin(p.twinkle));
+      const r = p.size * (0.6 + p.life * 0.8);
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 3);
+      grad.addColorStop(0, `rgba(${GOLD[0]},${GOLD[1]},${GOLD[2]},${alpha})`);
+      grad.addColorStop(0.4, `rgba(${GOLD[0]},${GOLD[1]},${GOLD[2]},${alpha * 0.4})`);
+      grad.addColorStop(1, 'rgba(201,169,110,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ========== SCROLL-TO-REVEAL STORY (collection) ========== */
+(function initCollectionStory() {
+  const story = document.getElementById('collectionStory');
+  if (!story) return;
+  const lines = Array.from(story.querySelectorAll('.story-line'));
+  if (!lines.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    lines.forEach(l => l.classList.add('revealed'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Reveal each line in sequence (CSS handles per-line --story-i delay)
+        lines.forEach(l => l.classList.add('revealed'));
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.35, rootMargin: '0px 0px -8% 0px' });
+  io.observe(story);
+})();
+
+/* ========== EASTER EGG (Konami code) ========== */
+(function initKonamiEgg() {
+  const SEQ = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let pos = 0;
+  const overlay = document.getElementById('eggOverlay');
+  const closeBtn = document.getElementById('eggClose');
+  const codeEl = document.getElementById('eggCode');
+  const copyHint = document.getElementById('eggCopyHint');
+  if (!overlay) return;
+
+  function openEgg() {
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    // Tiny gold burst confetti via the trail canvas particles is automatic;
+    // also store the discount so it could be applied later.
+    try { localStorage.setItem('ad-secret-unlocked', '1'); } catch (e) {}
+  }
+  function closeEgg() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    // Ignore when typing in an input/textarea
+    const tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const expected = SEQ[pos].length === 1 ? SEQ[pos].toLowerCase() : SEQ[pos];
+    if (key === expected) {
+      pos++;
+      if (pos === SEQ.length) { pos = 0; openEgg(); }
+    } else {
+      // restart, but allow this key to be the first of a new attempt
+      pos = (key === (SEQ[0].length === 1 ? SEQ[0].toLowerCase() : SEQ[0])) ? 1 : 0;
+    }
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeEgg);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeEgg(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('active')) closeEgg(); });
+
+  if (codeEl) {
+    codeEl.addEventListener('click', () => {
+      const code = 'KONAMI15';
+      const flash = () => {
+        if (!copyHint) return;
+        const spans = copyHint.querySelectorAll('span[data-lang]');
+        const orig = Array.from(spans).map(s => s.textContent);
+        copyHint.querySelector('[data-lang="en"]') && (copyHint.querySelector('[data-lang="en"]').textContent = 'copied!');
+        copyHint.querySelector('[data-lang="pl"]') && (copyHint.querySelector('[data-lang="pl"]').textContent = 'skopiowano!');
+        setTimeout(() => {
+          if (copyHint.querySelector('[data-lang="en"]')) copyHint.querySelector('[data-lang="en"]').textContent = orig[0] || 'click to copy';
+          if (copyHint.querySelector('[data-lang="pl"]')) copyHint.querySelector('[data-lang="pl"]').textContent = orig[1] || 'kliknij, by skopiować';
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(flash).catch(flash);
+      } else { flash(); }
+    });
+  }
 })();
 
 /* Init fav count on load */
