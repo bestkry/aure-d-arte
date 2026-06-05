@@ -1212,7 +1212,7 @@ html[data-theme="light"] .wall-trigger-btn:hover svg { stroke: #fff; }
   border: 6px solid #1a1714;
   border-image: linear-gradient(145deg, #3a2f22, #b89b6a, #2a221a) 1;
 }
-.wall-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.wall-art img { display: block; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; user-select: none; pointer-events: none; }
 .wall-art.dragging { cursor: grabbing; box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
 .wall-art .wall-art-drag-hint {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -2483,7 +2483,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
     <div class="wall-stage" id="wallStage">
       <img class="wall-stage-scene" id="wallScene" src="assets/scenes/scene-living.jpg" alt="Interior scene">
       <div class="wall-art" id="wallArt">
-        <img id="wallArtImg" src="" alt="Artwork preview" crossorigin="anonymous">
+        <img id="wallArtImg" src="" alt="Artwork preview" crossorigin="anonymous" draggable="false">
         <span class="wall-art-drag-hint"><span data-lang="en">Drag to position</span><span data-lang="pl">Przeciągnij, by ustawić</span></span>
       </div>
     </div>
@@ -5593,7 +5593,10 @@ function renderRecentBar() {
 
   // Drag to position (pointer events, clamped to stage)
   let dragging = false, startX = 0, startY = 0, baseX = 50, baseY = 50;
+  // Prevent the browser's native image "ghost drag"
+  artBox.addEventListener('dragstart', e => e.preventDefault());
   artBox.addEventListener('pointerdown', e => {
+    e.preventDefault();
     dragging = true;
     artBox.classList.add('dragging');
     artBox.setPointerCapture(e.pointerId);
