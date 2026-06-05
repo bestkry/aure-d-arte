@@ -728,6 +728,13 @@ html[data-theme="light"] .artwork-frame {
 .hero-bg img,
 .hero-bg video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-bg img { will-change: transform; }
+/* WebGL shader canvas — layered above the fallback video, fades in when ready */
+.hero-gl {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; opacity: 0; transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+.hero-gl.gl-ready { opacity: 1; }
 .hero-gradient {
   position: absolute; inset: 0; z-index: 1;
   background:
@@ -2344,6 +2351,7 @@ html[lang="pl"] [data-lang="en"] { display: none; }
     <video id="heroBgVideo" autoplay muted loop playsinline preload="metadata" poster="hero-poster.jpg" aria-hidden="true">
       <source src="assets/video/hero-bg.mp4" type="video/mp4">
     </video>
+    <canvas id="heroGL" class="hero-gl" aria-hidden="true"></canvas>
   </div>
   <div class="hero-gradient"></div>
   <div class="hero-content">
@@ -3864,6 +3872,247 @@ function closeMobileMenu() {
   mobileMenu.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
 }
+
+/* ============================================================ */
+/* #9 WEBGL HERO — liquid distortion + chromatic split + crossfade */
+/* Uses OGL (~20KB ESM). Falls back to the <video> when WebGL is   */
+/* unavailable, the device prefers reduced motion, or init fails.  */
+/* ============================================================ */
+(function initHeroGL() {
+  const canvas = document.getElementById('heroGL');
+  const heroSection = document.querySelector('.hero');
+  if (!canvas || !heroSection) return;
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Skip on low-power / small screens / reduced motion — keep the video fallback.
+  const lowPower = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2)
+                || (navigator.deviceMemory && navigator.deviceMemory <= 2);
+  if (reduced || lowPower) return;
+
+  // Curated artworks for the living-gallery crossfade.
+  const SOURCES = [
+    'assets/throne-shadows.jpg',
+    'assets/neon-requiem.jpg',
+    'assets/obsidian-garden.jpg',
+    'assets/eternal-revenant.jpg'
+  ];
+
+  // Quick WebGL capability check before pulling the library.
+  try {
+    const test = document.createElement('canvas');
+    if (!(test.getContext('webgl2') || test.getContext('webgl'))) return;
+  } catch (e) { return; }
+
+  import('https://cdn.jsdelivr.net/npm/ogl@1.0.11/+esm').then(({ Renderer, Triangle, Program, Mesh, Texture }) => {
+    const renderer = new Renderer({ canvas, alpha: false, antialias: false, dpr: Math.min(window.devicePixelRatio, 2) });
+    const gl = renderer.gl;
+    gl.clearColor(0.04, 0.04, 0.04, 1);
+
+    const geometry = new Triangle(gl);
+
+    // Two textures we crossfade between.
+    const texA = new Texture(gl, { generateMipmaps: false });
+    const texB = new Texture(gl, { generateMipmaps: false });
+    const imgSize = { a: [1, 1], b: [1, 1] };
+
+    const vertex = /* glsl */`
+      attribute vec2 uv;
+      attribute vec2 position;
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = vec4(position, 0.0, 1.0);
+      }
+    `;
+
+    const fragment = /* glsl */`
+      precision highp float;
+      varying vec2 vUv;
+      uniform sampler2D tMapA;
+      uniform sampler2D tMapB;
+      uniform float uTime;
+      uniform float uFade;        // 0..1 crossfade between A and B
+      uniform vec2  uMouse;       // -1..1
+      uniform float uScroll;      // 0..1 progress through hero
+      uniform vec2  uRes;         // canvas resolution
+      uniform vec2  uSizeA;       // image A natural size
+      uniform vec2  uSizeB;       // image B natural size
+
+      // cover-fit UV so the image fills without stretching
+      vec2 coverUv(vec2 uv, vec2 res, vec2 img) {
+        float rImg = img.x / img.y;
+        float rScr = res.x / res.y;
+        vec2 scale = rScr > rImg ? vec2(1.0, rImg / rScr) : vec2(rScr / rImg, 1.0);
+        return (uv - 0.5) * scale + 0.5;
+      }
+
+      // simplex-ish flowing noise
+      vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
+      vec2 mod289(vec2 x){return x-floor(x*(1.0/289.0))*289.0;}
+      vec3 permute(vec3 x){return mod289(((x*34.0)+1.0)*x);}
+      float snoise(vec2 v){
+        const vec4 C=vec4(0.211324865,0.366025403,-0.577350269,0.024390243);
+        vec2 i=floor(v+dot(v,C.yy));
+        vec2 x0=v-i+dot(i,C.xx);
+        vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);
+        vec4 x12=x0.xyxy+C.xxzz; x12.xy-=i1;
+        i=mod289(i);
+        vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));
+        vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);
+        m=m*m; m=m*m;
+        vec3 x=2.0*fract(p*C.www)-1.0;
+        vec3 h=abs(x)-0.5; vec3 ox=floor(x+0.5); vec3 a0=x-ox;
+        m*=1.79284291-0.85373472*(a0*a0+h*h);
+        vec3 g; g.x=a0.x*x0.x+h.x*x0.y;
+        g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+        return 130.0*dot(m,g);
+      }
+
+      void main() {
+        vec2 uv = vUv;
+        // gentle flowing displacement field
+        float t = uTime * 0.06;
+        float n = snoise(uv * 2.4 + vec2(t, -t * 0.7));
+        float n2 = snoise(uv * 4.0 - vec2(t * 0.5, t));
+        vec2 flow = vec2(n, n2) * 0.012;
+
+        // mouse + scroll influence
+        vec2 m = uMouse * 0.5;
+        float dist = distance(uv, m * 0.5 + 0.5);
+        float ripple = sin(dist * 18.0 - uTime * 0.9) * 0.004 * (1.0 - dist);
+        vec2 disp = flow + (m * 0.018) + ripple;
+        disp += vec2(0.0, uScroll * 0.05); // parallax drift on scroll
+
+        // chromatic aberration grows with mouse distance + scroll
+        float ca = (0.004 + length(uMouse) * 0.006 + uScroll * 0.006);
+
+        vec2 uvA = coverUv(uv + disp, uRes, uSizeA);
+        vec2 uvB = coverUv(uv + disp, uRes, uSizeB);
+
+        vec3 colA, colB;
+        colA.r = texture2D(tMapA, uvA + vec2(ca, 0.0)).r;
+        colA.g = texture2D(tMapA, uvA).g;
+        colA.b = texture2D(tMapA, uvA - vec2(ca, 0.0)).b;
+        colB.r = texture2D(tMapB, uvB + vec2(ca, 0.0)).r;
+        colB.g = texture2D(tMapB, uvB).g;
+        colB.b = texture2D(tMapB, uvB - vec2(ca, 0.0)).b;
+
+        vec3 col = mix(colA, colB, uFade);
+
+        // subtle film grain
+        float g = fract(sin(dot(uv * uRes, vec2(12.9898, 78.233)) + uTime) * 43758.5453);
+        col += (g - 0.5) * 0.04;
+
+        // vignette to keep focus center + match dark theme
+        float vig = smoothstep(1.15, 0.35, distance(uv, vec2(0.5)));
+        col *= mix(0.55, 1.0, vig);
+
+        gl_FragColor = vec4(col, 1.0);
+      }
+    `;
+
+    const program = new Program(gl, {
+      vertex, fragment,
+      uniforms: {
+        tMapA: { value: texA },
+        tMapB: { value: texB },
+        uTime: { value: 0 },
+        uFade: { value: 0 },
+        uMouse: { value: [0, 0] },
+        uScroll: { value: 0 },
+        uRes: { value: [1, 1] },
+        uSizeA: { value: [1, 1] },
+        uSizeB: { value: [1, 1] },
+      }
+    });
+    const mesh = new Mesh(gl, { geometry, program });
+
+    function resize() {
+      const w = heroSection.clientWidth, h = heroSection.clientHeight;
+      renderer.setSize(w, h);
+      program.uniforms.uRes.value = [gl.canvas.width, gl.canvas.height];
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Smoothed mouse
+    const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+    heroSection.addEventListener('mousemove', (e) => {
+      const r = heroSection.getBoundingClientRect();
+      mouse.tx = ((e.clientX - r.left) / r.width) * 2 - 1;
+      mouse.ty = -(((e.clientY - r.top) / r.height) * 2 - 1);
+    });
+    heroSection.addEventListener('mouseleave', () => { mouse.tx = 0; mouse.ty = 0; });
+
+    // Load a single image into a Texture, return a promise.
+    function loadImage(src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = src;
+      });
+    }
+
+    let idx = 0;
+    let ready = false;
+    const fade = { v: 0, target: 0 };
+
+    // Bootstrap first two images, then start the loop + crossfade cycle.
+    Promise.all([loadImage(SOURCES[0]), loadImage(SOURCES[1])]).then(([a, b]) => {
+      if (!a) return; // give up gracefully -> video stays
+      texA.image = a; imgSize.a = [a.naturalWidth, a.naturalHeight];
+      program.uniforms.uSizeA.value = imgSize.a;
+      if (b) { texB.image = b; imgSize.b = [b.naturalWidth, b.naturalHeight]; program.uniforms.uSizeB.value = imgSize.b; }
+      ready = true;
+      canvas.classList.add('gl-ready');
+
+      // crossfade cycle every ~6s
+      let showingB = false;
+      setInterval(async () => {
+        const nextSrc = SOURCES[(idx + 2) % SOURCES.length];
+        const nextImg = await loadImage(nextSrc);
+        if (!nextImg) return;
+        if (showingB) {
+          // currently B visible -> load next into A, fade back to A
+          texA.image = nextImg; program.uniforms.uSizeA.value = [nextImg.naturalWidth, nextImg.naturalHeight];
+          fade.target = 0;
+        } else {
+          texB.image = nextImg; program.uniforms.uSizeB.value = [nextImg.naturalWidth, nextImg.naturalHeight];
+          fade.target = 1;
+        }
+        showingB = !showingB;
+        idx = (idx + 1) % SOURCES.length;
+      }, 6000);
+    });
+
+    // Scroll progress through hero (0 at top -> 1 when scrolled one hero height)
+    let scrollProg = 0;
+    window.addEventListener('scroll', () => {
+      const h = heroSection.clientHeight || window.innerHeight;
+      scrollProg = Math.min(Math.max(window.scrollY / h, 0), 1);
+    }, { passive: true });
+
+    let rafId;
+    const start = performance.now();
+    function frame(now) {
+      rafId = requestAnimationFrame(frame);
+      // Pause rendering when hero is off-screen to save GPU.
+      if (window.scrollY > (heroSection.clientHeight || window.innerHeight)) return;
+      if (!ready) return;
+      mouse.x += (mouse.tx - mouse.x) * 0.06;
+      mouse.y += (mouse.ty - mouse.y) * 0.06;
+      fade.v += (fade.target - fade.v) * 0.03;
+      program.uniforms.uTime.value = (now - start) * 0.01;
+      program.uniforms.uMouse.value = [mouse.x, mouse.y];
+      program.uniforms.uFade.value = fade.v;
+      program.uniforms.uScroll.value = scrollProg;
+      renderer.render({ scene: mesh });
+    }
+    rafId = requestAnimationFrame(frame);
+  }).catch(() => { /* OGL failed to load — video fallback remains visible */ });
+})();
 
 /* ========== LOADING SCREEN (video intro with play gate) ========== */
 (function initIntroLoader() {
