@@ -1146,6 +1146,125 @@ html[data-theme="light"] .egg-card {
   background: linear-gradient(160deg, #fbf9f3, #f4f2ec);
 }
 
+/* ========== BUILD YOUR WALL ========== */
+/* Home section */
+.wall-section { background: var(--bg-main); padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 4vw, 3rem); text-align: center; }
+.wall-section .section-label { text-align: center; }
+.wall-cta-row {
+  display: flex; flex-direction: column; align-items: center; gap: 1.4rem;
+  max-width: 640px; margin: clamp(1.5rem, 3vw, 2.5rem) auto 0;
+}
+.wall-section .wall-blurb {
+  color: var(--text-muted); font-size: 1rem; line-height: 1.7; max-width: 520px; margin: 0 auto;
+}
+
+/* Trigger button (also used in modal/artwork page) */
+.wall-trigger-btn {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-family: var(--font-body); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-primary); background: transparent; cursor: pointer;
+  border: 1px solid var(--gold); padding: 0.85rem 1.6rem; border-radius: 2px;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+.wall-trigger-btn svg { stroke: var(--gold); transition: stroke 0.4s ease; }
+.wall-trigger-btn:hover { background: var(--gold); color: #0a0a0a; }
+.wall-trigger-btn:hover svg { stroke: #0a0a0a; }
+html[data-theme="light"] .wall-trigger-btn:hover { color: #fff; }
+html[data-theme="light"] .wall-trigger-btn:hover svg { stroke: #fff; }
+.add-to-cart-btn + .wall-trigger-btn,
+.wall-trigger-btn.full { width: 100%; justify-content: center; margin-top: 0.8rem; }
+
+/* Overlay */
+.wall-overlay {
+  position: fixed; inset: 0; z-index: 10060; display: none;
+  background: rgba(6,6,6,0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity 0.45s ease;
+  overflow-y: auto;
+}
+.wall-overlay.active { display: block; opacity: 1; }
+.wall-modal {
+  max-width: 1100px; margin: clamp(1rem, 4vh, 3rem) auto; padding: 0 1.2rem 3rem;
+  display: flex; flex-direction: column; gap: 1.4rem;
+}
+.wall-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding-top: clamp(1rem, 3vh, 2rem); }
+.wall-modal-head h2 {
+  font-family: var(--font-display); font-weight: 300; font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--text-primary); margin: 0;
+}
+.wall-modal-head p { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem; }
+.wall-close {
+  background: none; border: 1px solid var(--border); color: var(--text-muted);
+  width: 40px; height: 40px; border-radius: 2px; font-size: 1.3rem; line-height: 1; cursor: pointer; flex-shrink: 0;
+  transition: color 0.3s, border-color 0.3s;
+}
+.wall-close:hover { color: var(--gold); border-color: var(--gold); }
+
+/* Stage (scene + artwork) */
+.wall-stage {
+  position: relative; width: 100%; aspect-ratio: 4/3; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: 3px; overflow: hidden;
+  touch-action: none; user-select: none;
+}
+.wall-stage-scene { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.wall-art {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  cursor: grab; box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.2);
+  background: #0a0a0a; padding: 6px;
+  border: 6px solid #1a1714;
+  border-image: linear-gradient(145deg, #3a2f22, #b89b6a, #2a221a) 1;
+}
+.wall-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.wall-art.dragging { cursor: grabbing; box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+.wall-art .wall-art-drag-hint {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-family: var(--font-body); font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.85); background: rgba(0,0,0,0.5); padding: 0.4rem 0.7rem; border-radius: 2px;
+  pointer-events: none; opacity: 0; transition: opacity 0.3s ease; white-space: nowrap;
+}
+.wall-stage:hover .wall-art .wall-art-drag-hint { opacity: 1; }
+.wall-art.dragging .wall-art-drag-hint { opacity: 0; }
+
+/* Controls */
+.wall-controls { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-end; }
+.wall-control-group { display: flex; flex-direction: column; gap: 0.55rem; }
+.wall-control-group > .wall-ctl-label {
+  font-family: var(--font-body); font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted);
+}
+.wall-chip-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.wall-chip {
+  font-family: var(--font-body); font-size: 0.74rem; letter-spacing: 0.06em;
+  color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border);
+  padding: 0.6rem 0.95rem; border-radius: 2px; cursor: pointer; transition: all 0.3s ease;
+  display: inline-flex; flex-direction: column; align-items: center; gap: 0.15rem; line-height: 1.2;
+}
+.wall-chip small { font-size: 0.6rem; color: var(--text-faint); }
+.wall-chip:hover { border-color: rgba(201,169,110,0.5); color: var(--text-primary); }
+.wall-chip.active { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,0.08); }
+.wall-chip.active small { color: var(--gold); }
+.wall-scene-chip { padding: 0; overflow: hidden; width: 70px; height: 52px; position: relative; }
+.wall-scene-chip img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: opacity 0.3s; }
+.wall-scene-chip.active img, .wall-scene-chip:hover img { opacity: 1; }
+.wall-scene-chip.active { border-color: var(--gold); }
+.wall-upload-chip { width: 70px; height: 52px; padding: 0; justify-content: center; }
+.wall-upload-chip svg { stroke: currentColor; }
+.wall-actions { display: flex; gap: 0.7rem; margin-left: auto; flex-wrap: wrap; }
+.wall-action-btn {
+  font-family: var(--font-body); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; border-radius: 2px;
+  padding: 0.75rem 1.3rem; transition: all 0.3s ease;
+}
+.wall-action-btn.primary { background: var(--gold); color: #0a0a0a; border: 1px solid var(--gold); }
+.wall-action-btn.primary:hover { filter: brightness(1.08); }
+html[data-theme="light"] .wall-action-btn.primary { color: #fff; }
+.wall-action-btn.ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+.wall-action-btn.ghost:hover { color: var(--gold); border-color: var(--gold); }
+.wall-action-btn svg { stroke: currentColor; }
+.wall-hint { font-size: 0.74rem; color: var(--text-faint); margin-top: 0.2rem; flex-basis: 100%; }
+@media (max-width: 720px) {
+  .wall-controls { gap: 1.1rem; }
+  .wall-actions { margin-left: 0; width: 100%; }
+  .wall-action-btn { flex: 1; justify-content: center; }
+}
+
 /* ========== CURTAIN VIEW TRANSITION ========== */
 .view-curtain {
   position: fixed;
@@ -2350,6 +2469,65 @@ html[lang="pl"] [data-lang="en"] { display: none; }
   </div>
 </div>
 
+<!-- BUILD YOUR WALL OVERLAY -->
+<div class="wall-overlay" id="wallOverlay" role="dialog" aria-modal="true" aria-label="Build your wall visualizer">
+  <div class="wall-modal">
+    <div class="wall-modal-head">
+      <div>
+        <h2><span data-lang="en">Build Your Wall</span><span data-lang="pl">Zaprojektuj Swoją Ścianę</span></h2>
+        <p id="wallArtName"></p>
+      </div>
+      <button class="wall-close" id="wallClose" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="wall-stage" id="wallStage">
+      <img class="wall-stage-scene" id="wallScene" src="assets/scenes/scene-living.jpg" alt="Interior scene">
+      <div class="wall-art" id="wallArt">
+        <img id="wallArtImg" src="" alt="Artwork preview" crossorigin="anonymous">
+        <span class="wall-art-drag-hint"><span data-lang="en">Drag to position</span><span data-lang="pl">Przeciągnij, by ustawić</span></span>
+      </div>
+    </div>
+
+    <div class="wall-controls">
+      <div class="wall-control-group">
+        <span class="wall-ctl-label"><span data-lang="en">Choose Artwork</span><span data-lang="pl">Wybierz Dzieło</span></span>
+        <div class="wall-chip-row" id="wallArtPicker"></div>
+      </div>
+      <div class="wall-control-group">
+        <span class="wall-ctl-label"><span data-lang="en">Scene</span><span data-lang="pl">Sceneria</span></span>
+        <div class="wall-chip-row">
+          <button class="wall-scene-chip active" data-scene="assets/scenes/scene-living.jpg" aria-label="Living room"><img src="assets/scenes/scene-living.jpg" alt="Living room"></button>
+          <button class="wall-scene-chip" data-scene="assets/scenes/scene-bedroom.jpg" aria-label="Bedroom"><img src="assets/scenes/scene-bedroom.jpg" alt="Bedroom"></button>
+          <button class="wall-scene-chip" data-scene="assets/scenes/scene-loft.jpg" aria-label="Loft"><img src="assets/scenes/scene-loft.jpg" alt="Loft"></button>
+          <button class="wall-chip wall-upload-chip" id="wallUploadBtn" aria-label="Upload your wall" title="Upload your wall">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+          </button>
+          <input type="file" id="wallUploadInput" accept="image/*" style="display:none">
+        </div>
+      </div>
+      <div class="wall-control-group">
+        <span class="wall-ctl-label"><span data-lang="en">Size</span><span data-lang="pl">Rozmiar</span></span>
+        <div class="wall-chip-row" id="wallSizePicker">
+          <button class="wall-chip" data-size="30">S<small>30×40 cm</small></button>
+          <button class="wall-chip active" data-size="50">M<small>50×70 cm</small></button>
+          <button class="wall-chip" data-size="70">L<small>70×100 cm</small></button>
+        </div>
+      </div>
+      <div class="wall-actions">
+        <button class="wall-action-btn ghost" id="wallReset">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 3v5h5"/></svg>
+          <span data-lang="en">Reset</span><span data-lang="pl">Reset</span>
+        </button>
+        <button class="wall-action-btn primary" id="wallDownload">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 3v12M12 15l-4-4M12 15l4-4"/><path d="M4 19h16"/></svg>
+          <span data-lang="en">Download PNG</span><span data-lang="pl">Pobierz PNG</span>
+        </button>
+      </div>
+      <p class="wall-hint"><span data-lang="en">Drag the artwork to position it. Sizes shown at approximate true scale on the wall.</span><span data-lang="pl">Przeciągnij dzieło, by je ustawić. Rozmiary pokazane w przybliżonej skali 1:1 na ścianie.</span></p>
+    </div>
+  </div>
+</div>
+
 <!-- LIVE SALE PULSE (#4) -->
 <div class="sale-pulse" id="salePulse" aria-hidden="true">
   <span class="sale-dot"></span>
@@ -2670,6 +2848,22 @@ html[lang="pl"] [data-lang="en"] { display: none; }
   </div>
 </section>
 
+<!-- BUILD YOUR WALL -->
+<section class="wall-section" id="buildyourwall">
+  <p class="section-label reveal"><span data-lang="en">See It Before You Own It</span><span data-lang="pl">Zobacz, Zanim Kupisz</span></p>
+  <h2 class="section-title letter-reveal" data-letter-reveal><span data-lang="en">Build Your Wall</span><span data-lang="pl">Zaprojektuj Swoją Ścianę</span></h2>
+  <div class="wall-cta-row reveal">
+    <p class="wall-blurb">
+      <span data-lang="en">Upload a photo of your own wall — or pick a curated interior — and see any artwork in place, at true scale, before it ships.</span>
+      <span data-lang="pl">Wgraj zdjęcie swojej ściany — albo wybierz gotowe wnętrze — i zobacz dowolne dzieło w skali 1:1, zanim trafi do Ciebie.</span>
+    </p>
+    <button class="wall-trigger-btn" data-magnetic onclick="openWallVisualizer()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="8" y="8" width="8" height="8" rx="0.5"/></svg>
+      <span data-lang="en">Try It On Your Wall</span><span data-lang="pl">Przymierz Na Swojej Ścianie</span>
+    </button>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section class="faq-section" id="faq">
   <p class="section-label reveal"><span data-lang="en">Good to Know</span><span data-lang="pl">Warto Wiedzieć</span></p>
@@ -2865,6 +3059,12 @@ html[lang="pl"] [data-lang="en"] { display: none; }
         <button class="add-to-cart-btn" onclick="addToCart()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           <span data-lang="en">Add to Cart</span><span data-lang="pl">Dodaj do Koszyka</span>
+        </button>
+
+        <!-- See on your wall -->
+        <button class="wall-trigger-btn full" id="modalWallBtn" data-magnetic onclick="openWallVisualizer('modal')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg>
+          <span data-lang="en">See on Your Wall</span><span data-lang="pl">Zobacz Na Swojej Ścianie</span>
         </button>
 
         <!-- Save / Wishlist -->
@@ -3149,6 +3349,11 @@ html[lang="pl"] [data-lang="en"] { display: none; }
         <button class="add-to-cart-btn" onclick="addArtworkPageToCart()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           <span data-lang="en">Add to Cart</span><span data-lang="pl">Dodaj do Koszyka</span>
+        </button>
+
+        <button class="wall-trigger-btn full" data-magnetic onclick="openWallVisualizer('artwork')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg>
+          <span data-lang="en">See on Your Wall</span><span data-lang="pl">Zobacz Na Swojej Ścianie</span>
         </button>
       </div>
     </div>
@@ -3716,6 +3921,9 @@ function openProductModal(id) {
     frameSection.style.display = '';
     frameDivider.style.display = '';
   }
+  // "See on your wall" only makes sense for artwork, not apparel
+  const modalWallBtn = document.getElementById('modalWallBtn');
+  if (modalWallBtn) modalWallBtn.style.display = currentProduct.isApparel ? 'none' : '';
 
   // Render sizes
   renderSizes();
@@ -5232,6 +5440,252 @@ function renderRecentBar() {
       } else { flash(); }
     });
   }
+})();
+
+/* ========== BUILD YOUR WALL — visualizer (#wall) ========== */
+(function () {
+  const overlay   = document.getElementById('wallOverlay');
+  if (!overlay) return;
+  const stage     = document.getElementById('wallStage');
+  const sceneImg  = document.getElementById('wallScene');
+  const artBox    = document.getElementById('wallArt');
+  const artImg    = document.getElementById('wallArtImg');
+  const artName   = document.getElementById('wallArtName');
+  const picker    = document.getElementById('wallArtPicker');
+  const sizePicker= document.getElementById('wallSizePicker');
+  const closeBtn  = document.getElementById('wallClose');
+  const resetBtn  = document.getElementById('wallReset');
+  const dlBtn     = document.getElementById('wallDownload');
+  const uploadBtn = document.getElementById('wallUploadBtn');
+  const uploadIn  = document.getElementById('wallUploadInput');
+  const sceneChips= overlay.querySelectorAll('.wall-scene-chip[data-scene]');
+
+  // Size in cm (longest reference). The wall scenes are framed so a ~50cm piece
+  // reads as ~26% of the stage width — gives a believable true-scale feel.
+  const SIZE_TO_PCT = { '30': 16, '50': 26, '70': 37 };
+  const DEFAULT_SIZE = '50';
+
+  let posX = 50, posY = 50;        // % position of the art centre within stage
+  let currentSizeCm = DEFAULT_SIZE;
+  let tainted = false;             // true if a cross-origin (picsum) image is loaded
+
+  function artworkSrc(art) {
+    if (art && art.images && art.images.length) return art.images[0];
+    return art ? `https://picsum.photos/seed/${art.seed}/600/750` : '';
+  }
+
+  function isCrossOrigin(src) {
+    return /^https?:\/\//i.test(src) && src.indexOf(location.origin) !== 0;
+  }
+
+  function applySize() {
+    const pct = SIZE_TO_PCT[currentSizeCm] || SIZE_TO_PCT[DEFAULT_SIZE];
+    artBox.style.width = pct + '%';
+    // height auto-follows via image natural aspect ratio
+  }
+
+  function applyPos() {
+    artBox.style.left = posX + '%';
+    artBox.style.top  = posY + '%';
+  }
+
+  function recenter() {
+    posX = 50; posY = 50;
+    currentSizeCm = DEFAULT_SIZE;
+    sizePicker.querySelectorAll('.wall-chip').forEach(c =>
+      c.classList.toggle('active', c.dataset.size === DEFAULT_SIZE));
+    applySize(); applyPos();
+  }
+
+  function loadArt(src, name) {
+    tainted = isCrossOrigin(src);
+    artImg.crossOrigin = tainted ? 'anonymous' : null;
+    artImg.src = src;
+    if (artName) {
+      artName.textContent = name || '';
+      artName.style.display = name ? '' : 'none';
+    }
+    dlBtn.disabled = false;
+    dlBtn.title = '';
+  }
+
+  function buildPicker() {
+    if (!picker || typeof allArtworks === 'undefined') return;
+    picker.innerHTML = '';
+    allArtworks.slice(0, 8).forEach(art => {
+      const src = artworkSrc(art);
+      const btn = document.createElement('button');
+      btn.className = 'wall-scene-chip wall-art-chip';
+      btn.setAttribute('aria-label', art.name);
+      btn.title = art.name;
+      btn.innerHTML = `<img src="${src}" alt="${art.name}">`;
+      btn.addEventListener('click', () => {
+        picker.querySelectorAll('.wall-art-chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        loadArt(src, art.name);
+      });
+      picker.appendChild(btn);
+    });
+  }
+
+  function markPickerActive(name) {
+    if (!picker) return;
+    picker.querySelectorAll('.wall-art-chip').forEach(c =>
+      c.classList.toggle('active', c.title === name));
+  }
+
+  // GLOBAL entry point — called from home section, product modal & artwork page
+  window.openWallVisualizer = function (source) {
+    let src = '', name = '';
+    if (source === 'modal' && typeof currentProduct !== 'undefined' && currentProduct) {
+      src = artworkSrc(currentProduct); name = currentProduct.name;
+    } else if (source === 'artwork' && typeof artworkPageProduct !== 'undefined' && artworkPageProduct) {
+      src = artworkSrc(artworkPageProduct); name = artworkPageProduct.name;
+    } else if (typeof allArtworks !== 'undefined' && allArtworks.length) {
+      src = artworkSrc(allArtworks[0]); name = allArtworks[0].name;
+    }
+    buildPicker();
+    markPickerActive(name);
+    loadArt(src, name);
+    recenter();
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  function closeWall() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Scene chips
+  sceneChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      sceneChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      sceneImg.src = chip.dataset.scene;
+    });
+  });
+
+  // Upload your own wall (local only — FileReader, never uploaded)
+  if (uploadBtn && uploadIn) {
+    uploadBtn.addEventListener('click', () => uploadIn.click());
+    uploadIn.addEventListener('change', () => {
+      const file = uploadIn.files && uploadIn.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        sceneImg.src = e.target.result;          // data URL — canvas-safe
+        sceneChips.forEach(c => c.classList.remove('active'));
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Size picker
+  sizePicker.querySelectorAll('.wall-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      sizePicker.querySelectorAll('.wall-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentSizeCm = chip.dataset.size;
+      applySize();
+    });
+  });
+
+  // Drag to position (pointer events, clamped to stage)
+  let dragging = false, startX = 0, startY = 0, baseX = 50, baseY = 50;
+  artBox.addEventListener('pointerdown', e => {
+    dragging = true;
+    artBox.classList.add('dragging');
+    artBox.setPointerCapture(e.pointerId);
+    startX = e.clientX; startY = e.clientY;
+    baseX = posX; baseY = posY;
+  });
+  artBox.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const r = stage.getBoundingClientRect();
+    const dxPct = ((e.clientX - startX) / r.width) * 100;
+    const dyPct = ((e.clientY - startY) / r.height) * 100;
+    posX = Math.max(6, Math.min(94, baseX + dxPct));
+    posY = Math.max(6, Math.min(94, baseY + dyPct));
+    applyPos();
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    artBox.classList.remove('dragging');
+    try { artBox.releasePointerCapture(e.pointerId); } catch (_) {}
+  }
+  artBox.addEventListener('pointerup', endDrag);
+  artBox.addEventListener('pointercancel', endDrag);
+
+  // Reset
+  resetBtn.addEventListener('click', recenter);
+
+  // Download composed preview as PNG
+  dlBtn.addEventListener('click', () => {
+    const sw = sceneImg.naturalWidth  || 1280;
+    const sh = sceneImg.naturalHeight || 960;
+    const canvas = document.createElement('canvas');
+    canvas.width = sw; canvas.height = sh;
+    const ctx = canvas.getContext('2d');
+
+    // Scene fills canvas (object-fit: cover already matches aspect 4/3)
+    ctx.drawImage(sceneImg, 0, 0, sw, sh);
+
+    // Artwork box geometry — mirror the on-screen layout
+    const stageRect = stage.getBoundingClientRect();
+    const scale = sw / stageRect.width;
+    const artRect = artBox.getBoundingClientRect();
+    const bw = artRect.width  * scale;
+    const bh = artRect.height * scale;
+    const bx = (artRect.left - stageRect.left) * scale;
+    const by = (artRect.top  - stageRect.top)  * scale;
+
+    // Frame: outer dark border + gold gradient edge + inner mat, matching CSS
+    const border = 6 * scale, pad = 6 * scale;
+    // drop shadow
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.55)';
+    ctx.shadowBlur = 40 * scale; ctx.shadowOffsetY = 12 * scale;
+    ctx.fillStyle = '#1a1714';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.restore();
+    // gold gradient frame edge
+    const grad = ctx.createLinearGradient(bx, by, bx + bw, by + bh);
+    grad.addColorStop(0, '#3a2f22'); grad.addColorStop(0.5, '#b89b6a'); grad.addColorStop(1, '#2a221a');
+    ctx.strokeStyle = grad; ctx.lineWidth = border;
+    ctx.strokeRect(bx + border / 2, by + border / 2, bw - border, bh - border);
+    // mat background
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(bx + border, by + border, bw - border * 2, bh - border * 2);
+    // artwork image inside frame + padding
+    const ix = bx + border + pad, iy = by + border + pad;
+    const iw = bw - (border + pad) * 2, ih = bh - (border + pad) * 2;
+    try {
+      ctx.drawImage(artImg, ix, iy, iw, ih);
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'aure-darte-wall.png';
+      document.body.appendChild(a); a.click(); a.remove();
+    } catch (err) {
+      // Canvas tainted (cross-origin artwork) — inform user gracefully
+      const isPL = document.documentElement.lang === 'pl';
+      alert(isPL
+        ? 'Nie można pobrać tego podglądu (obraz z zewnętrznego źródła). Wybierz inne dzieło.'
+        : 'Could not export this preview (external image source). Try another artwork.');
+    }
+  });
+
+  // Keep art centred correctly once the image loads (aspect-driven height)
+  artImg.addEventListener('load', () => { applySize(); applyPos(); });
+
+  // Close interactions
+  closeBtn.addEventListener('click', closeWall);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeWall(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay.classList.contains('active')) closeWall();
+  });
 })();
 
 /* Init fav count on load */
