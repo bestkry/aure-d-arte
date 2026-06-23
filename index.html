@@ -2530,6 +2530,44 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 .admin-item-del { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; font-size: 0.75rem; }
 .admin-item-del:hover { color: #dc5050; }
 .admin-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; line-height: 1.5; }
+
+/* Mode toggle (Local / Draft / Publish) */
+.admin-mode { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin: 0 0 22px; border: 1px solid var(--border); }
+.admin-mode label { margin: 0; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.25s ease; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.admin-mode label:last-child { border-right: none; }
+.admin-mode input { position: absolute; opacity: 0; pointer-events: none; width: 0; }
+.admin-mode label:hover { color: var(--text-primary); background: rgba(201,169,110,0.04); }
+.admin-mode input:checked + span { color: var(--gold); }
+.admin-mode label.active { background: rgba(201,169,110,0.08); color: var(--gold); }
+.admin-mode-desc { font-size: 0.7rem; color: var(--text-muted); margin: -10px 0 22px; line-height: 1.5; padding: 10px 14px; background: rgba(201,169,110,0.04); border-left: 2px solid var(--gold); }
+
+/* DRAFT badge na karcie produktu */
+.shop-item.is-draft { position: relative; }
+.shop-item.is-draft::before {
+  content: 'DRAFT'; position: absolute; top: 10px; left: 10px; z-index: 5;
+  font-family: var(--font-body); font-size: 0.62rem; letter-spacing: 0.22em;
+  color: #0a0a0a; background: var(--gold); padding: 4px 10px;
+  pointer-events: none;
+}
+.shop-item.is-draft .shop-item-image { outline: 1px solid var(--gold); outline-offset: -1px; }
+
+/* Draft list w panelu admina */
+.admin-drafts { margin-top: 24px; padding: 18px; background: rgba(201,169,110,0.04); border: 1px solid rgba(201,169,110,0.2); }
+.admin-drafts h4 { font-family: var(--font-display); font-weight: 300; font-size: 1rem; color: var(--gold); margin: 0 0 12px; letter-spacing: 0.06em; }
+.admin-drafts-empty { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
+.admin-draft-item { display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.78rem; }
+.admin-draft-item:last-child { border-bottom: none; }
+.admin-draft-name { color: var(--text-primary); }
+.admin-draft-meta { color: var(--text-muted); font-size: 0.68rem; }
+.admin-draft-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; padding: 5px 10px; font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; transition: all 0.3s ease; }
+.admin-draft-btn:hover { border-color: var(--gold); color: var(--gold); }
+.admin-draft-btn.danger:hover { border-color: #dc5050; color: #dc5050; }
+
+/* Change password section */
+.admin-pwd-change { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+.admin-pwd-change summary { cursor: pointer; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); padding: 4px 0; }
+.admin-pwd-change summary:hover { color: var(--gold); }
+.admin-pwd-change[open] summary { color: var(--gold); margin-bottom: 12px; }
 </style>
 </head>
 <body>
@@ -3759,7 +3797,7 @@ function renderShopGrid(filter) {
   const filtered = filter === 'all' ? allArtworks : allArtworks.filter(a => a.category === filter);
   filtered.forEach(art => {
     const item = document.createElement('div');
-    item.className = 'shop-item';
+    item.className = 'shop-item' + (art.isDraft ? ' is-draft' : '');
     item.onclick = (e) => {
       if (e.target.closest('.shop-item-fav')) return;
       openProductModal(art.id);
@@ -5926,33 +5964,96 @@ document.addEventListener('click', (e) => {
 });
 
 /* ============================================================
-   ADMIN PANEL — add/edit/delete artworks via GitHub API
-   Activate via ?admin=1 in URL. Stores PAT in localStorage.
+   DRAFTS — local-only artwork drafts in localStorage
+   Merged into allArtworks at runtime so the user can preview
+   them on the live site without committing to GitHub.
+============================================================ */
+const Drafts = (function() {
+  const KEY = 'aure_admin_drafts';
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch(e) { return []; }
+  }
+  function save(arr) {
+    try { localStorage.setItem(KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+  function all() { return load(); }
+  function add(art) {
+    const arr = load();
+    // assign unique negative id so it never collides with real artworks
+    const minId = Math.min(0, ...arr.map(a => a.id || 0));
+    const draft = { ...art, id: minId - 1, isDraft: true, createdAt: Date.now() };
+    arr.unshift(draft);
+    save(arr);
+    return draft;
+  }
+  function remove(id) {
+    save(load().filter(a => a.id !== id));
+  }
+  function clear() { save([]); }
+  function find(id) { return load().find(a => a.id === id); }
+  // Merge drafts into the global allArtworks array so they show on the site
+  function mergeIntoArtworks() {
+    if (!window.allArtworks) return;
+    // first remove any previously merged drafts
+    for (let i = window.allArtworks.length - 1; i >= 0; i--) {
+      if (window.allArtworks[i].isDraft) window.allArtworks.splice(i, 1);
+    }
+    // then prepend current drafts
+    const drafts = load();
+    drafts.forEach(d => window.allArtworks.unshift(d));
+  }
+  return { all, add, remove, clear, find, mergeIntoArtworks };
+})();
+
+/* ============================================================
+   ADMIN PANEL v2 — Local / Draft / Publish modes
+   • Local  = nothing leaves the browser (test-only)
+   • Draft  = saved in localStorage, shows on site with DRAFT badge
+   • Publish = commits straight to GitHub via fine-grained PAT
+   Activate via ?admin=1 in URL or Ctrl+Shift+A.
 ============================================================ */
 const AdminPanel = (function() {
-  const PASSWORD = 'aure2026'; // ← ZMIEŃ PO PIERWSZYM LOGOWANIU (linia: const PASSWORD = '...')
+  // SHA-256 hash of "aure2026" (NEVER store plaintext password in source)
+  // To generate a new hash: in browser console run:
+  //   crypto.subtle.digest('SHA-256', new TextEncoder().encode('YOUR_PASSWORD'))
+  //     .then(b => console.log([...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join('')));
+  const DEFAULT_PWD_HASH = 'cdd271a2a40f75c77406f2889dea3c239356072e358aa5998597e2cb712b962c';
+  const PWD_HASH_KEY = 'aure_admin_pwd_hash';
   const GH_OWNER = 'bestkry';
   const GH_REPO = 'aure-d-arte';
   const GH_BRANCH = 'main';
-  const STORAGE_KEY = 'aure_admin_session';
+  const SESSION_KEY = 'aure_admin_session';
   const TOKEN_KEY = 'aure_admin_gh_token';
+  const MODE_KEY = 'aure_admin_mode';
 
   let overlay = null;
-  let workingList = null;
 
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, '0')).join('');
+  }
+  function currentPwdHash() {
+    try { return localStorage.getItem(PWD_HASH_KEY) || DEFAULT_PWD_HASH; }
+    catch(e) { return DEFAULT_PWD_HASH; }
+  }
+  function setPwdHash(h) {
+    try { localStorage.setItem(PWD_HASH_KEY, h); } catch(e) {}
+  }
   function isUnlocked() {
-    try { return localStorage.getItem(STORAGE_KEY) === 'unlocked'; }
+    try { return localStorage.getItem(SESSION_KEY) === 'unlocked'; }
     catch(e) { return false; }
   }
-
-  function unlock(pwd) {
-    if (pwd === PASSWORD) {
-      try { localStorage.setItem(STORAGE_KEY, 'unlocked'); } catch(e) {}
-      return true;
-    }
-    return false;
+  function markUnlocked() {
+    try { localStorage.setItem(SESSION_KEY, 'unlocked'); } catch(e) {}
   }
-
+  function getMode() {
+    try { return localStorage.getItem(MODE_KEY) || 'local'; }
+    catch(e) { return 'local'; }
+  }
+  function setMode(m) {
+    try { localStorage.setItem(MODE_KEY, m); } catch(e) {}
+  }
   function getToken() {
     try { return localStorage.getItem(TOKEN_KEY) || ''; } catch(e) { return ''; }
   }
@@ -5979,9 +6080,18 @@ const AdminPanel = (function() {
         </div>
 
         <div id="adminMain" style="display:none;">
-          <label>GitHub Personal Access Token (fine-grained, repo write)</label>
-          <input type="password" id="adminGhToken" placeholder="ghp_... or github_pat_..." autocomplete="off">
-          <div class="admin-hint">Token zapisuje się tylko w Twojej przeglądarce. Wygeneruj na github.com → Settings → Developer settings → Personal access tokens (fine-grained). Daj uprawnienia: Contents: Read and write na repo bestkry/aure-d-arte.</div>
+          <div class="admin-mode" id="adminMode">
+            <label data-mode="local"><input type="radio" name="adminMode" value="local"><span>Local · test</span></label>
+            <label data-mode="draft"><input type="radio" name="adminMode" value="draft"><span>Draft · preview</span></label>
+            <label data-mode="publish"><input type="radio" name="adminMode" value="publish"><span>Publish · live</span></label>
+          </div>
+          <div class="admin-mode-desc" id="adminModeDesc"></div>
+
+          <div id="adminTokenWrap">
+            <label>GitHub Personal Access Token (fine-grained, repo write)</label>
+            <input type="password" id="adminGhToken" placeholder="ghp_... or github_pat_..." autocomplete="off">
+            <div class="admin-hint">Token zapisuje się tylko w Twojej przeglądarce. Wygeneruj na github.com → Settings → Developer settings → Personal access tokens (fine-grained). Daj uprawnienia: Contents: Read and write na repo bestkry/aure-d-arte.</div>
+          </div>
 
           <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
 
@@ -6003,25 +6113,45 @@ const AdminPanel = (function() {
           </div>
           <label>Image filename (assets/...)</label>
           <input type="text" id="adminImage" placeholder="assets/your-image.jpg">
-          <div class="admin-hint">Najpierw wrzuć obraz do repo → folder <b>assets/</b> → wpisz ścieżkę tutaj. Możesz to zrobić ręcznie przez GitHub web UI.</div>
+          <div class="admin-hint" id="adminImageHint">Najpierw wrzuć obraz do repo → folder <b>assets/</b> → wpisz ścieżkę tutaj. Możesz to zrobić ręcznie przez GitHub web UI.</div>
           <label>Seed (URL slug)</label>
           <input type="text" id="adminSeed" placeholder="crimson-reverie">
           <label>Description (EN)</label>
           <textarea id="adminDesc" placeholder="A descent into layered darkness..."></textarea>
-          <div class="admin-actions">
-            <button class="admin-btn primary" data-action="commit">Commit to GitHub</button>
-            <button class="admin-btn" data-action="export">Export JSON only</button>
-          </div>
+          <div class="admin-actions" id="adminActions"></div>
           <div class="admin-status" id="adminStatus2"></div>
 
+          <div class="admin-drafts" id="adminDraftsBox">
+            <h4>Local drafts</h4>
+            <div id="adminDraftsList"></div>
+            <div class="admin-actions" style="margin-top:14px;">
+              <button class="admin-btn" data-action="clearDrafts">Clear all drafts</button>
+            </div>
+          </div>
+
           <div class="admin-list">
-            <h3>Current collection (${'${' + 'allArtworks.length' + '}'} items)</h3>
+            <h3>Published collection <span id="adminListCount" style="color:var(--text-muted);font-size:0.8rem;"></span></h3>
             <div id="adminList"></div>
           </div>
+
+          <details class="admin-pwd-change">
+            <summary>Change studio password</summary>
+            <label>New password</label>
+            <input type="password" id="adminNewPwd" placeholder="New password (min 6 chars)">
+            <label>Confirm new password</label>
+            <input type="password" id="adminNewPwd2" placeholder="Repeat new password">
+            <div class="admin-actions">
+              <button class="admin-btn primary" data-action="changePwd">Save new password</button>
+            </div>
+          </details>
         </div>
       </div>`;
     document.body.appendChild(overlay);
     overlay.addEventListener('click', handleClick);
+    overlay.addEventListener('change', handleChange);
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.id === 'adminPwd') { e.preventDefault(); tryUnlock(); }
+    });
   }
 
   function handleClick(e) {
@@ -6032,9 +6162,21 @@ const AdminPanel = (function() {
     }
     if (act === 'close') close();
     if (act === 'unlock') tryUnlock();
-    if (act === 'commit') tryCommit();
+    if (act === 'save') saveArtwork();
     if (act === 'export') exportJSON();
     if (act === 'delete') tryDelete(parseInt(e.target.dataset.id));
+    if (act === 'publishDraft') publishDraft(parseInt(e.target.dataset.id));
+    if (act === 'deleteDraft') { Drafts.remove(parseInt(e.target.dataset.id)); afterDraftsChanged(); }
+    if (act === 'clearDrafts') {
+      if (confirm('Clear all local drafts? They will disappear from the site.')) {
+        Drafts.clear(); afterDraftsChanged();
+      }
+    }
+    if (act === 'changePwd') changePassword();
+  }
+  function handleChange(e) {
+    if (e.target.name === 'adminMode') { setMode(e.target.value); applyMode(); }
+    if (e.target.id === 'adminGhToken') setToken(e.target.value.trim());
   }
 
   function show() {
@@ -6055,8 +6197,43 @@ const AdminPanel = (function() {
     overlay.querySelector('#adminGate').style.display = 'none';
     overlay.querySelector('#adminMain').style.display = '';
     overlay.querySelector('#adminGhToken').value = getToken();
-    overlay.querySelector('#adminGhToken').addEventListener('change', (e) => setToken(e.target.value.trim()));
+    // set mode radio
+    const mode = getMode();
+    overlay.querySelectorAll('input[name="adminMode"]').forEach(r => { r.checked = (r.value === mode); });
+    applyMode();
     renderList();
+    renderDrafts();
+  }
+
+  function applyMode() {
+    const mode = getMode();
+    // highlight active label
+    overlay.querySelectorAll('.admin-mode label').forEach(l => {
+      l.classList.toggle('active', l.dataset.mode === mode);
+    });
+    // description text
+    const desc = overlay.querySelector('#adminModeDesc');
+    if (mode === 'local') {
+      desc.innerHTML = '<b style="color:var(--gold);">LOCAL TEST</b> — formularz nie zapisuje nigdzie. Wypełnij pola, zobacz JSON w konsoli, używaj do treningu. Nic nie wychodzi z przeglądarki.';
+    } else if (mode === 'draft') {
+      desc.innerHTML = '<b style="color:var(--gold);">DRAFT</b> — zapisuje do localStorage tej przeglądarki. Praca pojawi się na stronie u Ciebie z plakietką DRAFT. Inni jej nie widzą. Możesz później ją opublikować na live.';
+    } else {
+      desc.innerHTML = '<b style="color:var(--gold);">PUBLISH</b> — commit prosto do GitHub. Wymaga tokena. GitHub Pages odbuduje się w ~60s i praca będzie widoczna dla wszystkich.';
+    }
+    // show/hide token field
+    overlay.querySelector('#adminTokenWrap').style.display = (mode === 'publish') ? '' : 'none';
+    // action buttons depending on mode
+    const actions = overlay.querySelector('#adminActions');
+    if (mode === 'local') {
+      actions.innerHTML = `<button class="admin-btn primary" data-action="save">Preview in console</button>
+                          <button class="admin-btn" data-action="export">Export JSON</button>`;
+    } else if (mode === 'draft') {
+      actions.innerHTML = `<button class="admin-btn primary" data-action="save">Save as draft</button>
+                          <button class="admin-btn" data-action="export">Export JSON</button>`;
+    } else {
+      actions.innerHTML = `<button class="admin-btn primary" data-action="save">Commit to GitHub</button>
+                          <button class="admin-btn" data-action="export">Export JSON</button>`;
+    }
   }
 
   function status(id, msg, isErr) {
@@ -6064,18 +6241,38 @@ const AdminPanel = (function() {
     el.textContent = msg;
     el.classList.add('show');
     el.classList.toggle('error', !!isErr);
-    if (!isErr) setTimeout(() => el.classList.remove('show'), 4000);
+    if (!isErr) setTimeout(() => el.classList.remove('show'), 5000);
   }
 
-  function tryUnlock() {
+  async function tryUnlock() {
     const pwd = overlay.querySelector('#adminPwd').value;
-    if (unlock(pwd)) showMain();
-    else status('adminStatus', 'Wrong password.', true);
+    if (!pwd) { status('adminStatus', 'Enter the password.', true); return; }
+    const h = await sha256(pwd);
+    if (h === currentPwdHash()) {
+      markUnlocked();
+      showMain();
+    } else {
+      status('adminStatus', 'Wrong password.', true);
+    }
+  }
+
+  async function changePassword() {
+    const a = overlay.querySelector('#adminNewPwd').value;
+    const b = overlay.querySelector('#adminNewPwd2').value;
+    if (!a || a.length < 6) { status('adminStatus2', 'Password must be at least 6 chars.', true); return; }
+    if (a !== b) { status('adminStatus2', 'Passwords do not match.', true); return; }
+    const h = await sha256(a);
+    setPwdHash(h);
+    overlay.querySelector('#adminNewPwd').value = '';
+    overlay.querySelector('#adminNewPwd2').value = '';
+    status('adminStatus2', '✓ Password updated. Stored as SHA-256 hash in this browser only.');
   }
 
   function renderList() {
     const list = overlay.querySelector('#adminList');
-    list.innerHTML = allArtworks.map(a => `
+    const published = allArtworks.filter(a => !a.isDraft);
+    overlay.querySelector('#adminListCount').textContent = `(${published.length} items)`;
+    list.innerHTML = published.map(a => `
       <div class="admin-item">
         <span class="admin-item-name">${a.name}</span>
         <span class="admin-item-meta">${a.category} · ${a.price} PLN · ${a.edition}</span>
@@ -6083,7 +6280,33 @@ const AdminPanel = (function() {
       </div>`).join('');
   }
 
-  function buildNewArtwork() {
+  function renderDrafts() {
+    const list = overlay.querySelector('#adminDraftsList');
+    const drafts = Drafts.all();
+    if (!drafts.length) {
+      list.innerHTML = '<div class="admin-drafts-empty">No drafts yet. Switch to Draft mode and save one to preview it on the live site.</div>';
+      return;
+    }
+    list.innerHTML = drafts.map(d => `
+      <div class="admin-draft-item">
+        <span class="admin-draft-name">${d.name}</span>
+        <span class="admin-draft-meta">${d.category} · ${d.price} PLN</span>
+        <button class="admin-draft-btn" data-action="publishDraft" data-id="${d.id}">Publish</button>
+        <button class="admin-draft-btn danger" data-action="deleteDraft" data-id="${d.id}">Delete</button>
+      </div>`).join('');
+  }
+
+  function afterDraftsChanged() {
+    Drafts.mergeIntoArtworks();
+    renderDrafts();
+    if (typeof renderShopGrid === 'function') {
+      const activeFilter = document.querySelector('.filter-btn.active');
+      renderShopGrid(activeFilter ? activeFilter.dataset.filter : 'all');
+    }
+    if (window.LiveStock) window.LiveStock.refresh();
+  }
+
+  function readForm() {
     const name = overlay.querySelector('#adminName').value.trim();
     const category = overlay.querySelector('#adminCategory').value;
     const price = parseInt(overlay.querySelector('#adminPrice').value);
@@ -6091,36 +6314,78 @@ const AdminPanel = (function() {
     const image = overlay.querySelector('#adminImage').value.trim();
     const seed = overlay.querySelector('#adminSeed').value.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const desc = overlay.querySelector('#adminDesc').value.trim();
-    if (!name || !category || !price || !image || !desc) {
-      return null;
-    }
-    const maxId = Math.max(0, ...allArtworks.map(a => a.id));
+    if (!name || !category || !price || !desc) return null;
     return {
-      id: maxId + 1, name, category, price,
+      name, category, price,
       edition: `${sold}/250`, seed, desc,
-      images: [image]
+      images: image ? [image] : []
     };
+  }
+  function clearForm() {
+    ['adminName','adminImage','adminSeed','adminDesc'].forEach(id => {
+      overlay.querySelector('#' + id).value = '';
+    });
+    overlay.querySelector('#adminPrice').value = '449';
+    overlay.querySelector('#adminSold').value = '0';
+  }
+
+  async function saveArtwork() {
+    const mode = getMode();
+    const data = readForm();
+    if (!data) { status('adminStatus2', 'Fill name, category, price, description.', true); return; }
+    if (mode === 'local') {
+      const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
+      const preview = { ...data, id: maxId + 1 };
+      console.group('%c[Aure Admin · LOCAL test]', 'color:#c9a96e;font-weight:bold;');
+      console.log('Artwork preview (NOT saved):', preview);
+      console.log('JS literal:', `{ id:${preview.id}, name:"${preview.name}", category:"${preview.category}", price:${preview.price}, edition:"${preview.edition}", seed:"${preview.seed}", desc:"${preview.desc}", images:${JSON.stringify(preview.images)} }`);
+      console.groupEnd();
+      status('adminStatus2', '✓ Local preview — see browser console (F12) for full JSON. Nothing was saved.');
+      return;
+    }
+    if (mode === 'draft') {
+      const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
+      const draft = Drafts.add({ ...data, id: maxId + 1 });
+      status('adminStatus2', `✓ Saved as draft. Visible on your site with DRAFT badge. Switch tabs to see it.`);
+      clearForm();
+      afterDraftsChanged();
+      return;
+    }
+    // publish mode
+    await tryCommit(data);
   }
 
   function exportJSON() {
-    const newArt = buildNewArtwork();
-    if (!newArt) { status('adminStatus2', 'Fill all fields.', true); return; }
-    const updated = [...allArtworks, newArt];
+    const data = readForm();
+    if (!data) { status('adminStatus2', 'Fill all fields.', true); return; }
+    const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
+    const newArt = { id: maxId + 1, ...data };
+    const updated = [...allArtworks.filter(a => !a.isDraft), newArt];
     const json = JSON.stringify(updated, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = 'artworks.json'; a.click();
     URL.revokeObjectURL(url);
-    status('adminStatus2', 'JSON exported. Paste into index.html allArtworks array.');
+    status('adminStatus2', '✓ JSON exported.');
   }
 
-  async function tryCommit() {
-    const token = overlay.querySelector('#adminGhToken').value.trim();
-    if (!token) { status('adminStatus2', 'Provide GitHub token first.', true); return; }
+  async function publishDraft(draftId) {
+    const draft = Drafts.find(draftId);
+    if (!draft) return;
+    if (!confirm(`Publish draft "${draft.name}" to live site? This will commit to GitHub.`)) return;
+    const { isDraft, createdAt, id, ...data } = draft;
+    const ok = await tryCommit(data);
+    if (ok) {
+      Drafts.remove(draftId);
+      afterDraftsChanged();
+    }
+  }
+
+  async function tryCommit(data) {
+    const token = overlay.querySelector('#adminGhToken').value.trim() || getToken();
+    if (!token) { status('adminStatus2', 'Provide GitHub token first (Publish mode requires it).', true); return false; }
     setToken(token);
-    const newArt = buildNewArtwork();
-    if (!newArt) { status('adminStatus2', 'Fill all fields.', true); return; }
     status('adminStatus2', 'Reading current index.html from GitHub…');
     try {
       const indexUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/index.html?ref=${GH_BRANCH}`;
@@ -6128,11 +6393,9 @@ const AdminPanel = (function() {
       if (!r1.ok) throw new Error('Failed to read index.html: ' + r1.status);
       const meta = await r1.json();
       const current = atob(meta.content.replace(/\n/g, ''));
-      // Find allArtworks array and inject
       const startMarker = 'const allArtworks = [';
       const startIdx = current.indexOf(startMarker);
       if (startIdx === -1) throw new Error('Could not locate allArtworks in index.html');
-      // Find matching closing "];" — walk forward, simple counter on brackets
       let i = startIdx + startMarker.length, depth = 1;
       while (i < current.length && depth > 0) {
         const c = current[i];
@@ -6141,12 +6404,15 @@ const AdminPanel = (function() {
         if (depth === 0) break;
         i++;
       }
-      const endIdx = i; // position of closing ]
+      const endIdx = i;
       const before = current.slice(0, endIdx);
       const after = current.slice(endIdx);
-      // Build new entry as JS object literal (single-line for safety)
-      const esc = s => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-      const entry = `,\n  { id:${newArt.id}, name:"${esc(newArt.name)}", category:"${esc(newArt.category)}", price:${newArt.price}, edition:"${newArt.edition}", seed:"${esc(newArt.seed)}", desc:"${esc(newArt.desc)}", images:["${esc(newArt.images[0])}"] }`;
+      // Find max id in published artworks
+      const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
+      const newArt = { id: maxId + 1, ...data };
+      const esc = s => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const imgArr = (newArt.images || []).map(x => `"${esc(x)}"`).join(',');
+      const entry = `,\n  { id:${newArt.id}, name:"${esc(newArt.name)}", category:"${esc(newArt.category)}", price:${newArt.price}, edition:"${esc(newArt.edition)}", seed:"${esc(newArt.seed)}", desc:"${esc(newArt.desc)}", images:[${imgArr}] }`;
       const updated = before + entry + '\n' + after;
 
       status('adminStatus2', 'Committing to GitHub…');
@@ -6164,17 +6430,14 @@ const AdminPanel = (function() {
         const errBody = await putR.text();
         throw new Error('Commit failed: ' + putR.status + ' — ' + errBody.slice(0, 200));
       }
-      status('adminStatus2', `✓ Committed! GitHub Pages will redeploy in ~60s. Refresh after that.`);
-      // Add to local array so admin list updates immediately
+      status('adminStatus2', `✓ Committed! GitHub Pages will redeploy in ~60s.`);
       allArtworks.push(newArt);
       renderList();
-      // Clear form
-      ['adminName','adminPrice','adminSold','adminImage','adminSeed','adminDesc'].forEach(id => {
-        const el = overlay.querySelector('#' + id);
-        if (el) el.value = el.id === 'adminPrice' ? '449' : (el.id === 'adminSold' ? '0' : '');
-      });
+      clearForm();
+      return true;
     } catch (e) {
       status('adminStatus2', 'Error: ' + e.message, true);
+      return false;
     }
   }
 
@@ -6182,7 +6445,7 @@ const AdminPanel = (function() {
     const art = allArtworks.find(a => a.id === id);
     if (!art) return;
     if (!confirm(`Delete "${art.name}"? This will commit to GitHub.`)) return;
-    const token = overlay.querySelector('#adminGhToken').value.trim();
+    const token = overlay.querySelector('#adminGhToken').value.trim() || getToken();
     if (!token) { status('adminStatus2', 'Provide GitHub token first.', true); return; }
     setToken(token);
     status('adminStatus2', 'Deleting via GitHub…');
@@ -6192,7 +6455,6 @@ const AdminPanel = (function() {
       if (!r1.ok) throw new Error('Failed to read index.html: ' + r1.status);
       const meta = await r1.json();
       const current = atob(meta.content.replace(/\n/g, ''));
-      // Find line: { id:NN, name:
       const pattern = new RegExp(`,?\\s*\\{\\s*id\\s*:\\s*${id}\\s*,[^}]*\\}`, 'm');
       if (!pattern.test(current)) throw new Error('Could not locate artwork entry id=' + id);
       const updated = current.replace(pattern, '');
@@ -6218,9 +6480,14 @@ const AdminPanel = (function() {
 
   return {
     init() {
+      // Merge any drafts saved from previous sessions BEFORE first render
+      Drafts.mergeIntoArtworks();
+      // Re-render the shop grid so drafts appear
+      if (typeof renderShopGrid === 'function') {
+        try { renderShopGrid('all'); } catch(e) {}
+      }
       const params = new URLSearchParams(window.location.search);
       if (params.get('admin') === '1') show();
-      // Also: Ctrl+Shift+A to open from any page
       document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.shiftKey && e.key === 'A') {
           e.preventDefault();
@@ -6231,6 +6498,7 @@ const AdminPanel = (function() {
   };
 })();
 AdminPanel.init();
+
 </script>
 </body>
 </html>
