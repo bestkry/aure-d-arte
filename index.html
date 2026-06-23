@@ -4161,6 +4161,29 @@ const frames = [
   { name: "White Oak", class: "frame-white", price: 79 },
 ];
 
+/* V5: Load bundles from localStorage draft (or future JSON) and merge into allArtworks */
+(function loadBundles() {
+  try {
+    const stored = JSON.parse(localStorage.getItem('aure_bundles_draft') || 'null') || [];
+    if (!Array.isArray(stored) || !stored.length) return;
+    // Filter out already-existing IDs to avoid double-merge
+    const existingIds = new Set(allArtworks.map(a => a.id));
+    stored.forEach(b => {
+      if (!existingIds.has(b.id)) {
+        // Compute original price (sum of items) for badge
+        const items = (b.bundleItemIds || []).map(id => allArtworks.find(a => a.id === id)).filter(Boolean);
+        const orig = items.reduce((s, a) => s + (a.price || 0), 0);
+        allArtworks.push({
+          ...b,
+          isBundle: true,
+          originalPrice: orig,
+          bundleSavings: Math.max(0, orig - (b.price || 0))
+        });
+      }
+    });
+  } catch(e) { console.warn('Bundles load failed:', e); }
+})();
+
 /* State */
 let cart = [];
 let currentProduct = null;
@@ -4231,7 +4254,31 @@ homeGalleryData.forEach(art => {
 
 /* ========== SHOP GRID (15 items) ========== */
 function buildShopCardInner(art) {
-  const imgSrc = art.images ? art.images[0] : `https://picsum.photos/seed/${art.seed}/600/800`;
+  const imgSrc = art.images ? art.images[0] : (art.image || `https://picsum.photos/seed/${art.seed||art.id}/600/800`);
+  // V5: bundle cards have simplified meta — no edition counter, show savings badge instead
+  if (art.isBundle) {
+    const isFavB = Wishlist.has(art.id);
+    const savings = art.bundleSavings || Math.max(0, (art.originalPrice||0) - (art.price||0));
+    return `
+    <div class="shop-item-image">
+      <img src="${imgSrc}" alt="${art.name}" width="600" height="800" loading="lazy">
+      <span class="shop-item-badge" style="background:var(--gold);color:#0a0a0a;">BUNDLE</span>
+      <button class="shop-item-fav${isFavB ? ' active' : ''}" data-fav="${art.id}" aria-label="Toggle favorite">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      </button>
+      <div class="shop-item-quick"><span>Quick View</span></div>
+    </div>
+    <div class="shop-item-info">
+      <h3 class="shop-item-name">${art.name}</h3>
+      <div class="shop-item-meta">
+        <span class="shop-item-cat">${(art.bundleItemIds||[]).length} pieces</span>
+        <span class="shop-item-price">${art.price} PLN${savings ? ` <span style="text-decoration:line-through;color:var(--text-muted);font-size:0.7em;margin-left:6px;">${art.originalPrice} PLN</span>` : ''}</span>
+      </div>
+      <div class="shop-item-edition">
+        <div class="shop-item-edition-row" style="color:var(--gold);font-size:0.72rem;letter-spacing:0.08em;">${savings ? `SAVE ${savings} PLN` : (art.tagline || 'Curated set')}</div>
+      </div>
+    </div>`;
+  }
   const sold = parseInt(art.edition.split('/')[0]);
   const total = 250;
   const remaining = total - sold;
@@ -5715,6 +5762,98 @@ function removePromoCode() {
   } catch(e){}
 })();
 
+/* =========================================================
+   V5: Affiliate tracking + abandoned cart tracker
+========================================================= */
+let affiliates = JSON.parse(localStorage.getItem('aure_affiliates_draft') || 'null') || [];
+window.affiliates = affiliates;
+
+// Capture ?ref=CODE from URL on first load → store in sessionStorage for 30 days
+(function captureReferral() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const ref = (params.get('ref') || '').toUpperCase().trim();
+    if (ref) {
+      const existing = localStorage.getItem('aure_referral');
+      const data = { code: ref, ts: Date.now() };
+      // Don't overwrite if already saved within last 30 days
+      if (!existing || (Date.now() - JSON.parse(existing).ts) > 30 * 24 * 3600 * 1000) {
+        localStorage.setItem('aure_referral', JSON.stringify(data));
+      }
+      // Also auto-apply as promo code if it matches a discount (affiliate codes work both ways)
+      const d = (window.discountCodes || []).find(c => c.code === ref);
+      if (d && !activeDiscount) {
+        activeDiscount = { code: d.code, type: d.type, value: d.value, label: d.label, savings: 0 };
+        sessionStorage.setItem('aure_active_discount', JSON.stringify(activeDiscount));
+      }
+    }
+  } catch(e){}
+})();
+
+function getActiveReferral() {
+  try {
+    const data = JSON.parse(localStorage.getItem('aure_referral') || 'null');
+    if (!data) return null;
+    if (Date.now() - data.ts > 30 * 24 * 3600 * 1000) { localStorage.removeItem('aure_referral'); return null; }
+    return data.code;
+  } catch(e){ return null; }
+}
+
+// Abandoned cart tracker — fires on email blur in checkout form when cart has items
+function trackAbandonedCart() {
+  try {
+    const emailEl = document.getElementById('coEmail');
+    if (!emailEl) return;
+    const email = (emailEl.value || '').trim().toLowerCase();
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) return;
+    if (!cart || !cart.length) return;
+    const firstName = (document.getElementById('coFirstName')?.value || '').trim();
+    const lastName = (document.getElementById('coLastName')?.value || '').trim();
+    const carts = JSON.parse(localStorage.getItem('aure_abandoned_carts') || '[]');
+    // Replace existing entry by email
+    const filtered = carts.filter(c => c.email !== email);
+    const subtotal = cart.reduce((s,i) => s + i.price, 0);
+    filtered.push({
+      id: 'CART-' + Date.now(),
+      date: new Date().toISOString(),
+      email,
+      firstName,
+      lastName,
+      items: cart.map(i => ({ name: i.name, size: i.sizeLabel, frame: i.frame, price: i.price })),
+      subtotal,
+      referral: getActiveReferral(),
+      recovered: false
+    });
+    // Keep last 200
+    localStorage.setItem('aure_abandoned_carts', JSON.stringify(filtered.slice(-200)));
+  } catch(e){}
+}
+
+// Wire up email blur once DOM is ready
+(function wireAbandonedCart() {
+  const wire = () => {
+    const emailEl = document.getElementById('coEmail');
+    if (emailEl && !emailEl.dataset.cartTracked) {
+      emailEl.dataset.cartTracked = '1';
+      emailEl.addEventListener('blur', trackAbandonedCart);
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();
+
+// Mark cart as recovered when an order is placed with the same email
+function markCartRecovered(email) {
+  try {
+    if (!email) return;
+    const e = email.toLowerCase();
+    const carts = JSON.parse(localStorage.getItem('aure_abandoned_carts') || '[]');
+    let changed = false;
+    carts.forEach(c => { if (c.email === e && !c.recovered) { c.recovered = true; changed = true; } });
+    if (changed) localStorage.setItem('aure_abandoned_carts', JSON.stringify(carts));
+  } catch(e){}
+}
+
 function renderCheckoutSummary() {
   const itemsCont = document.getElementById('orderItems');
   if (!itemsCont) return;
@@ -5810,13 +5949,35 @@ async function placeOrder() {
     }
   }
 
+  // V5: Determine referral/affiliate attribution
+  let referralCode = getActiveReferral();
+  // If discount code matches an affiliate code, use that as referral
+  if (discountInfo && Array.isArray(window.affiliates)) {
+    const aff = window.affiliates.find(a => a.code === discountInfo.code);
+    if (aff) referralCode = aff.code;
+  }
+  let affiliateInfo = null;
+  if (referralCode && Array.isArray(window.affiliates)) {
+    const aff = window.affiliates.find(a => a.code === referralCode);
+    if (aff) {
+      const commissionAmount = Math.round((total * (aff.commission || 0)) / 100);
+      affiliateInfo = { code: aff.code, name: aff.name, commission: aff.commission, commissionAmount, paid: false };
+      // Increment affiliate's tracking counters
+      aff.sales = (aff.sales || 0) + 1;
+      aff.revenue = (aff.revenue || 0) + total;
+      aff.commissionOwed = (aff.commissionOwed || 0) + commissionAmount;
+      localStorage.setItem('aure_affiliates_draft', JSON.stringify(window.affiliates));
+    }
+  }
+
+  const customerEmail = document.getElementById('coEmail').value.trim();
   const order = {
     id: 'ADA-' + Date.now(),
     date: new Date().toISOString(),
     customer: {
       firstName: document.getElementById('coFirstName').value.trim(),
       lastName: document.getElementById('coLastName').value.trim(),
-      email: document.getElementById('coEmail').value.trim(),
+      email: customerEmail,
       phone: document.getElementById('coPhone').value.trim(),
       address: document.getElementById('coAddress').value.trim(),
       city: document.getElementById('coCity').value.trim(),
@@ -5830,13 +5991,18 @@ async function placeOrder() {
       sizeLabel: i.sizeLabel,
       frame: i.frame,
       price: i.price,
+      isBundle: !!i.isBundle,
+      bundleItemIds: i.bundleItemIds || null,
     })),
     subtotal: subtotal,
     discount: discountInfo,
+    affiliate: affiliateInfo,
     total: total,
     currency: 'PLN',
     status: 'pending',
   };
+  // Mark any matching abandoned cart as recovered
+  markCartRecovered(customerEmail);
   // Clear active discount after order
   activeDiscount = null;
   sessionStorage.removeItem('aure_active_discount');
@@ -6715,8 +6881,13 @@ const AdminPanel = (function() {
 
           <div class="admin-tabs">
             <button class="admin-tab" data-tab="artworks">Artworks</button>
+            <button class="admin-tab" data-tab="bundles">Bundles</button>
             <button class="admin-tab" data-tab="dashboard">Dashboard</button>
             <button class="admin-tab" data-tab="orders">Orders</button>
+            <button class="admin-tab" data-tab="customers">Customers</button>
+            <button class="admin-tab" data-tab="carts">Abandoned</button>
+            <button class="admin-tab" data-tab="affiliates">Affiliates</button>
+            <button class="admin-tab" data-tab="social">Social</button>
             <button class="admin-tab" data-tab="codes">Codes</button>
             <button class="admin-tab" data-tab="seo">SEO</button>
             <button class="admin-tab" data-tab="messages">Messages</button>
@@ -6961,6 +7132,107 @@ const AdminPanel = (function() {
           </div>
 
           <!-- TAB: SETTINGS -->
+          <!-- TAB: BUNDLES (v5) -->
+          <div class="admin-tab-content" data-tab-content="bundles">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Bundle Builder</h3>
+            <div class="admin-hint" style="margin-bottom:14px;">Stwórz pakiet z 2+ prac (np. "Trio Eternal"). Wyświetli się w sklepie jako osobny produkt z kategorią BUNDLES i badge’m, składowe pozostają normalnie kupowalne osobno.</div>
+            <div class="admin-row" style="grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;">
+              <div><label>Bundle name</label><input type="text" id="newBundleName" placeholder="Trio Eternal"></div>
+              <div><label>Bundle price (PLN)</label><input type="number" id="newBundlePrice" placeholder="2500" min="0"></div>
+              <div><label>Cover image URL</label><input type="text" id="newBundleImg" placeholder="https://..."></div>
+              <div><label>Short tagline</label><input type="text" id="newBundleTag" placeholder="3 prints, 1 vision"></div>
+            </div>
+            <div style="margin-top:12px;"><label style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);">Pick artworks (min 2)</label>
+              <div id="bundlePicker" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:8px;max-height:280px;overflow-y:auto;padding:8px;border:1px solid #1a1a1a;background:rgba(255,255,255,0.02);"></div>
+              <div id="bundleSummary" style="margin-top:10px;font-size:0.78rem;color:var(--text-muted);"></div>
+            </div>
+            <div class="admin-actions" style="margin-top:14px;">
+              <button class="admin-btn primary" data-action="createBundle">Create bundle</button>
+              <button class="admin-btn" data-action="saveBundles">Commit all to GitHub</button>
+            </div>
+            <div class="admin-status" id="bundleStatus"></div>
+            <h4 style="margin:24px 0 10px;color:var(--gold);font-family:var(--font-display);font-weight:300;font-size:1rem;">Existing bundles</h4>
+            <div id="bundlesList"></div>
+          </div>
+
+          <!-- TAB: CUSTOMERS (v5) -->
+          <div class="admin-tab-content" data-tab-content="customers">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Customers / CRM</h3>
+            <div class="admin-hint" style="margin-bottom:12px;">Agregowane z zamówień po emailu. VIP automatycznie po 3+ zamówieniach lub 3000+ PLN total spent.</div>
+            <div class="codes-stats" id="customersStats"></div>
+            <div class="admin-actions" style="margin:12px 0;">
+              <button class="admin-btn" data-action="refreshCustomers">Refresh</button>
+              <button class="admin-btn" data-action="exportCustomersCsv">Export CSV</button>
+              <button class="admin-btn" data-action="mailtoAllCustomers">Mailto: all</button>
+              <button class="admin-btn" data-action="mailtoVipCustomers">Mailto: VIP only</button>
+            </div>
+            <input type="text" id="customerSearch" placeholder="Search by email or name..." style="width:100%;margin-bottom:12px;">
+            <div id="customersList"></div>
+          </div>
+
+          <!-- TAB: ABANDONED CARTS (v5) -->
+          <div class="admin-tab-content" data-tab-content="carts">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Abandoned carts</h3>
+            <div class="admin-hint" style="margin-bottom:12px;">Klienci którzy wpisali email w checkoucie ale nie złożyli zamówienia. „Recover” wysyła link powrotny na Discorda (potem ty pisz ręcznie z mailto).</div>
+            <div class="codes-stats" id="cartsStats"></div>
+            <div class="admin-actions" style="margin:12px 0;">
+              <button class="admin-btn" data-action="refreshCarts">Refresh</button>
+              <button class="admin-btn" data-action="exportCartsCsv">Export CSV</button>
+              <button class="admin-btn" data-action="clearCarts">Clear all</button>
+            </div>
+            <div id="cartsList"></div>
+          </div>
+
+          <!-- TAB: AFFILIATES (v5) -->
+          <div class="admin-tab-content" data-tab-content="affiliates">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Affiliate / referral program</h3>
+            <div class="admin-hint" style="margin-bottom:12px;">Wygeneruj kod dla influencera (działa równocześnie jak discount + tracking). Klienci używają go w checkoucie albo wchodzą z linku <code style="color:var(--gold);">?ref=KASIA15</code>.</div>
+            <div class="admin-row" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px;">
+              <div><label>Influencer name</label><input type="text" id="newAffName" placeholder="Kasia Nowak"></div>
+              <div><label>Code</label><input type="text" id="newAffCode" placeholder="KASIA15" style="text-transform:uppercase;"></div>
+              <div><label>Customer discount %</label><input type="number" id="newAffDiscount" placeholder="15" min="0" max="50" value="15"></div>
+              <div><label>Commission %</label><input type="number" id="newAffCommission" placeholder="15" min="0" max="50" value="15"></div>
+              <div><label>Email (PayPal)</label><input type="email" id="newAffEmail" placeholder="kasia@example.com"></div>
+            </div>
+            <div class="admin-actions" style="margin-top:12px;">
+              <button class="admin-btn primary" data-action="addAffiliate">Add affiliate</button>
+              <button class="admin-btn" data-action="saveAffiliates">Commit to GitHub</button>
+            </div>
+            <div class="admin-status" id="affStatus"></div>
+            <div class="codes-stats" id="affStats" style="margin-top:18px;"></div>
+            <h4 style="margin:18px 0 10px;color:var(--gold);font-family:var(--font-display);font-weight:300;font-size:1rem;">Active affiliates</h4>
+            <div id="affiliatesList"></div>
+          </div>
+
+          <!-- TAB: SOCIAL POSTER (v5) -->
+          <div class="admin-tab-content" data-tab-content="social">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Social auto-poster</h3>
+            <div class="admin-hint" style="margin-bottom:12px;">1-click post o pracy na Discord channel (z embed, zdjęciem, ceną i linkiem). Webhook konfigurujesz w Settings. Możesz edytować caption + hashtagi przed wysłaniem.</div>
+            <details open style="margin-bottom:14px;border:1px solid #1a1a1a;padding:12px;background:rgba(255,255,255,0.02);">
+              <summary style="cursor:pointer;color:var(--text-primary);font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;">Default caption template</summary>
+              <div style="margin-top:10px;">
+                <div class="admin-hint" style="margin-bottom:8px;">Użyj zmiennych: <code style="color:var(--gold);">{name}</code> <code style="color:var(--gold);">{category}</code> <code style="color:var(--gold);">{price}</code> <code style="color:var(--gold);">{url}</code></div>
+                <textarea id="socialTemplate" rows="4" style="width:100%;" placeholder="NEW DROP — {name}\n{category} · {price} PLN\n{url}\n#aureart #darkart #fineart"></textarea>
+                <div class="admin-actions" style="margin-top:8px;">
+                  <button class="admin-btn primary" data-action="saveSocialTpl">Save template</button>
+                </div>
+              </div>
+            </details>
+            <h4 style="margin:14px 0 10px;color:var(--gold);font-family:var(--font-display);font-weight:300;font-size:1rem;">Post log</h4>
+            <div class="codes-stats" id="socialStats"></div>
+            <div id="socialList" style="margin-top:14px;"></div>
+            <h4 style="margin:18px 0 10px;color:var(--gold);font-family:var(--font-display);font-weight:300;font-size:1rem;">Quick post</h4>
+            <div class="admin-hint" style="margin-bottom:8px;">Wybierz pracę, edytuj caption, wyślij.</div>
+            <div class="admin-row" style="grid-template-columns:1fr;gap:10px;">
+              <div><label>Artwork</label><select id="socialArtPick"></select></div>
+              <div><label>Caption (edytuj przed wysłaniem)</label><textarea id="socialCaption" rows="4" style="width:100%;"></textarea></div>
+            </div>
+            <div class="admin-actions" style="margin-top:8px;">
+              <button class="admin-btn" data-action="socialPrefill">Pre-fill from template</button>
+              <button class="admin-btn primary" data-action="socialPost">Post to Discord</button>
+            </div>
+          </div>
+
           <div class="admin-tab-content" data-tab-content="settings">
             <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Settings</h3>
 
@@ -7079,6 +7351,39 @@ const AdminPanel = (function() {
 
     // === V4: Multi-image manager ===
     if (act === 'removeGalleryImg') removeGalleryImage(parseInt(e.target.dataset.idx));
+
+    // === V5: Bundles ===
+    if (act === 'createBundle') createBundle();
+    if (act === 'saveBundles') saveBundlesToGitHub();
+    if (act === 'deleteBundle') deleteBundle(parseInt(e.target.dataset.id));
+    if (act === 'editBundle') editBundle(parseInt(e.target.dataset.id));
+    if (act === 'toggleBundleItem') toggleBundleItem(parseInt(e.target.dataset.id));
+
+    // === V5: Customers ===
+    if (act === 'refreshCustomers') renderCustomersTab();
+    if (act === 'exportCustomersCsv') exportCustomersCSV();
+    if (act === 'mailtoAllCustomers') mailtoCustomers(false);
+    if (act === 'mailtoVipCustomers') mailtoCustomers(true);
+    if (act === 'customerToggle') toggleCustomer(e.target.dataset.email);
+
+    // === V5: Abandoned carts ===
+    if (act === 'refreshCarts') renderCartsTab();
+    if (act === 'exportCartsCsv') exportCartsCSV();
+    if (act === 'clearCarts') clearAbandonedCarts();
+    if (act === 'recoverCart') recoverCart(e.target.dataset.id);
+    if (act === 'deleteCart') deleteAbandonedCart(e.target.dataset.id);
+
+    // === V5: Affiliates ===
+    if (act === 'addAffiliate') addAffiliate();
+    if (act === 'saveAffiliates') saveAffiliatesToGitHub();
+    if (act === 'deleteAffiliate') deleteAffiliate(e.target.dataset.code);
+    if (act === 'markAffPaid') markAffiliatePaid(e.target.dataset.code);
+    if (act === 'copyAffLink') copyAffLink(e.target.dataset.code);
+
+    // === V5: Social poster ===
+    if (act === 'saveSocialTpl') saveSocialTemplate();
+    if (act === 'socialPrefill') socialPrefill();
+    if (act === 'socialPost') socialPost();
   }
   function handleChange(e) {
     if (e.target.name === 'adminMode') { setMode(e.target.value); applyMode(); }
@@ -7127,8 +7432,13 @@ const AdminPanel = (function() {
     overlay.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
     overlay.querySelectorAll('.admin-tab-content').forEach(c => c.classList.toggle('active', c.dataset.tabContent === tab));
     if (tab === 'artworks') { renderList(); renderDrafts(); }
+    if (tab === 'bundles') renderBundlesTab();
     if (tab === 'dashboard') renderDashboard();
     if (tab === 'orders') renderOrders();
+    if (tab === 'customers') renderCustomersTab();
+    if (tab === 'carts') renderCartsTab();
+    if (tab === 'affiliates') renderAffiliatesTab();
+    if (tab === 'social') renderSocialTab();
     if (tab === 'codes') renderCodesTab();
     if (tab === 'seo') renderSeoTab();
     if (tab === 'messages') renderMessages();
@@ -8701,6 +9011,667 @@ const AdminPanel = (function() {
     return await res.json();
   }
 
+  /* =========================================================
+     V5: BUNDLES TAB
+  ========================================================= */
+  let bundlePickerSel = new Set(); // ids picked in builder
+
+  function getBundles() {
+    try { return JSON.parse(localStorage.getItem('aure_bundles_draft') || '[]') || []; } catch { return []; }
+  }
+  function saveBundlesLocal(arr) {
+    localStorage.setItem('aure_bundles_draft', JSON.stringify(arr));
+  }
+
+  function renderBundlesTab() {
+    const picker = overlay.querySelector('#bundlePicker');
+    const list = overlay.querySelector('#bundlesList');
+    if (!picker || !list) return;
+    // Picker: list non-bundle artworks
+    picker.innerHTML = '';
+    allArtworks.filter(a => !a.isBundle).forEach(a => {
+      const el = document.createElement('div');
+      const picked = bundlePickerSel.has(a.id);
+      el.style.cssText = 'cursor:pointer;border:1px solid ' + (picked ? 'var(--gold)' : '#1a1a1a') + ';padding:6px;background:' + (picked ? 'rgba(201,169,110,0.08)' : 'transparent') + ';font-size:0.72rem;color:var(--text-primary);';
+      el.dataset.action = 'toggleBundleItem';
+      el.dataset.id = a.id;
+      const imgUrl = (a.images && a.images[0]) || a.image || '';
+      el.innerHTML = `<div style="pointer-events:none;"><div style="height:80px;background:#0a0a0a;background-image:url('${imgUrl}');background-size:cover;background-position:center;margin-bottom:4px;"></div><div style="font-weight:500;">${escHtml(a.name)}</div><div style="color:var(--text-muted);">${a.price} PLN</div></div>`;
+      picker.appendChild(el);
+    });
+    // Summary
+    const sumEl = overlay.querySelector('#bundleSummary');
+    if (sumEl) {
+      const picked = Array.from(bundlePickerSel).map(id => allArtworks.find(a => a.id === id)).filter(Boolean);
+      const total = picked.reduce((s, a) => s + (a.price || 0), 0);
+      const inputPrice = parseInt(overlay.querySelector('#newBundlePrice')?.value || '0') || 0;
+      const savings = Math.max(0, total - inputPrice);
+      sumEl.innerHTML = picked.length
+        ? `<b>${picked.length}</b> selected · original total: <b>${total} PLN</b>${inputPrice ? ` · bundle price: <b style="color:var(--gold);">${inputPrice} PLN</b> · customer saves: <b style="color:var(--gold);">${savings} PLN</b>` : ''}`
+        : 'Pick at least 2 artworks.';
+    }
+    // Existing bundles
+    const bundles = getBundles();
+    if (!bundles.length) {
+      list.innerHTML = '<div class="admin-empty">No bundles yet.</div>';
+    } else {
+      list.innerHTML = bundles.map(b => {
+        const items = (b.bundleItemIds || []).map(id => allArtworks.find(a => a.id === id)).filter(Boolean);
+        const orig = items.reduce((s, a) => s + (a.price || 0), 0);
+        const sav = Math.max(0, orig - (b.price || 0));
+        return `<div class="discount-row">
+          <div style="flex:1;">
+            <div class="disc-code">${escHtml(b.name)}</div>
+            <div class="disc-meta">${items.length} items · ${b.price} PLN <span style="text-decoration:line-through;color:var(--text-muted);">${orig} PLN</span> · save ${sav} PLN</div>
+            <div class="disc-meta" style="color:var(--text-muted);font-size:0.7rem;">${items.map(a => escHtml(a.name)).join(' · ')}</div>
+          </div>
+          <button class="admin-btn" data-action="deleteBundle" data-id="${b.id}">Delete</button>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  function toggleBundleItem(id) {
+    if (bundlePickerSel.has(id)) bundlePickerSel.delete(id); else bundlePickerSel.add(id);
+    renderBundlesTab();
+  }
+
+  function createBundle() {
+    const name = (overlay.querySelector('#newBundleName')?.value || '').trim();
+    const price = parseInt(overlay.querySelector('#newBundlePrice')?.value || '0') || 0;
+    const img = (overlay.querySelector('#newBundleImg')?.value || '').trim();
+    const tag = (overlay.querySelector('#newBundleTag')?.value || '').trim();
+    if (!name) return status('bundleStatus', '✗ Bundle name required.');
+    if (price <= 0) return status('bundleStatus', '✗ Bundle price must be > 0.');
+    if (bundlePickerSel.size < 2) return status('bundleStatus', '✗ Pick at least 2 artworks.');
+    const bundles = getBundles();
+    const id = 9000 + bundles.length + 1; // bundles get high IDs to avoid clashes
+    const bundle = {
+      id,
+      name,
+      category: 'bundles',
+      price,
+      image: img,
+      images: img ? [img] : null,
+      tagline: tag,
+      bundleItemIds: Array.from(bundlePickerSel),
+      desc: tag || `A curated set of ${bundlePickerSel.size} works.`,
+      isBundle: true,
+      edition: '0/250',
+      seed: 'bundle' + id
+    };
+    bundles.push(bundle);
+    saveBundlesLocal(bundles);
+    // Push into allArtworks immediately so it shows on the site
+    const items = bundle.bundleItemIds.map(bid => allArtworks.find(a => a.id === bid)).filter(Boolean);
+    const orig = items.reduce((s, a) => s + (a.price || 0), 0);
+    allArtworks.push({ ...bundle, originalPrice: orig, bundleSavings: Math.max(0, orig - price) });
+    if (typeof renderShopGrid === 'function') { try { renderShopGrid('all'); } catch(e){} }
+    bundlePickerSel.clear();
+    overlay.querySelector('#newBundleName').value = '';
+    overlay.querySelector('#newBundlePrice').value = '';
+    overlay.querySelector('#newBundleImg').value = '';
+    overlay.querySelector('#newBundleTag').value = '';
+    status('bundleStatus', `✓ Bundle “${name}” created. It now appears on the shop grid.`);
+    renderBundlesTab();
+  }
+
+  function deleteBundle(id) {
+    if (!confirm('Delete this bundle? (Local; commit to remove from GitHub.)')) return;
+    const bundles = getBundles().filter(b => b.id !== id);
+    saveBundlesLocal(bundles);
+    // Also remove from allArtworks
+    const idx = allArtworks.findIndex(a => a.id === id);
+    if (idx >= 0) allArtworks.splice(idx, 1);
+    if (typeof renderShopGrid === 'function') { try { renderShopGrid('all'); } catch(e){} }
+    renderBundlesTab();
+  }
+
+  async function saveBundlesToGitHub() {
+    if (getMode() !== 'publish') return status('bundleStatus', '✗ Switch to PUBLISH mode + set token first.');
+    const token = getToken();
+    if (!token) return status('bundleStatus', '✗ GitHub token required.');
+    status('bundleStatus', '… Committing bundles.json…');
+    try {
+      const bundles = getBundles();
+      await ghPutFile(token, 'data/bundles.json', JSON.stringify(bundles, null, 2), 'chore(bundles): update bundles list via admin panel');
+      status('bundleStatus', `✓ Committed ${bundles.length} bundle(s) to GitHub.`);
+    } catch(e) { status('bundleStatus', '✗ ' + e.message); }
+  }
+
+  /* =========================================================
+     V5: CUSTOMERS / CRM TAB
+  ========================================================= */
+  function aggregateCustomers() {
+    const orders = JSON.parse(localStorage.getItem('aure_orders') || '[]');
+    const byEmail = new Map();
+    orders.forEach(o => {
+      const email = (o.customer?.email || '').toLowerCase();
+      if (!email) return;
+      let c = byEmail.get(email);
+      if (!c) {
+        c = { email, firstName: o.customer.firstName, lastName: o.customer.lastName, city: o.customer.city, country: o.customer.country, orderCount: 0, totalSpent: 0, firstOrder: o.date, lastOrder: o.date, orders: [] };
+        byEmail.set(email, c);
+      }
+      c.orderCount++;
+      c.totalSpent += (o.total || 0);
+      if (new Date(o.date) < new Date(c.firstOrder)) c.firstOrder = o.date;
+      if (new Date(o.date) > new Date(c.lastOrder)) c.lastOrder = o.date;
+      c.orders.push(o);
+    });
+    const list = Array.from(byEmail.values()).map(c => ({
+      ...c,
+      avgOrder: c.orderCount ? Math.round(c.totalSpent / c.orderCount) : 0,
+      isVip: c.orderCount >= 3 || c.totalSpent >= 3000,
+      isRepeat: c.orderCount >= 2,
+    }));
+    list.sort((a, b) => b.totalSpent - a.totalSpent);
+    return list;
+  }
+
+  let customersExpanded = new Set();
+  function toggleCustomer(email) {
+    if (customersExpanded.has(email)) customersExpanded.delete(email); else customersExpanded.add(email);
+    renderCustomersTab();
+  }
+
+  function renderCustomersTab() {
+    const stats = overlay.querySelector('#customersStats');
+    const list = overlay.querySelector('#customersList');
+    if (!stats || !list) return;
+    const customers = aggregateCustomers();
+    const search = (overlay.querySelector('#customerSearch')?.value || '').toLowerCase().trim();
+    const filtered = search ? customers.filter(c => c.email.includes(search) || (`${c.firstName} ${c.lastName}`).toLowerCase().includes(search)) : customers;
+    const totalRev = customers.reduce((s, c) => s + c.totalSpent, 0);
+    const vipCount = customers.filter(c => c.isVip).length;
+    const repeatCount = customers.filter(c => c.isRepeat && !c.isVip).length;
+    const avgLtv = customers.length ? Math.round(totalRev / customers.length) : 0;
+    stats.innerHTML = `
+      <div class="code-stat"><span class="code-stat-n">${customers.length}</span><span class="code-stat-l">Customers</span></div>
+      <div class="code-stat"><span class="code-stat-n">${vipCount}</span><span class="code-stat-l">VIP</span></div>
+      <div class="code-stat"><span class="code-stat-n">${repeatCount}</span><span class="code-stat-l">Repeat</span></div>
+      <div class="code-stat"><span class="code-stat-n">${avgLtv} PLN</span><span class="code-stat-l">Avg LTV</span></div>
+    `;
+    if (!filtered.length) { list.innerHTML = '<div class="admin-empty">No customers yet.</div>'; return; }
+    list.innerHTML = filtered.map(c => {
+      const expanded = customersExpanded.has(c.email);
+      const tags = [];
+      if (c.isVip) tags.push('<span style="background:var(--gold);color:#0a0a0a;padding:2px 6px;font-size:0.62rem;letter-spacing:0.08em;">VIP</span>');
+      else if (c.isRepeat) tags.push('<span style="border:1px solid var(--gold);color:var(--gold);padding:2px 6px;font-size:0.62rem;letter-spacing:0.08em;">REPEAT</span>');
+      return `<div class="discount-row" style="display:block;">
+        <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" data-action="customerToggle" data-email="${escHtml(c.email)}">
+          <div style="flex:1;pointer-events:none;">
+            <div class="disc-code" style="font-family:inherit;">${escHtml(c.firstName || '')} ${escHtml(c.lastName || '')} ${tags.join(' ')}</div>
+            <div class="disc-meta"><a href="mailto:${escHtml(c.email)}" style="color:var(--gold);" onclick="event.stopPropagation();">${escHtml(c.email)}</a> · ${escHtml(c.city||'')} ${escHtml(c.country||'')}</div>
+          </div>
+          <div style="text-align:right;pointer-events:none;">
+            <div style="color:var(--gold);font-weight:500;">${c.totalSpent} PLN</div>
+            <div class="disc-meta">${c.orderCount} order(s) · avg ${c.avgOrder} PLN</div>
+          </div>
+        </div>
+        ${expanded ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid #1a1a1a;font-size:0.74rem;color:var(--text-muted);">
+          <div>First order: ${new Date(c.firstOrder).toLocaleDateString()} · last: ${new Date(c.lastOrder).toLocaleDateString()}</div>
+          <div style="margin-top:6px;">${c.orders.map(o => `<div>• ${o.id} — ${new Date(o.date).toLocaleDateString()} — ${o.total} PLN ${o.discount ? '(' + escHtml(o.discount.code) + ')' : ''}</div>`).join('')}</div>
+        </div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function exportCustomersCSV() {
+    const customers = aggregateCustomers();
+    const head = ['email','firstName','lastName','city','country','orderCount','totalSpent','avgOrder','firstOrder','lastOrder','tags'];
+    const rows = customers.map(c => head.map(h => {
+      if (h === 'tags') return c.isVip ? 'VIP' : (c.isRepeat ? 'REPEAT' : '');
+      return c[h] === undefined ? '' : String(c[h]);
+    }));
+    downloadCsv('aure-customers.csv', [head, ...rows]);
+  }
+
+  function mailtoCustomers(vipOnly) {
+    const customers = aggregateCustomers().filter(c => vipOnly ? c.isVip : true);
+    if (!customers.length) return alert('No customers to mail.');
+    const emails = customers.map(c => c.email).join(',');
+    // mailto with bcc to protect privacy
+    const link = 'mailto:?bcc=' + encodeURIComponent(emails);
+    if (link.length > 7000) {
+      navigator.clipboard.writeText(emails);
+      alert('Too many recipients for mailto. Email list copied to clipboard (' + customers.length + ' addresses).');
+    } else {
+      window.location.href = link;
+    }
+  }
+
+  /* =========================================================
+     V5: ABANDONED CARTS TAB
+  ========================================================= */
+  function getAbandonedCarts() {
+    try { return JSON.parse(localStorage.getItem('aure_abandoned_carts') || '[]') || []; } catch { return []; }
+  }
+  function setAbandonedCarts(arr) { localStorage.setItem('aure_abandoned_carts', JSON.stringify(arr)); }
+
+  function renderCartsTab() {
+    const stats = overlay.querySelector('#cartsStats');
+    const list = overlay.querySelector('#cartsList');
+    if (!stats || !list) return;
+    const carts = getAbandonedCarts().slice().reverse(); // newest first
+    const open = carts.filter(c => !c.recovered);
+    const recovered = carts.filter(c => c.recovered);
+    const value = open.reduce((s, c) => s + (c.subtotal || 0), 0);
+    const recoveryRate = carts.length ? Math.round((recovered.length / carts.length) * 100) : 0;
+    stats.innerHTML = `
+      <div class="code-stat"><span class="code-stat-n">${carts.length}</span><span class="code-stat-l">Total carts</span></div>
+      <div class="code-stat"><span class="code-stat-n">${open.length}</span><span class="code-stat-l">Open</span></div>
+      <div class="code-stat"><span class="code-stat-n">${recovered.length}</span><span class="code-stat-l">Recovered</span></div>
+      <div class="code-stat"><span class="code-stat-n">${recoveryRate}%</span><span class="code-stat-l">Recovery rate</span></div>
+    `;
+    if (!carts.length) { list.innerHTML = '<div class="admin-empty">No abandoned carts yet.</div>'; return; }
+    list.innerHTML = carts.map(c => `
+      <div class="discount-row" style="display:block;${c.recovered ? 'opacity:0.5;' : ''}">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="flex:1;">
+            <div class="disc-code" style="font-family:inherit;">${escHtml(c.firstName || '')} ${escHtml(c.lastName || '')} ${c.recovered ? '<span style="background:#1a2e1a;color:#7ed957;padding:2px 6px;font-size:0.62rem;letter-spacing:0.08em;">RECOVERED</span>' : ''}</div>
+            <div class="disc-meta"><a href="mailto:${escHtml(c.email)}" style="color:var(--gold);">${escHtml(c.email)}</a> · ${new Date(c.date).toLocaleString()}</div>
+            <div class="disc-meta" style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">${(c.items||[]).map(i => escHtml(i.name) + ' (' + i.price + ' PLN)').join(' · ')}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:var(--gold);font-weight:500;">${c.subtotal} PLN</div>
+            <div style="margin-top:8px;display:flex;gap:6px;">
+              ${!c.recovered ? `<button class="admin-btn" data-action="recoverCart" data-id="${c.id}">Recover</button>` : ''}
+              <button class="admin-btn" data-action="deleteCart" data-id="${c.id}">×</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  async function recoverCart(id) {
+    const carts = getAbandonedCarts();
+    const c = carts.find(x => x.id === id);
+    if (!c) return;
+    const hook = (siteConfig && siteConfig.chatWebhook) || '';
+    if (!hook) {
+      // Just open mailto
+      const subj = encodeURIComponent('Your cart at AURE D\'ARTE is still waiting');
+      const body = encodeURIComponent(`Hi ${c.firstName || ''},\n\nYou left these works in your cart:\n${(c.items||[]).map(i => '- ' + i.name + ' (' + i.price + ' PLN)').join('\n')}\n\nReady to complete your order? Use code AURE10 for 10% off.\n\nAURE D'ARTE`);
+      window.location.href = `mailto:${c.email}?subject=${subj}&body=${body}`;
+      return;
+    }
+    // Send to Discord
+    try {
+      const itemsList = (c.items||[]).map(i => `• ${i.name} — ${i.price} PLN`).join('\n');
+      const payload = {
+        username: 'AURE D’ARTE · Abandoned Cart',
+        embeds: [{
+          color: 13215854,
+          title: 'Abandoned cart · ' + (c.firstName || c.email),
+          description: itemsList,
+          fields: [
+            { name: 'Email', value: c.email, inline: true },
+            { name: 'Subtotal', value: c.subtotal + ' PLN', inline: true },
+            { name: 'When', value: new Date(c.date).toLocaleString(), inline: false }
+          ]
+        }]
+      };
+      const res = await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      alert('Recovery alert sent to Discord for ' + c.email);
+    } catch(e) { alert('Discord webhook failed: ' + e.message + '. Falling back to mailto.'); window.location.href = 'mailto:' + c.email; }
+  }
+
+  function deleteAbandonedCart(id) {
+    setAbandonedCarts(getAbandonedCarts().filter(c => c.id !== id));
+    renderCartsTab();
+  }
+  function clearAbandonedCarts() {
+    if (!confirm('Clear ALL abandoned carts?')) return;
+    setAbandonedCarts([]);
+    renderCartsTab();
+  }
+  function exportCartsCSV() {
+    const carts = getAbandonedCarts();
+    const head = ['id','date','email','firstName','lastName','subtotal','itemCount','recovered','referral'];
+    const rows = carts.map(c => [c.id, c.date, c.email, c.firstName||'', c.lastName||'', c.subtotal||0, (c.items||[]).length, c.recovered?'yes':'no', c.referral||'']);
+    downloadCsv('aure-abandoned-carts.csv', [head, ...rows]);
+  }
+
+  /* =========================================================
+     V5: AFFILIATES TAB
+  ========================================================= */
+  function renderAffiliatesTab() {
+    const stats = overlay.querySelector('#affStats');
+    const list = overlay.querySelector('#affiliatesList');
+    if (!stats || !list) return;
+    const totalSales = affiliates.reduce((s, a) => s + (a.sales || 0), 0);
+    const totalRev = affiliates.reduce((s, a) => s + (a.revenue || 0), 0);
+    const totalOwed = affiliates.reduce((s, a) => s + (a.commissionOwed || 0), 0);
+    stats.innerHTML = `
+      <div class="code-stat"><span class="code-stat-n">${affiliates.length}</span><span class="code-stat-l">Affiliates</span></div>
+      <div class="code-stat"><span class="code-stat-n">${totalSales}</span><span class="code-stat-l">Total sales</span></div>
+      <div class="code-stat"><span class="code-stat-n">${totalRev} PLN</span><span class="code-stat-l">Revenue</span></div>
+      <div class="code-stat"><span class="code-stat-n">${totalOwed} PLN</span><span class="code-stat-l">Commission owed</span></div>
+    `;
+    if (!affiliates.length) { list.innerHTML = '<div class="admin-empty">No affiliates yet. Add the first one above.</div>'; return; }
+    list.innerHTML = affiliates.map(a => `
+      <div class="discount-row" style="display:block;">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div style="flex:1;">
+            <div class="disc-code">${escHtml(a.code)}</div>
+            <div class="disc-meta">${escHtml(a.name)} · ${a.discount}% off for customer · ${a.commission}% commission</div>
+            <div class="disc-meta" style="color:var(--text-muted);font-size:0.7rem;">
+              ${a.email ? `<a href="mailto:${escHtml(a.email)}" style="color:var(--gold);">${escHtml(a.email)}</a>` : 'no email'}
+              · link: <code style="color:var(--gold);">?ref=${escHtml(a.code)}</code>
+            </div>
+          </div>
+          <div style="text-align:right;min-width:220px;">
+            <div style="color:var(--gold);font-weight:500;">${a.sales || 0} sales · ${a.revenue || 0} PLN</div>
+            <div class="disc-meta">Owed: <b>${a.commissionOwed || 0} PLN</b> · paid: ${a.commissionPaid || 0} PLN</div>
+            <div style="margin-top:8px;display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;">
+              <button class="admin-btn" data-action="copyAffLink" data-code="${escHtml(a.code)}">Copy link</button>
+              ${(a.commissionOwed || 0) > 0 ? `<button class="admin-btn" data-action="markAffPaid" data-code="${escHtml(a.code)}">Mark paid</button>` : ''}
+              <button class="admin-btn" data-action="deleteAffiliate" data-code="${escHtml(a.code)}">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  function addAffiliate() {
+    const name = (overlay.querySelector('#newAffName')?.value || '').trim();
+    const code = (overlay.querySelector('#newAffCode')?.value || '').trim().toUpperCase();
+    const discount = parseInt(overlay.querySelector('#newAffDiscount')?.value || '15') || 15;
+    const commission = parseInt(overlay.querySelector('#newAffCommission')?.value || '15') || 15;
+    const email = (overlay.querySelector('#newAffEmail')?.value || '').trim();
+    if (!name || !code) return status('affStatus', '✗ Name + code required.');
+    if (!/^[A-Z0-9_-]+$/.test(code)) return status('affStatus', '✗ Code must be A-Z, 0-9, _ or - only.');
+    if (affiliates.some(a => a.code === code)) return status('affStatus', '✗ Code already exists.');
+    // Also add as discount code so it works in checkout
+    if (!discountCodes.some(d => d.code === code)) {
+      discountCodes.push({ code, type: 'percent', value: discount, label: `${discount}% off via ${name}`, limit: 0, used: 0, expires: null });
+      localStorage.setItem('aure_discount_codes_draft', JSON.stringify(discountCodes));
+    }
+    affiliates.push({ code, name, email, discount, commission, sales: 0, revenue: 0, commissionOwed: 0, commissionPaid: 0, created: new Date().toISOString() });
+    window.affiliates = affiliates;
+    localStorage.setItem('aure_affiliates_draft', JSON.stringify(affiliates));
+    overlay.querySelector('#newAffName').value = '';
+    overlay.querySelector('#newAffCode').value = '';
+    overlay.querySelector('#newAffEmail').value = '';
+    status('affStatus', `✓ Affiliate “${name}” added with code ${code}.`);
+    renderAffiliatesTab();
+  }
+
+  function deleteAffiliate(code) {
+    if (!confirm('Delete affiliate ' + code + '? Tracked sales will be kept in orders.')) return;
+    affiliates = affiliates.filter(a => a.code !== code);
+    window.affiliates = affiliates;
+    localStorage.setItem('aure_affiliates_draft', JSON.stringify(affiliates));
+    renderAffiliatesTab();
+  }
+
+  function markAffiliatePaid(code) {
+    const aff = affiliates.find(a => a.code === code);
+    if (!aff) return;
+    if (!confirm(`Mark ${aff.commissionOwed} PLN as paid to ${aff.name}?`)) return;
+    aff.commissionPaid = (aff.commissionPaid || 0) + (aff.commissionOwed || 0);
+    aff.commissionOwed = 0;
+    localStorage.setItem('aure_affiliates_draft', JSON.stringify(affiliates));
+    renderAffiliatesTab();
+  }
+
+  function copyAffLink(code) {
+    const link = window.location.origin + window.location.pathname + '?ref=' + code;
+    navigator.clipboard.writeText(link).then(() => {
+      status('affStatus', '✓ Link copied: ' + link);
+    });
+  }
+
+  async function saveAffiliatesToGitHub() {
+    if (getMode() !== 'publish') return status('affStatus', '✗ Switch to PUBLISH mode + set token first.');
+    const token = getToken();
+    if (!token) return status('affStatus', '✗ GitHub token required.');
+    status('affStatus', '… Committing affiliates.json…');
+    try {
+      await ghPutFile(token, 'data/affiliates.json', JSON.stringify(affiliates, null, 2), 'chore(affiliates): update affiliate program via admin panel');
+      status('affStatus', `✓ Committed ${affiliates.length} affiliate(s) to GitHub.`);
+    } catch(e) { status('affStatus', '✗ ' + e.message); }
+  }
+
+  /* =========================================================
+     V5: SOCIAL POSTER TAB
+  ========================================================= */
+  function getSocialTemplate() {
+    return localStorage.getItem('aure_social_template') || 'NEW DROP — {name}\n{category} · {price} PLN\n{url}\n#aureart #darkart #fineart #limitededition';
+  }
+  function getSocialLog() {
+    try { return JSON.parse(localStorage.getItem('aure_social_log') || '[]') || []; } catch { return []; }
+  }
+  function setSocialLog(arr) { localStorage.setItem('aure_social_log', JSON.stringify(arr.slice(-100))); }
+
+  function renderSocialTab() {
+    const tpl = overlay.querySelector('#socialTemplate');
+    if (tpl && !tpl.value) tpl.value = getSocialTemplate();
+    // Populate artwork picker
+    const sel = overlay.querySelector('#socialArtPick');
+    if (sel) {
+      sel.innerHTML = allArtworks.map(a => `<option value="${a.id}">${escHtml(a.name)} — ${a.price} PLN${a.isBundle?' · BUNDLE':''}</option>`).join('');
+    }
+    // Stats + log
+    const log = getSocialLog();
+    const last7 = log.filter(l => Date.now() - new Date(l.date).getTime() < 7*24*3600*1000);
+    const okCount = log.filter(l => l.ok).length;
+    const stats = overlay.querySelector('#socialStats');
+    if (stats) stats.innerHTML = `
+      <div class="code-stat"><span class="code-stat-n">${log.length}</span><span class="code-stat-l">Total posts</span></div>
+      <div class="code-stat"><span class="code-stat-n">${okCount}</span><span class="code-stat-l">Successful</span></div>
+      <div class="code-stat"><span class="code-stat-n">${last7.length}</span><span class="code-stat-l">Last 7 days</span></div>
+      <div class="code-stat"><span class="code-stat-n">${(siteConfig && siteConfig.chatWebhook) ? 'OK' : '✗'}</span><span class="code-stat-l">Webhook</span></div>
+    `;
+    const list = overlay.querySelector('#socialList');
+    if (list) {
+      if (!log.length) list.innerHTML = '<div class="admin-empty">No posts yet.</div>';
+      else list.innerHTML = log.slice().reverse().slice(0, 30).map(l => `
+        <div class="discount-row">
+          <div style="flex:1;">
+            <div class="disc-code" style="font-family:inherit;color:${l.ok?'var(--gold)':'#ff6b6b'};">${l.ok ? '✓' : '✗'} ${escHtml(l.artName || '')}</div>
+            <div class="disc-meta">${new Date(l.date).toLocaleString()}</div>
+            <div class="disc-meta" style="color:var(--text-muted);font-size:0.7rem;white-space:pre-wrap;margin-top:4px;">${escHtml((l.caption||'').slice(0,180))}</div>
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  function saveSocialTemplate() {
+    const v = (overlay.querySelector('#socialTemplate')?.value || '').trim();
+    if (!v) return;
+    localStorage.setItem('aure_social_template', v);
+    alert('Template saved.');
+  }
+
+  function socialPrefill() {
+    const sel = overlay.querySelector('#socialArtPick');
+    if (!sel) return;
+    const id = parseInt(sel.value);
+    const a = allArtworks.find(x => x.id === id);
+    if (!a) return;
+    const tpl = getSocialTemplate();
+    const url = window.location.origin + window.location.pathname + '?artwork=' + a.id;
+    const txt = tpl.replace(/\{name\}/g, a.name).replace(/\{category\}/g, a.category).replace(/\{price\}/g, String(a.price)).replace(/\{url\}/g, url);
+    overlay.querySelector('#socialCaption').value = txt;
+  }
+
+  async function socialPost() {
+    const sel = overlay.querySelector('#socialArtPick');
+    const captionEl = overlay.querySelector('#socialCaption');
+    if (!sel || !captionEl) return;
+    const id = parseInt(sel.value);
+    const a = allArtworks.find(x => x.id === id);
+    if (!a) return alert('Pick an artwork first.');
+    let caption = (captionEl.value || '').trim();
+    if (!caption) socialPrefill(), caption = captionEl.value;
+    const hook = (siteConfig && siteConfig.chatWebhook) || '';
+    if (!hook) return alert('Set your Discord webhook in Settings first.');
+    const imgUrl = (a.images && a.images[0]) || a.image || '';
+    const absImg = imgUrl && !/^https?:/.test(imgUrl) ? window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/') + imgUrl.replace(/^\.?\//, '') : imgUrl;
+    const url = window.location.origin + window.location.pathname + '?artwork=' + a.id;
+    const payload = {
+      username: 'AURE D’ARTE · New drop',
+      embeds: [{
+        color: 13215854,
+        title: a.name,
+        url,
+        description: caption,
+        fields: [
+          { name: 'Category', value: a.category, inline: true },
+          { name: 'Price', value: a.price + ' PLN', inline: true },
+        ],
+        image: absImg ? { url: absImg } : undefined,
+        footer: { text: 'aure-d-arte' },
+        timestamp: new Date().toISOString(),
+      }]
+    };
+    let ok = false, err = '';
+    try {
+      const res = await fetch(hook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      ok = true;
+    } catch(e) { err = e.message; }
+    const log = getSocialLog();
+    log.push({ date: new Date().toISOString(), artId: a.id, artName: a.name, caption, ok, error: err });
+    setSocialLog(log);
+    renderSocialTab();
+    if (ok) alert('Posted to Discord.');
+    else alert('Post failed: ' + err);
+  }
+
+  /* =========================================================
+     V5: HELPERS
+  ========================================================= */
+  function downloadCsv(filename, rows) {
+    const csv = rows.map(r => r.map(c => {
+      const s = String(c == null ? '' : c);
+      return /[,\n\"]/.test(s) ? '"' + s.replace(/\"/g, '""') + '"' : s;
+    }).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  // Extend customerSearch input → re-render on input
+  document.addEventListener('input', (e) => {
+    if (e.target && e.target.id === 'customerSearch') renderCustomersTab();
+    if (e.target && (e.target.id === 'newBundlePrice')) {
+      const sumEl = overlay && overlay.querySelector && overlay.querySelector('#bundleSummary');
+      if (sumEl) renderBundlesTab();
+    }
+  });
+
+  /* =========================================================
+     V5: DASHBOARD UPGRADE (advanced analytics)
+  ========================================================= */
+  // Wrap existing renderDashboard — we extend output by appending charts under it.
+  const _originalRenderDashboard = renderDashboard;
+  renderDashboard = function() {
+    _originalRenderDashboard();
+    // Find dashboard container and append analytics block
+    const dashEl = overlay.querySelector('[data-tab-content="dashboard"]');
+    if (!dashEl) return;
+    // Remove old v5 block
+    const old = dashEl.querySelector('#v5AnalyticsBlock');
+    if (old) old.remove();
+    const block = document.createElement('div');
+    block.id = 'v5AnalyticsBlock';
+    block.style.cssText = 'margin-top:30px;padding-top:24px;border-top:1px solid #1a1a1a;';
+    block.innerHTML = buildAnalyticsHtml();
+    dashEl.appendChild(block);
+  };
+
+  function buildAnalyticsHtml() {
+    const orders = JSON.parse(localStorage.getItem('aure_orders') || '[]');
+    const carts = getAbandonedCarts();
+    // 30-day revenue chart
+    const days = 30;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const byDay = new Array(days).fill(0);
+    const orderByDay = new Array(days).fill(0);
+    orders.forEach(o => {
+      const d = new Date(o.date); d.setHours(0,0,0,0);
+      const diff = Math.floor((today - d) / (24*3600*1000));
+      if (diff >= 0 && diff < days) { byDay[days-1-diff] += (o.total||0); orderByDay[days-1-diff]++; }
+    });
+    const maxRev = Math.max(...byDay, 1);
+    const last7 = byDay.slice(-7).reduce((s,v)=>s+v,0);
+    const last30 = byDay.reduce((s,v)=>s+v,0);
+    // Top sellers
+    const itemMap = new Map();
+    orders.forEach(o => (o.items||[]).forEach(i => {
+      const key = i.name;
+      const e = itemMap.get(key) || { name: i.name, qty: 0, rev: 0 };
+      e.qty++; e.rev += (i.price||0);
+      itemMap.set(key, e);
+    }));
+    const top = Array.from(itemMap.values()).sort((a,b) => b.rev - a.rev).slice(0, 6);
+    // Conversion funnel
+    const cartCount = carts.length;
+    const orderCount = orders.length;
+    const convRate = cartCount ? Math.round((orderCount / (cartCount + orderCount)) * 100) : 0;
+    // Discount usage
+    const withDisc = orders.filter(o => o.discount).length;
+    const discRev = orders.filter(o => o.discount).reduce((s,o) => s + (o.total||0), 0);
+    // Referrals
+    const refOrders = orders.filter(o => o.affiliate);
+    const refRev = refOrders.reduce((s,o) => s + (o.total||0), 0);
+    // Bar chart — simple CSS bars
+    const bars = byDay.map((v, i) => {
+      const date = new Date(today); date.setDate(today.getDate() - (days-1-i));
+      const h = Math.max(2, Math.round((v / maxRev) * 100));
+      const lbl = (date.getDate() === 1 || i === 0 || i === days-1) ? `${date.getMonth()+1}/${date.getDate()}` : '';
+      return `<div title="${date.toLocaleDateString()} — ${v} PLN (${orderByDay[i]} orders)" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px;">
+        <div style="width:100%;height:${h}%;background:${v>0?'var(--gold)':'#1a1a1a'};opacity:${v>0?0.7:0.3};"></div>
+        <div style="font-size:0.55rem;color:var(--text-muted);height:10px;">${lbl}</div>
+      </div>`;
+    }).join('');
+    return `
+      <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Advanced analytics</h3>
+      <div class="codes-stats">
+        <div class="code-stat"><span class="code-stat-n">${last7} PLN</span><span class="code-stat-l">Last 7 days</span></div>
+        <div class="code-stat"><span class="code-stat-n">${last30} PLN</span><span class="code-stat-l">Last 30 days</span></div>
+        <div class="code-stat"><span class="code-stat-n">${convRate}%</span><span class="code-stat-l">Conv. rate</span></div>
+        <div class="code-stat"><span class="code-stat-n">${withDisc}</span><span class="code-stat-l">w/ discount</span></div>
+        <div class="code-stat"><span class="code-stat-n">${refRev} PLN</span><span class="code-stat-l">Referral rev</span></div>
+      </div>
+      <h4 style="margin:20px 0 8px;color:var(--gold);font-family:var(--font-display);font-weight:300;font-size:1rem;">Revenue · last 30 days</h4>
+      <div style="display:flex;align-items:flex-end;gap:2px;height:140px;border-bottom:1px solid #1a1a1a;padding:10px 0;">${bars}</div>
+      <h4 style="margin:20px 0 8px;color:var(--gold);font-family:var(--font-display);font-weight:300;font-size:1rem;">Top sellers</h4>
+      ${top.length ? top.map(t => {
+        const pct = Math.round((t.rev / (top[0].rev||1)) * 100);
+        return `<div style="display:flex;align-items:center;gap:10px;font-size:0.78rem;margin:6px 0;">
+          <div style="width:160px;color:var(--text-primary);">${escHtml(t.name)}</div>
+          <div style="flex:1;height:6px;background:#1a1a1a;"><div style="width:${pct}%;height:100%;background:var(--gold);opacity:0.7;"></div></div>
+          <div style="width:80px;text-align:right;color:var(--gold);">${t.rev} PLN</div>
+          <div style="width:50px;text-align:right;color:var(--text-muted);font-size:0.7rem;">${t.qty}×</div>
+        </div>`;
+      }).join('') : '<div class="admin-empty">No sales yet.</div>'}
+      <h4 style="margin:20px 0 8px;color:var(--gold);font-family:var(--font-display);font-weight:300;font-size:1rem;">Conversion funnel</h4>
+      <div style="display:flex;gap:0;font-size:0.78rem;">
+        <div style="flex:1;padding:10px;background:#1a1a1a;text-align:center;">
+          <div style="font-size:1.4rem;color:var(--text-primary);">${cartCount + orderCount}</div>
+          <div style="color:var(--text-muted);font-size:0.62rem;letter-spacing:0.08em;">CHECKOUTS</div>
+        </div>
+        <div style="flex:1;padding:10px;background:#0f0f0f;text-align:center;">
+          <div style="font-size:1.4rem;color:var(--text-primary);">${orderCount}</div>
+          <div style="color:var(--text-muted);font-size:0.62rem;letter-spacing:0.08em;">ORDERS</div>
+        </div>
+        <div style="flex:1;padding:10px;background:rgba(201,169,110,0.1);text-align:center;border-left:1px solid var(--gold);">
+          <div style="font-size:1.4rem;color:var(--gold);">${convRate}%</div>
+          <div style="color:var(--text-muted);font-size:0.62rem;letter-spacing:0.08em;">CONVERTED</div>
+        </div>
+      </div>
+      ${refOrders.length ? `<h4 style="margin:20px 0 8px;color:var(--gold);font-family:var(--font-display);font-weight:300;font-size:1rem;">Affiliate breakdown</h4>
+      ${refOrders.map(o => `<div style="display:flex;gap:10px;font-size:0.74rem;color:var(--text-muted);margin:4px 0;"><span style="color:var(--gold);width:80px;">${escHtml(o.affiliate.code)}</span><span style="flex:1;">${o.id}</span><span>${o.total} PLN</span><span>commission ${o.affiliate.commissionAmount} PLN</span></div>`).join('')}` : ''}
+    `;
+  }
+
   return {
     init() {
       // Apply any locally-saved overrides BEFORE first render
@@ -8718,6 +9689,9 @@ const AdminPanel = (function() {
         if (seoGlobalDraft) { try { siteConfig.seoGlobal = JSON.parse(seoGlobalDraft); } catch {} }
         const webhookDraft = localStorage.getItem('aure_chat_webhook_draft');
         if (webhookDraft) siteConfig.chatWebhook = webhookDraft;
+        // V5 drafts
+        const affDraft = localStorage.getItem('aure_affiliates_draft');
+        if (affDraft) { try { affiliates = JSON.parse(affDraft); window.affiliates = affiliates; } catch {} }
       } catch {}
       Drafts.mergeIntoArtworks();
       if (typeof renderShopGrid === 'function') { try { renderShopGrid('all'); } catch(e) {} }
