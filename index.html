@@ -2568,6 +2568,170 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 .admin-pwd-change summary { cursor: pointer; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); padding: 4px 0; }
 .admin-pwd-change summary:hover { color: var(--gold); }
 .admin-pwd-change[open] summary { color: var(--gold); margin-bottom: 12px; }
+
+/* ============ PROMO BANNER ============ */
+#promoBanner {
+  position: relative;
+  background: var(--gold);
+  color: #0a0a0a;
+  text-align: center;
+  padding: 10px 40px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  z-index: 50;
+  display: none;
+}
+#promoBanner.active { display: block; }
+#promoBanner a { color: #0a0a0a; text-decoration: underline; margin-left: 12px; font-weight: 600; }
+#promoBanner a:hover { color: #1a1a1a; }
+#promoBanner .promo-close {
+  position: absolute; top: 50%; right: 16px; transform: translateY(-50%);
+  background: none; border: none; color: #0a0a0a; cursor: pointer;
+  font-size: 1.1rem; padding: 4px 8px; line-height: 1; opacity: 0.6;
+}
+#promoBanner .promo-close:hover { opacity: 1; }
+body.has-promo .header { top: 36px; }
+@media (max-width: 640px) {
+  #promoBanner { font-size: 0.68rem; padding: 8px 32px; letter-spacing: 0.12em; }
+}
+
+/* ============ ADMIN TABS ============ */
+.admin-tabs {
+  display: flex; gap: 0; margin: 0 0 24px;
+  border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.admin-tab {
+  background: none; border: none; color: var(--text-muted);
+  padding: 12px 16px; font-family: var(--font-body); font-size: 0.7rem;
+  letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all 0.25s ease;
+}
+.admin-tab:hover { color: var(--text-primary); }
+.admin-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.admin-tab-content { display: none; }
+.admin-tab-content.active { display: block; }
+
+/* ============ UPLOAD ZONE ============ */
+.upload-zone {
+  border: 1px dashed var(--border); padding: 28px 20px;
+  text-align: center; cursor: pointer;
+  transition: all 0.25s ease;
+  margin-bottom: 8px;
+}
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--gold); background: rgba(201,169,110,0.04); }
+.upload-zone p { margin: 0 0 4px; font-size: 0.78rem; color: var(--text-primary); }
+.upload-zone small { font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.1em; }
+.upload-preview { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 10px; }
+.upload-preview-item { position: relative; aspect-ratio: 1; background: #1a1a1a; overflow: hidden; }
+.upload-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.upload-preview-item .upload-del {
+  position: absolute; top: 4px; right: 4px;
+  background: rgba(0,0,0,0.8); color: #fff; border: none;
+  width: 22px; height: 22px; cursor: pointer; font-size: 0.85rem; line-height: 1;
+}
+.upload-progress {
+  display: none; margin-top: 8px; padding: 8px 12px;
+  background: rgba(201,169,110,0.06); border-left: 2px solid var(--gold);
+  font-size: 0.72rem; color: var(--text-secondary);
+}
+.upload-progress.show { display: block; }
+
+/* ============ DASHBOARD CARDS ============ */
+.dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+.dash-card { background: #0a0a0a; border: 1px solid var(--border); padding: 18px 16px; }
+.dash-card-label { font-size: 0.64rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+.dash-card-value { font-family: var(--font-display); font-weight: 300; font-size: 1.8rem; color: var(--text-primary); line-height: 1.1; }
+.dash-card-value .dash-suffix { font-size: 0.85rem; color: var(--text-muted); margin-left: 4px; font-family: var(--font-body); letter-spacing: 0.06em; }
+.dash-card-sub { font-size: 0.7rem; color: var(--gold); margin-top: 4px; letter-spacing: 0.08em; }
+.dash-section { margin: 24px 0; }
+.dash-section h4 { font-family: var(--font-display); font-weight: 300; font-size: 1.05rem; color: var(--text-primary); margin: 0 0 12px; letter-spacing: 0.04em; }
+.dash-bar-row { display: grid; grid-template-columns: 110px 1fr 60px; gap: 10px; align-items: center; padding: 6px 0; font-size: 0.78rem; }
+.dash-bar-label { color: var(--text-secondary); }
+.dash-bar-track { height: 6px; background: rgba(255,255,255,0.04); position: relative; }
+.dash-bar-fill { height: 100%; background: var(--gold); }
+.dash-bar-value { text-align: right; color: var(--text-muted); font-size: 0.72rem; }
+.dash-best { padding: 14px 16px; background: rgba(201,169,110,0.04); border-left: 2px solid var(--gold); margin-top: 12px; }
+.dash-best-name { font-family: var(--font-display); font-size: 1.1rem; color: var(--gold); font-weight: 300; }
+.dash-best-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.1em; }
+
+/* ============ ARTWORK LIST ROWS (admin) ============ */
+.admin-art-row {
+  display: grid; grid-template-columns: 24px 56px 1fr auto auto auto auto;
+  gap: 10px; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 0.78rem;
+}
+.admin-art-handle {
+  cursor: grab; color: var(--text-muted); font-size: 1rem; line-height: 1;
+  user-select: none; text-align: center;
+}
+.admin-art-handle:hover { color: var(--gold); }
+.admin-art-row.dragging { opacity: 0.5; background: rgba(201,169,110,0.06); }
+.admin-art-row.drag-over { border-top: 2px solid var(--gold); }
+.admin-art-thumb { width: 56px; height: 56px; background: #111; overflow: hidden; }
+.admin-art-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-art-info { line-height: 1.4; min-width: 0; }
+.admin-art-name { color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.admin-art-meta { color: var(--text-muted); font-size: 0.66rem; letter-spacing: 0.06em; }
+.admin-art-sold { display: flex; align-items: center; gap: 4px; }
+.admin-art-sold input { width: 50px; padding: 4px 6px; text-align: center; background: #0a0a0a; border: 1px solid var(--border); color: var(--text-primary); font-size: 0.75rem; }
+.admin-art-sold button { background: none; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; padding: 2px 6px; font-size: 0.75rem; line-height: 1; }
+.admin-art-sold button:hover { border-color: var(--gold); color: var(--gold); }
+.admin-art-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; padding: 5px 10px; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; transition: all 0.3s ease; }
+.admin-art-btn:hover { border-color: var(--gold); color: var(--gold); }
+.admin-art-btn.danger:hover { border-color: #dc5050; color: #dc5050; }
+
+/* ============ FAQ EDITOR ============ */
+.faq-editor-item {
+  padding: 14px 14px; margin-bottom: 10px;
+  background: #0a0a0a; border: 1px solid var(--border);
+}
+.faq-editor-item.dragging { opacity: 0.5; }
+.faq-editor-item.drag-over { border-color: var(--gold); }
+.faq-editor-row { display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+.faq-editor-row .faq-handle { cursor: grab; color: var(--text-muted); text-align: center; }
+.faq-editor-row .faq-handle:hover { color: var(--gold); }
+.faq-editor-q { font-size: 0.85rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.faq-editor-body { display: none; }
+.faq-editor-item.expanded .faq-editor-body { display: block; }
+.faq-editor-item.expanded .faq-toggle::after { content: '−'; }
+.faq-toggle::after { content: '+'; }
+.faq-toggle { background: none; border: none; color: var(--gold); font-size: 1.3rem; cursor: pointer; line-height: 1; padding: 0 6px; }
+
+/* ============ ORDERS ============ */
+.order-row {
+  background: #0a0a0a; border: 1px solid var(--border);
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.order-head { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; }
+.order-id { font-family: var(--font-display); font-size: 1rem; color: var(--text-primary); }
+.order-meta { color: var(--text-muted); font-size: 0.7rem; letter-spacing: 0.08em; }
+.order-total { color: var(--gold); font-size: 0.95rem; font-weight: 500; }
+.order-status {
+  font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 4px 10px; border: 1px solid var(--border); color: var(--text-muted);
+  cursor: pointer; background: #0a0a0a; font-family: var(--font-body);
+}
+.order-status.pending { color: #c9a96e; border-color: rgba(201,169,110,0.4); }
+.order-status.shipped { color: #6ec991; border-color: rgba(110,201,145,0.4); }
+.order-status.delivered { color: #f0efe8; border-color: rgba(240,239,232,0.3); }
+.order-status.cancelled { color: #dc5050; border-color: rgba(220,80,80,0.4); }
+.order-body { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6; }
+.order-row.expanded .order-body { display: block; }
+.order-customer { margin-bottom: 10px; }
+.order-customer b { color: var(--text-primary); }
+.order-items { margin-top: 8px; }
+.order-item-line { padding: 4px 0; color: var(--text-muted); font-size: 0.74rem; }
+.order-item-line b { color: var(--text-secondary); }
+.order-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.85rem; }
+
+/* Image preview in form */
+.admin-img-preview { width: 100%; max-height: 200px; object-fit: contain; background: #111; margin-top: 8px; display: none; }
+.admin-img-preview.show { display: block; }
 </style>
 </head>
 <body>
@@ -2769,6 +2933,13 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <div class="toast" id="toast" aria-live="polite">
   <svg class="toast-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toastText">Added to cart</span>
+</div>
+
+<!-- PROMO BANNER (toggled via Admin → Promo) -->
+<div id="promoBanner">
+  <span id="promoBannerText"></span>
+  <a id="promoBannerLink" href="#" style="display:none;"></a>
+  <button class="promo-close" id="promoBannerClose" aria-label="Close">✕</button>
 </div>
 
 <!-- HEADER -->
@@ -3002,74 +3173,8 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 <section class="faq-section" id="faq">
   <p class="section-label reveal"><span data-lang="en">Good to Know</span><span data-lang="pl">Warto Wiedzieć</span></p>
   <h2 class="section-title letter-reveal" data-letter-reveal><span data-lang="en">Questions</span><span data-lang="pl">Pytania</span></h2>
-  <div class="faq-inner reveal">
-
-    <div class="faq-item">
-      <button class="faq-question" type="button" aria-expanded="false">
-        <span><span data-lang="en">What does "limited edition" mean?</span><span data-lang="pl">Co oznacza „limitowana edycja”?</span></span>
-        <span class="faq-icon" aria-hidden="true"></span>
-      </button>
-      <div class="faq-answer"><div class="faq-answer-inner">
-        <span data-lang="en">Every artwork is produced in a strictly limited run of 250 numbered prints. Once an edition sells out, it is never reprinted or restocked — your piece stays genuinely rare.</span>
-        <span data-lang="pl">Każde dzieło powstaje w ściśle limitowanej serii 250 numerowanych wydruków. Gdy edycja się wyprzeda, nigdy nie jest dodrukowywana — Twoja praca pozostaje naprawdę rzadka.</span>
-      </div></div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question" type="button" aria-expanded="false">
-        <span><span data-lang="en">What paper and printing quality do you use?</span><span data-lang="pl">Jaki papier i jakość druku stosujecie?</span></span>
-        <span class="faq-icon" aria-hidden="true"></span>
-      </button>
-      <div class="faq-answer"><div class="faq-answer-inner">
-        <span data-lang="en">Prints are produced on museum-grade archival paper using pigment inks rated to resist fading for over 100 years. Each print is inspected by hand before shipping.</span>
-        <span data-lang="pl">Wydruki powstają na archiwalnym papierze muzealnej jakości, atramentami pigmentowymi odpornymi na blaknięcie przez ponad 100 lat. Każdy wydruk jest sprawdzany ręcznie przed wysyłką.</span>
-      </div></div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question" type="button" aria-expanded="false">
-        <span><span data-lang="en">Which sizes and frames are available?</span><span data-lang="pl">Jakie rozmiary i ramy są dostępne?</span></span>
-        <span class="faq-icon" aria-hidden="true"></span>
-      </button>
-      <div class="faq-answer"><div class="faq-answer-inner">
-        <span data-lang="en">Each artwork is offered in multiple sizes, with the option of an unframed print or a premium matte-black or natural-oak frame. You can select your size and frame on every product page.</span>
-        <span data-lang="pl">Każde dzieło dostępne jest w kilku rozmiarach, z opcją wydruku bez ramy lub w premium ramie w kolorze matowej czerni albo naturalnego dębu. Rozmiar i ramę wybierzesz na karcie każdego produktu.</span>
-      </div></div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question" type="button" aria-expanded="false">
-        <span><span data-lang="en">How long does shipping take?</span><span data-lang="pl">Ile trwa wysyłka?</span></span>
-        <span class="faq-icon" aria-hidden="true"></span>
-      </button>
-      <div class="faq-answer"><div class="faq-answer-inner">
-        <span data-lang="en">Prints are made to order and ship within 5–7 business days. Delivery within Poland typically takes 2–3 days; international orders 7–14 days depending on destination. Every order ships in protective, rigid packaging.</span>
-        <span data-lang="pl">Wydruki realizujemy na zamówienie i wysyłamy w ciągu 5–7 dni roboczych. Dostawa na terenie Polski zwykle trwa 2–3 dni; zamówienia zagraniczne 7–14 dni w zależności od kraju. Każde zamówienie pakujemy w sztywne, ochronne opakowanie.</span>
-      </div></div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question" type="button" aria-expanded="false">
-        <span><span data-lang="en">Can I return or exchange a print?</span><span data-lang="pl">Czy mogę zwrócić lub wymienić wydruk?</span></span>
-        <span class="faq-icon" aria-hidden="true"></span>
-      </button>
-      <div class="faq-answer"><div class="faq-answer-inner">
-        <span data-lang="en">If your print arrives damaged, contact us within 14 days and we'll replace it free of charge. As each piece is made to order, we handle other returns case by case — just reach out and we'll find a fair solution.</span>
-        <span data-lang="pl">Jeśli wydruk dotrze uszkodzony, skontaktuj się z nami w ciągu 14 dni — wymienimy go bezpłatnie. Ponieważ każda praca powstaje na zamówienie, pozostałe zwroty rozpatrujemy indywidualnie — napisz do nas, a znajdziemy uczciwe rozwiązanie.</span>
-      </div></div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question" type="button" aria-expanded="false">
-        <span><span data-lang="en">Is the art really generated by AI?</span><span data-lang="pl">Czy sztuka naprawdę jest generowana przez AI?</span></span>
-        <span class="faq-icon" aria-hidden="true"></span>
-      </button>
-      <div class="faq-answer"><div class="faq-answer-inner">
-        <span data-lang="en">Yes. Every piece begins as an AI-generated composition, then is hand-curated, refined, and prepared for archival print. We believe AI is a new medium for fine art — not a shortcut, but a tool in the hands of a curator.</span>
-        <span data-lang="pl">Tak. Każda praca zaczyna się jako kompozycja wygenerowana przez AI, a następnie jest ręcznie selekcjonowana, dopracowywana i przygotowywana do druku archiwalnego. Wierzymy, że AI to nowe medium sztuki — nie skrót, lecz narzędzie w rękach kuratora.</span>
-      </div></div>
-    </div>
-
+  <div class="faq-inner reveal" id="faqList">
+    <!-- FAQ items rendered dynamically from faqData -->
   </div>
 </section>
 
@@ -3629,8 +3734,68 @@ html[lang="pl"] [data-lang="en"] { display: none; }
 </footer>
 
 <script>
+/* ========== SITE CONFIG — promo banner ==========
+   Toggle .enabled to show/hide promo banner site-wide.
+   Edit via Admin panel → Promo tab.
+=================================================== */
+let siteConfig = {
+  promo: {
+    enabled: false,
+    textEN: "Holiday drop — 15% off all prints with code AURE15",
+    textPL: "Świąteczna kolekcja — 15% rabatu kodem AURE15",
+    linkText: "",
+    linkUrl: ""
+  }
+};
+
+function renderPromoBanner() {
+  const el = document.getElementById('promoBanner');
+  const txt = document.getElementById('promoBannerText');
+  const link = document.getElementById('promoBannerLink');
+  if (!el || !txt) return;
+  // honor user dismissal (per-session)
+  const dismissed = sessionStorage.getItem('aure_promo_dismissed') === '1';
+  if (siteConfig.promo.enabled && !dismissed) {
+    const lang = document.documentElement.lang || 'en';
+    txt.textContent = (lang === 'pl') ? siteConfig.promo.textPL : siteConfig.promo.textEN;
+    if (siteConfig.promo.linkUrl && siteConfig.promo.linkText) {
+      link.href = siteConfig.promo.linkUrl;
+      link.textContent = siteConfig.promo.linkText;
+      link.style.display = '';
+    } else {
+      link.style.display = 'none';
+    }
+    el.classList.add('active');
+    document.body.classList.add('has-promo');
+  } else {
+    el.classList.remove('active');
+    document.body.classList.remove('has-promo');
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  renderPromoBanner();
+  const closeBtn = document.getElementById('promoBannerClose');
+  if (closeBtn) closeBtn.addEventListener('click', () => {
+    sessionStorage.setItem('aure_promo_dismissed', '1');
+    document.getElementById('promoBanner').classList.remove('active');
+    document.body.classList.remove('has-promo');
+  });
+});
+
+/* ========== FAQ DATA ==========
+   Edit, add, remove via Admin panel → FAQ tab.
+=================================================== */
+let faqData = [
+  { q_en: "What does \"limited edition\" mean?", q_pl: "Co oznacza „limitowana edycja”?", a_en: "Every artwork is produced in a strictly limited run of 250 numbered prints. Once an edition sells out, it is never reprinted or restocked — your piece stays genuinely rare.", a_pl: "Każde dzieło powstaje w ściśle limitowanej serii 250 numerowanych wydruków. Gdy edycja się wyprzeda, nigdy nie jest dodrukowywana — Twoja praca pozostaje naprawdę rzadka." },
+  { q_en: "What paper and printing quality do you use?", q_pl: "Jaki papier i jakość druku stosujecie?", a_en: "Prints are produced on museum-grade archival paper using pigment inks rated to resist fading for over 100 years. Each print is inspected by hand before shipping.", a_pl: "Wydruki powstają na archiwalnym papierze muzealnej jakości, atramentami pigmentowymi odpornymi na blaknięcie przez ponad 100 lat. Każdy wydruk jest sprawdzany ręcznie przed wysyłką." },
+  { q_en: "Which sizes and frames are available?", q_pl: "Jakie rozmiary i ramy są dostępne?", a_en: "Each artwork is offered in multiple sizes, with the option of an unframed print or a premium matte-black or natural-oak frame. You can select your size and frame on every product page.", a_pl: "Każde dzieło dostępne jest w kilku rozmiarach, z opcją wydruku bez ramy lub w premium ramie w kolorze matowej czerni albo naturalnego dębu. Rozmiar i ramę wybierzesz na karcie każdego produktu." },
+  { q_en: "How long does shipping take?", q_pl: "Ile trwa wysyłka?", a_en: "Prints are made to order and ship within 5–7 business days. Delivery within Poland typically takes 2–3 days; international orders 7–14 days depending on destination. Every order ships in protective, rigid packaging.", a_pl: "Wydruki realizujemy na zamówienie i wysyłamy w ciągu 5–7 dni roboczych. Dostawa na terenie Polski zwykle trwa 2–3 dni; zamówienia zagraniczne 7–14 dni w zależności od kraju. Każde zamówienie pakujemy w sztywne, ochronne opakowanie." },
+  { q_en: "Can I return or exchange a print?", q_pl: "Czy mogę zwrócić lub wymienić wydruk?", a_en: "If your print arrives damaged, contact us within 14 days and we'll replace it free of charge. As each piece is made to order, we handle other returns case by case — just reach out and we'll find a fair solution.", a_pl: "Jeśli wydruk dotrze uszkodzony, skontaktuj się z nami w ciągu 14 dni — wymienimy go bezpłatnie. Ponieważ każda praca powstaje na zamówienie, pozostałe zwroty rozpatrujemy indywidualnie — napisz do nas, a znajdziemy uczciwe rozwiązanie." },
+  { q_en: "Is the art really generated by AI?", q_pl: "Czy sztuka naprawdę jest generowana przez AI?", a_en: "Yes. Every piece begins as an AI-generated composition, then is hand-curated, refined, and prepared for archival print. We believe AI is a new medium for fine art — not a shortcut, but a tool in the hands of a curator.", a_pl: "Tak. Każda praca zaczyna się jako kompozycja wygenerowana przez AI, a następnie jest ręcznie selekcjonowana, dopracowywana i przygotowywana do druku archiwalnego. Wierzymy, że AI to nowe medium sztuki — nie skrót, lecz narzędzie w rękach kuratora." }
+];
+
 /* ========== PRODUCT DATA — 15 ARTWORKS ========== */
-const allArtworks = [
+let allArtworks = [
   { id:1,  name:"Velvet Abyss",        category:"Dark Art",    price:399, edition:"12/250",  seed:"velvet-abyss",     desc:"A descent into layered darkness where soft textures meet the void. Velvet Abyss explores the beauty hidden in absolute blackness.", images: ["assets/velvet-abyss-main.jpg","assets/velvet-abyss-detail.jpg","assets/velvet-abyss-close.jpg","assets/velvet-abyss-print.jpg"] },
   { id:2,  name:"Cathedral of Dust",   category:"Surrealism",  price:499, edition:"31/250",  seed:"cathedral-dust",   desc:"Crumbling arches of an impossible cathedral, where dust particles become constellations in forgotten light.", images: ["assets/cathedral-dust.jpg"] },
   { id:3,  name:"Neon Requiem",        category:"Portrait",    price:349, edition:"7/250",   seed:"neon-requiem",     desc:"A portrait suspended between life and electricity. The subject's gaze pierces through synthetic haze.", images: ["assets/neon-requiem.jpg"] },
@@ -4896,31 +5061,49 @@ function initAnimations() {
   window._letterRevealObserver = letterObserver;
 
   /* ===== FAQ accordion ===== */
-  document.querySelectorAll('.faq-item').forEach(item => {
-    const btn = item.querySelector('.faq-question');
-    const answer = item.querySelector('.faq-answer');
-    if (!btn || !answer) return;
-    btn.addEventListener('click', () => {
-      const isOpen = item.classList.contains('open');
-      // Close all others (single-open accordion)
-      document.querySelectorAll('.faq-item.open').forEach(other => {
-        if (other !== item) {
-          other.classList.remove('open');
-          other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
-          other.querySelector('.faq-answer').style.maxHeight = null;
+  window.renderFAQ = function() {
+    const list = document.getElementById('faqList');
+    if (!list) return;
+    const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    list.innerHTML = faqData.map((f, i) => `
+      <div class="faq-item" data-faq-idx="${i}">
+        <button class="faq-question" type="button" aria-expanded="false">
+          <span><span data-lang="en">${esc(f.q_en)}</span><span data-lang="pl">${esc(f.q_pl)}</span></span>
+          <span class="faq-icon" aria-hidden="true"></span>
+        </button>
+        <div class="faq-answer"><div class="faq-answer-inner">
+          <span data-lang="en">${esc(f.a_en)}</span>
+          <span data-lang="pl">${esc(f.a_pl)}</span>
+        </div></div>
+      </div>`).join('');
+    list.querySelectorAll('.faq-item').forEach(item => {
+      const btn = item.querySelector('.faq-question');
+      const answer = item.querySelector('.faq-answer');
+      if (!btn || !answer) return;
+      btn.addEventListener('click', () => {
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(other => {
+          if (other !== item) {
+            other.classList.remove('open');
+            other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+            other.querySelector('.faq-answer').style.maxHeight = null;
+          }
+        });
+        if (isOpen) {
+          item.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          answer.style.maxHeight = null;
+        } else {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+          answer.style.maxHeight = answer.scrollHeight + 'px';
         }
       });
-      if (isOpen) {
-        item.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-        answer.style.maxHeight = null;
-      } else {
-        item.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-        answer.style.maxHeight = answer.scrollHeight + 'px';
-      }
     });
-  });
+    // Re-apply language visibility for dynamic spans
+    if (window.applyLanguage) window.applyLanguage();
+  };
+  window.renderFAQ();
   // Recalculate open answer height on resize / language switch
   window.addEventListener('resize', () => {
     const open = document.querySelector('.faq-item.open .faq-answer');
@@ -6015,9 +6198,6 @@ const Drafts = (function() {
 ============================================================ */
 const AdminPanel = (function() {
   // SHA-256 hash of "aure2026" (NEVER store plaintext password in source)
-  // To generate a new hash: in browser console run:
-  //   crypto.subtle.digest('SHA-256', new TextEncoder().encode('YOUR_PASSWORD'))
-  //     .then(b => console.log([...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join('')));
   const DEFAULT_PWD_HASH = 'cdd271a2a40f75c77406f2889dea3c239356072e358aa5998597e2cb712b962c';
   const PWD_HASH_KEY = 'aure_admin_pwd_hash';
   const GH_OWNER = 'bestkry';
@@ -6026,40 +6206,26 @@ const AdminPanel = (function() {
   const SESSION_KEY = 'aure_admin_session';
   const TOKEN_KEY = 'aure_admin_gh_token';
   const MODE_KEY = 'aure_admin_mode';
+  const TAB_KEY = 'aure_admin_tab';
 
   let overlay = null;
+  let editingId = null; // when set, form is editing this artwork (not adding new)
+  let pendingImages = []; // {dataUrl, filename, blob} — uploaded but not committed yet
 
   async function sha256(str) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
     return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, '0')).join('');
   }
-  function currentPwdHash() {
-    try { return localStorage.getItem(PWD_HASH_KEY) || DEFAULT_PWD_HASH; }
-    catch(e) { return DEFAULT_PWD_HASH; }
-  }
-  function setPwdHash(h) {
-    try { localStorage.setItem(PWD_HASH_KEY, h); } catch(e) {}
-  }
-  function isUnlocked() {
-    try { return localStorage.getItem(SESSION_KEY) === 'unlocked'; }
-    catch(e) { return false; }
-  }
-  function markUnlocked() {
-    try { localStorage.setItem(SESSION_KEY, 'unlocked'); } catch(e) {}
-  }
-  function getMode() {
-    try { return localStorage.getItem(MODE_KEY) || 'local'; }
-    catch(e) { return 'local'; }
-  }
-  function setMode(m) {
-    try { localStorage.setItem(MODE_KEY, m); } catch(e) {}
-  }
-  function getToken() {
-    try { return localStorage.getItem(TOKEN_KEY) || ''; } catch(e) { return ''; }
-  }
-  function setToken(t) {
-    try { localStorage.setItem(TOKEN_KEY, t); } catch(e) {}
-  }
+  function currentPwdHash() { try { return localStorage.getItem(PWD_HASH_KEY) || DEFAULT_PWD_HASH; } catch(e) { return DEFAULT_PWD_HASH; } }
+  function setPwdHash(h) { try { localStorage.setItem(PWD_HASH_KEY, h); } catch(e) {} }
+  function isUnlocked() { try { return localStorage.getItem(SESSION_KEY) === 'unlocked'; } catch(e) { return false; } }
+  function markUnlocked() { try { localStorage.setItem(SESSION_KEY, 'unlocked'); } catch(e) {} }
+  function getMode() { try { return localStorage.getItem(MODE_KEY) || 'local'; } catch(e) { return 'local'; } }
+  function setMode(m) { try { localStorage.setItem(MODE_KEY, m); } catch(e) {} }
+  function getTab() { try { return localStorage.getItem(TAB_KEY) || 'artworks'; } catch(e) { return 'artworks'; } }
+  function setTab(t) { try { localStorage.setItem(TAB_KEY, t); } catch(e) {} }
+  function getToken() { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch(e) { return ''; } }
+  function setToken(t) { try { localStorage.setItem(TOKEN_KEY, t); } catch(e) {} }
 
   function build() {
     overlay = document.createElement('div');
@@ -6093,68 +6259,165 @@ const AdminPanel = (function() {
             <div class="admin-hint">Token zapisuje się tylko w Twojej przeglądarce. Wygeneruj na github.com → Settings → Developer settings → Personal access tokens (fine-grained). Daj uprawnienia: Contents: Read and write na repo bestkry/aure-d-arte.</div>
           </div>
 
-          <hr style="border:none;border-top:1px solid var(--border);margin:24px 0;">
+          <div class="admin-tabs">
+            <button class="admin-tab" data-tab="artworks">Artworks</button>
+            <button class="admin-tab" data-tab="dashboard">Dashboard</button>
+            <button class="admin-tab" data-tab="orders">Orders</button>
+            <button class="admin-tab" data-tab="faq">FAQ</button>
+            <button class="admin-tab" data-tab="promo">Promo</button>
+            <button class="admin-tab" data-tab="settings">Settings</button>
+          </div>
 
-          <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Add new artwork</h3>
-          <div class="admin-row">
-            <div><label>Name</label><input type="text" id="adminName" placeholder="Crimson Reverie"></div>
-            <div><label>Category</label>
-              <select id="adminCategory">
-                <option value="Dark Art">Dark Art</option>
-                <option value="Surrealism">Surrealism</option>
-                <option value="Portrait">Portrait</option>
-                <option value="Abstract">Abstract</option>
-              </select>
+          <!-- TAB: ARTWORKS -->
+          <div class="admin-tab-content" data-tab-content="artworks">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);" id="formTitle">Add new artwork</h3>
+            <div class="admin-row">
+              <div><label>Name</label><input type="text" id="adminName" placeholder="Crimson Reverie"></div>
+              <div><label>Category</label>
+                <select id="adminCategory">
+                  <option value="Dark Art">Dark Art</option>
+                  <option value="Surrealism">Surrealism</option>
+                  <option value="Portrait">Portrait</option>
+                  <option value="Abstract">Abstract</option>
+                </select>
+              </div>
+            </div>
+            <div class="admin-row">
+              <div><label>Price (PLN)</label><input type="number" id="adminPrice" value="449" min="99" max="9999"></div>
+              <div><label>Sold of 250</label><input type="number" id="adminSold" value="0" min="0" max="250"></div>
+            </div>
+
+            <label>Image upload (drag &amp; drop or click)</label>
+            <div class="upload-zone" id="uploadZone">
+              <p>Drop image here or click to choose</p>
+              <small>JPG / PNG / WebP · auto-resized to max 1600px</small>
+              <input type="file" id="uploadInput" accept="image/*" multiple style="display:none;">
+            </div>
+            <div class="upload-preview" id="uploadPreview"></div>
+            <div class="upload-progress" id="uploadProgress"></div>
+
+            <label>Or paste image filename(s) — comma-separated</label>
+            <input type="text" id="adminImage" placeholder="assets/your-image.jpg, assets/your-image-2.jpg">
+            <div class="admin-hint" id="adminImageHint">Każda wgrana grafika pojawi się tu jako ścieżka. Wiele zdjęć = slider w karcie produktu.</div>
+            <img class="admin-img-preview" id="adminImgPreview" alt="preview">
+
+            <label>Seed (URL slug)</label>
+            <input type="text" id="adminSeed" placeholder="crimson-reverie">
+            <label>Description (EN)</label>
+            <textarea id="adminDesc" placeholder="A descent into layered darkness..."></textarea>
+
+            <div class="admin-actions" id="adminActions"></div>
+            <div class="admin-status" id="adminStatus2"></div>
+
+            <div class="admin-drafts" id="adminDraftsBox">
+              <h4>Local drafts</h4>
+              <div id="adminDraftsList"></div>
+              <div class="admin-actions" style="margin-top:14px;">
+                <button class="admin-btn" data-action="clearDrafts">Clear all drafts</button>
+              </div>
+            </div>
+
+            <div class="admin-list">
+              <h3>Published collection <span id="adminListCount" style="color:var(--text-muted);font-size:0.8rem;"></span></h3>
+              <div class="admin-hint" style="margin-bottom:10px;">Drag rows by the ⋮⋮ handle to reorder. Click Edit to change a piece.</div>
+              <div id="adminList"></div>
+              <div class="admin-actions" style="margin-top:16px;">
+                <button class="admin-btn" data-action="saveOrder" id="saveOrderBtn" style="display:none;">Commit new order to GitHub</button>
+              </div>
             </div>
           </div>
-          <div class="admin-row">
-            <div><label>Price (PLN)</label><input type="number" id="adminPrice" value="449" min="99" max="9999"></div>
-            <div><label>Sold of 250</label><input type="number" id="adminSold" value="0" min="0" max="250"></div>
-          </div>
-          <label>Image filename (assets/...)</label>
-          <input type="text" id="adminImage" placeholder="assets/your-image.jpg">
-          <div class="admin-hint" id="adminImageHint">Najpierw wrzuć obraz do repo → folder <b>assets/</b> → wpisz ścieżkę tutaj. Możesz to zrobić ręcznie przez GitHub web UI.</div>
-          <label>Seed (URL slug)</label>
-          <input type="text" id="adminSeed" placeholder="crimson-reverie">
-          <label>Description (EN)</label>
-          <textarea id="adminDesc" placeholder="A descent into layered darkness..."></textarea>
-          <div class="admin-actions" id="adminActions"></div>
-          <div class="admin-status" id="adminStatus2"></div>
 
-          <div class="admin-drafts" id="adminDraftsBox">
-            <h4>Local drafts</h4>
-            <div id="adminDraftsList"></div>
+          <!-- TAB: DASHBOARD -->
+          <div class="admin-tab-content" data-tab-content="dashboard">
+            <div id="dashContent"></div>
+          </div>
+
+          <!-- TAB: ORDERS -->
+          <div class="admin-tab-content" data-tab-content="orders">
+            <div class="admin-row" style="margin-bottom:14px;">
+              <div style="grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <button class="admin-btn" data-action="refreshOrders">Refresh</button>
+                <button class="admin-btn" data-action="exportOrdersCsv">Export CSV</button>
+                <button class="admin-btn" data-action="clearOrders">Clear all (local)</button>
+                <span class="admin-hint" id="ordersCount" style="margin-left:auto;"></span>
+              </div>
+            </div>
+            <div id="ordersList"></div>
+          </div>
+
+          <!-- TAB: FAQ -->
+          <div class="admin-tab-content" data-tab-content="faq">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">FAQ editor</h3>
+            <div class="admin-hint" style="margin-bottom:14px;">Edit, add and reorder FAQ questions. Bilingual (PL/EN). Saves directly into index.html via GitHub when in Publish mode; in Local/Draft modes changes apply only to this browser.</div>
+            <div id="faqEditorList"></div>
             <div class="admin-actions" style="margin-top:14px;">
-              <button class="admin-btn" data-action="clearDrafts">Clear all drafts</button>
+              <button class="admin-btn primary" data-action="addFaq">Add new question</button>
+              <button class="admin-btn" data-action="saveFaq">Save FAQ to GitHub</button>
             </div>
+            <div class="admin-status" id="adminFaqStatus"></div>
           </div>
 
-          <div class="admin-list">
-            <h3>Published collection <span id="adminListCount" style="color:var(--text-muted);font-size:0.8rem;"></span></h3>
-            <div id="adminList"></div>
-          </div>
-
-          <details class="admin-pwd-change">
-            <summary>Change studio password</summary>
-            <label>New password</label>
-            <input type="password" id="adminNewPwd" placeholder="New password (min 6 chars)">
-            <label>Confirm new password</label>
-            <input type="password" id="adminNewPwd2" placeholder="Repeat new password">
+          <!-- TAB: PROMO -->
+          <div class="admin-tab-content" data-tab-content="promo">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Promo banner</h3>
+            <div class="admin-hint" style="margin-bottom:14px;">Top-of-site banner. Customers can dismiss for the session.</div>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <input type="checkbox" id="promoEnabled" style="width:auto;margin:0;"> Show banner
+            </label>
+            <label>Text (EN)</label>
+            <input type="text" id="promoTextEN" placeholder="Holiday drop — 15% off">
+            <label>Text (PL)</label>
+            <input type="text" id="promoTextPL" placeholder="Świąteczna kolekcja — 15% rabatu">
+            <div class="admin-row">
+              <div><label>Link text (optional)</label><input type="text" id="promoLinkText" placeholder="Shop now"></div>
+              <div><label>Link URL (optional)</label><input type="text" id="promoLinkUrl" placeholder="#shop"></div>
+            </div>
             <div class="admin-actions">
-              <button class="admin-btn primary" data-action="changePwd">Save new password</button>
+              <button class="admin-btn primary" data-action="savePromo">Save promo to GitHub</button>
+              <button class="admin-btn" data-action="previewPromo">Preview locally</button>
             </div>
-          </details>
+            <div class="admin-status" id="adminPromoStatus"></div>
+          </div>
+
+          <!-- TAB: SETTINGS -->
+          <div class="admin-tab-content" data-tab-content="settings">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Settings</h3>
+            <details class="admin-pwd-change" open>
+              <summary>Change studio password</summary>
+              <label>New password</label>
+              <input type="password" id="adminNewPwd" placeholder="New password (min 6 chars)">
+              <label>Confirm new password</label>
+              <input type="password" id="adminNewPwd2" placeholder="Repeat new password">
+              <div class="admin-actions">
+                <button class="admin-btn primary" data-action="changePwd">Save new password</button>
+              </div>
+            </details>
+            <div class="admin-status" id="adminSettingsStatus"></div>
+            <div class="admin-hint" style="margin-top:30px;">
+              <b style="color:var(--text-primary);">Storage keys (this browser):</b><br>
+              <code style="color:var(--gold);">aure_admin_pwd_hash</code> · password hash (SHA-256)<br>
+              <code style="color:var(--gold);">aure_admin_gh_token</code> · GitHub PAT<br>
+              <code style="color:var(--gold);">aure_admin_drafts</code> · local artwork drafts<br>
+              <code style="color:var(--gold);">aure_orders</code> · customer orders (this browser)<br>
+              <code style="color:var(--gold);">aure_admin_mode</code> · last selected mode
+            </div>
+          </div>
         </div>
       </div>`;
     document.body.appendChild(overlay);
     overlay.addEventListener('click', handleClick);
     overlay.addEventListener('change', handleChange);
+    overlay.addEventListener('input', handleInput);
     overlay.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && e.target.id === 'adminPwd') { e.preventDefault(); tryUnlock(); }
     });
+    initUploadZone();
   }
 
   function handleClick(e) {
+    const tab = e.target.closest('.admin-tab');
+    if (tab) { switchTab(tab.dataset.tab); return; }
+
     const act = e.target.dataset.action;
     if (!act) {
       if (e.target === overlay) close();
@@ -6165,6 +6428,8 @@ const AdminPanel = (function() {
     if (act === 'save') saveArtwork();
     if (act === 'export') exportJSON();
     if (act === 'delete') tryDelete(parseInt(e.target.dataset.id));
+    if (act === 'edit') startEdit(parseInt(e.target.dataset.id));
+    if (act === 'cancelEdit') cancelEdit();
     if (act === 'publishDraft') publishDraft(parseInt(e.target.dataset.id));
     if (act === 'deleteDraft') { Drafts.remove(parseInt(e.target.dataset.id)); afterDraftsChanged(); }
     if (act === 'clearDrafts') {
@@ -6173,10 +6438,37 @@ const AdminPanel = (function() {
       }
     }
     if (act === 'changePwd') changePassword();
+    if (act === 'soldUp') updateSold(parseInt(e.target.dataset.id), 1);
+    if (act === 'soldDown') updateSold(parseInt(e.target.dataset.id), -1);
+    if (act === 'soldSet') updateSoldExact(parseInt(e.target.dataset.id));
+    if (act === 'saveOrder') saveReorder();
+    if (act === 'addFaq') addFaqItem();
+    if (act === 'toggleFaq') toggleFaqItem(parseInt(e.target.dataset.idx));
+    if (act === 'deleteFaq') deleteFaqItem(parseInt(e.target.dataset.idx));
+    if (act === 'saveFaq') saveFaqToGitHub();
+    if (act === 'savePromo') savePromoToGitHub();
+    if (act === 'previewPromo') previewPromo();
+    if (act === 'refreshOrders') renderOrders();
+    if (act === 'exportOrdersCsv') exportOrdersCSV();
+    if (act === 'clearOrders') clearOrders();
+    if (act === 'setOrderStatus') setOrderStatus(e.target.dataset.id, e.target.dataset.status);
+    if (act === 'toggleOrder') toggleOrder(e.target.dataset.id);
+    if (act === 'removePendingImg') removePendingImage(parseInt(e.target.dataset.idx));
   }
   function handleChange(e) {
     if (e.target.name === 'adminMode') { setMode(e.target.value); applyMode(); }
     if (e.target.id === 'adminGhToken') setToken(e.target.value.trim());
+  }
+  function handleInput(e) {
+    if (e.target.id === 'adminImage') updateImgPreview();
+  }
+
+  function updateImgPreview() {
+    const txt = overlay.querySelector('#adminImage').value.trim();
+    const img = overlay.querySelector('#adminImgPreview');
+    const first = txt.split(',')[0].trim();
+    if (first) { img.src = first; img.classList.add('show'); }
+    else img.classList.remove('show');
   }
 
   function show() {
@@ -6185,9 +6477,7 @@ const AdminPanel = (function() {
     if (isUnlocked()) showMain();
     else showGate();
   }
-  function close() {
-    if (overlay) overlay.classList.remove('active');
-  }
+  function close() { if (overlay) overlay.classList.remove('active'); }
   function showGate() {
     overlay.querySelector('#adminGate').style.display = '';
     overlay.querySelector('#adminMain').style.display = 'none';
@@ -6197,21 +6487,26 @@ const AdminPanel = (function() {
     overlay.querySelector('#adminGate').style.display = 'none';
     overlay.querySelector('#adminMain').style.display = '';
     overlay.querySelector('#adminGhToken').value = getToken();
-    // set mode radio
     const mode = getMode();
     overlay.querySelectorAll('input[name="adminMode"]').forEach(r => { r.checked = (r.value === mode); });
     applyMode();
-    renderList();
-    renderDrafts();
+    switchTab(getTab());
+  }
+
+  function switchTab(tab) {
+    setTab(tab);
+    overlay.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    overlay.querySelectorAll('.admin-tab-content').forEach(c => c.classList.toggle('active', c.dataset.tabContent === tab));
+    if (tab === 'artworks') { renderList(); renderDrafts(); }
+    if (tab === 'dashboard') renderDashboard();
+    if (tab === 'orders') renderOrders();
+    if (tab === 'faq') renderFaqEditor();
+    if (tab === 'promo') loadPromoForm();
   }
 
   function applyMode() {
     const mode = getMode();
-    // highlight active label
-    overlay.querySelectorAll('.admin-mode label').forEach(l => {
-      l.classList.toggle('active', l.dataset.mode === mode);
-    });
-    // description text
+    overlay.querySelectorAll('.admin-mode label').forEach(l => l.classList.toggle('active', l.dataset.mode === mode));
     const desc = overlay.querySelector('#adminModeDesc');
     if (mode === 'local') {
       desc.innerHTML = '<b style="color:var(--gold);">LOCAL TEST</b> — formularz nie zapisuje nigdzie. Wypełnij pola, zobacz JSON w konsoli, używaj do treningu. Nic nie wychodzi z przeglądarki.';
@@ -6220,24 +6515,27 @@ const AdminPanel = (function() {
     } else {
       desc.innerHTML = '<b style="color:var(--gold);">PUBLISH</b> — commit prosto do GitHub. Wymaga tokena. GitHub Pages odbuduje się w ~60s i praca będzie widoczna dla wszystkich.';
     }
-    // show/hide token field
     overlay.querySelector('#adminTokenWrap').style.display = (mode === 'publish') ? '' : 'none';
-    // action buttons depending on mode
     const actions = overlay.querySelector('#adminActions');
+    const editing = editingId !== null;
     if (mode === 'local') {
-      actions.innerHTML = `<button class="admin-btn primary" data-action="save">Preview in console</button>
-                          <button class="admin-btn" data-action="export">Export JSON</button>`;
+      actions.innerHTML = `<button class="admin-btn primary" data-action="save">${editing ? 'Update (local)' : 'Preview in console'}</button>
+                          <button class="admin-btn" data-action="export">Export JSON</button>
+                          ${editing ? '<button class="admin-btn" data-action="cancelEdit">Cancel edit</button>' : ''}`;
     } else if (mode === 'draft') {
-      actions.innerHTML = `<button class="admin-btn primary" data-action="save">Save as draft</button>
-                          <button class="admin-btn" data-action="export">Export JSON</button>`;
+      actions.innerHTML = `<button class="admin-btn primary" data-action="save">${editing ? 'Save edits to draft' : 'Save as draft'}</button>
+                          <button class="admin-btn" data-action="export">Export JSON</button>
+                          ${editing ? '<button class="admin-btn" data-action="cancelEdit">Cancel edit</button>' : ''}`;
     } else {
-      actions.innerHTML = `<button class="admin-btn primary" data-action="save">Commit to GitHub</button>
-                          <button class="admin-btn" data-action="export">Export JSON</button>`;
+      actions.innerHTML = `<button class="admin-btn primary" data-action="save">${editing ? 'Commit edits to GitHub' : 'Commit to GitHub'}</button>
+                          <button class="admin-btn" data-action="export">Export JSON</button>
+                          ${editing ? '<button class="admin-btn" data-action="cancelEdit">Cancel edit</button>' : ''}`;
     }
   }
 
   function status(id, msg, isErr) {
     const el = overlay.querySelector('#' + id);
+    if (!el) return;
     el.textContent = msg;
     el.classList.add('show');
     el.classList.toggle('error', !!isErr);
@@ -6248,43 +6546,287 @@ const AdminPanel = (function() {
     const pwd = overlay.querySelector('#adminPwd').value;
     if (!pwd) { status('adminStatus', 'Enter the password.', true); return; }
     const h = await sha256(pwd);
-    if (h === currentPwdHash()) {
-      markUnlocked();
-      showMain();
-    } else {
-      status('adminStatus', 'Wrong password.', true);
-    }
+    if (h === currentPwdHash()) { markUnlocked(); showMain(); }
+    else status('adminStatus', 'Wrong password.', true);
   }
 
   async function changePassword() {
     const a = overlay.querySelector('#adminNewPwd').value;
     const b = overlay.querySelector('#adminNewPwd2').value;
-    if (!a || a.length < 6) { status('adminStatus2', 'Password must be at least 6 chars.', true); return; }
-    if (a !== b) { status('adminStatus2', 'Passwords do not match.', true); return; }
+    if (!a || a.length < 6) { status('adminSettingsStatus', 'Password must be at least 6 chars.', true); return; }
+    if (a !== b) { status('adminSettingsStatus', 'Passwords do not match.', true); return; }
     const h = await sha256(a);
     setPwdHash(h);
     overlay.querySelector('#adminNewPwd').value = '';
     overlay.querySelector('#adminNewPwd2').value = '';
-    status('adminStatus2', '✓ Password updated. Stored as SHA-256 hash in this browser only.');
+    status('adminSettingsStatus', '✓ Password updated. Stored as SHA-256 hash in this browser only.');
   }
 
+  /* ======== ARTWORK LIST + REORDER ======== */
+  let orderDirty = false;
   function renderList() {
     const list = overlay.querySelector('#adminList');
     const published = allArtworks.filter(a => !a.isDraft);
     overlay.querySelector('#adminListCount').textContent = `(${published.length} items)`;
-    list.innerHTML = published.map(a => `
-      <div class="admin-item">
-        <span class="admin-item-name">${a.name}</span>
-        <span class="admin-item-meta">${a.category} · ${a.price} PLN · ${a.edition}</span>
-        <button class="admin-item-del" data-action="delete" data-id="${a.id}">Delete</button>
+    const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    list.innerHTML = published.map(a => {
+      const sold = parseInt(String(a.edition).split('/')[0]) || 0;
+      const total = parseInt(String(a.edition).split('/')[1]) || 250;
+      const img = (a.images && a.images[0]) || '';
+      return `
+        <div class="admin-art-row" draggable="true" data-art-id="${a.id}">
+          <div class="admin-art-handle" title="Drag to reorder">⋮⋮</div>
+          <div class="admin-art-thumb">${img ? `<img src="${esc(img)}" alt="" loading="lazy">` : ''}</div>
+          <div class="admin-art-info">
+            <div class="admin-art-name">${esc(a.name)}</div>
+            <div class="admin-art-meta">${esc(a.category)} · ${a.price} PLN</div>
+          </div>
+          <div class="admin-art-sold">
+            <button data-action="soldDown" data-id="${a.id}" title="-1 sold">−</button>
+            <input type="number" data-sold-input="${a.id}" value="${sold}" min="0" max="${total}">
+            <button data-action="soldUp" data-id="${a.id}" title="+1 sold">+</button>
+            <button data-action="soldSet" data-id="${a.id}" title="Commit">✓</button>
+            <span style="margin-left:4px;color:var(--text-muted);font-size:0.65rem;">/${total}</span>
+          </div>
+          <button class="admin-art-btn" data-action="edit" data-id="${a.id}">Edit</button>
+          <button class="admin-art-btn danger" data-action="delete" data-id="${a.id}">Delete</button>
+        </div>`;
+    }).join('');
+    initRowDrag();
+    orderDirty = false;
+    overlay.querySelector('#saveOrderBtn').style.display = 'none';
+  }
+
+  function initRowDrag() {
+    const rows = overlay.querySelectorAll('.admin-art-row');
+    let dragged = null;
+    rows.forEach(row => {
+      row.addEventListener('dragstart', e => {
+        dragged = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', row.dataset.artId); } catch {}
+      });
+      row.addEventListener('dragend', () => {
+        row.classList.remove('dragging');
+        rows.forEach(r => r.classList.remove('drag-over'));
+      });
+      row.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (dragged && dragged !== row) row.classList.add('drag-over');
+      });
+      row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+      row.addEventListener('drop', e => {
+        e.preventDefault();
+        row.classList.remove('drag-over');
+        if (!dragged || dragged === row) return;
+        const parent = row.parentNode;
+        const rect = row.getBoundingClientRect();
+        const before = (e.clientY - rect.top) < rect.height / 2;
+        parent.insertBefore(dragged, before ? row : row.nextSibling);
+        // Reorder allArtworks based on new DOM order (only published artworks)
+        const drafts = allArtworks.filter(a => a.isDraft);
+        const newOrder = [];
+        parent.querySelectorAll('.admin-art-row').forEach(r => {
+          const id = parseInt(r.dataset.artId);
+          const art = allArtworks.find(a => a.id === id);
+          if (art) newOrder.push(art);
+        });
+        allArtworks.length = 0;
+        drafts.forEach(d => allArtworks.push(d));
+        newOrder.forEach(a => allArtworks.push(a));
+        orderDirty = true;
+        overlay.querySelector('#saveOrderBtn').style.display = '';
+        // Re-render shop
+        if (typeof renderShopGrid === 'function') {
+          const fb = document.querySelector('.filter-btn.active');
+          renderShopGrid(fb ? fb.dataset.filter : 'all');
+        }
+      });
+    });
+  }
+
+  async function saveReorder() {
+    const mode = getMode();
+    if (mode !== 'publish') {
+      status('adminStatus2', 'Switch to Publish mode to commit reorder to GitHub.', true);
+      return;
+    }
+    if (!orderDirty) { status('adminStatus2', 'Order has not changed.'); return; }
+    status('adminStatus2', 'Committing reorder to GitHub…');
+    const ok = await commitArtworksArray('Reorder artworks');
+    if (ok) { orderDirty = false; overlay.querySelector('#saveOrderBtn').style.display = 'none'; }
+  }
+
+  /* ======== SOLD QUICK UPDATE ======== */
+  async function updateSold(id, delta) {
+    const art = allArtworks.find(a => a.id === id);
+    if (!art) return;
+    const parts = String(art.edition).split('/');
+    let sold = (parseInt(parts[0]) || 0) + delta;
+    const total = parseInt(parts[1]) || 250;
+    sold = Math.max(0, Math.min(total, sold));
+    art.edition = `${sold}/${total}`;
+    await persistSoldChange(art);
+  }
+  async function updateSoldExact(id) {
+    const inp = overlay.querySelector(`[data-sold-input="${id}"]`);
+    const art = allArtworks.find(a => a.id === id);
+    if (!inp || !art) return;
+    const total = parseInt(String(art.edition).split('/')[1]) || 250;
+    let sold = Math.max(0, Math.min(total, parseInt(inp.value) || 0));
+    art.edition = `${sold}/${total}`;
+    await persistSoldChange(art);
+  }
+  async function persistSoldChange(art) {
+    const mode = getMode();
+    if (typeof renderShopGrid === 'function') {
+      const fb = document.querySelector('.filter-btn.active');
+      renderShopGrid(fb ? fb.dataset.filter : 'all');
+    }
+    if (mode === 'publish') {
+      status('adminStatus2', `Committing sold update for ${art.name}…`);
+      await commitArtworksArray(`Update sold count: ${art.name} → ${art.edition}`);
+    } else {
+      status('adminStatus2', `(${mode}) Sold updated locally to ${art.edition}. Switch to Publish mode and click ✓ again to commit.`);
+    }
+  }
+
+  /* ======== UPLOAD ZONE ======== */
+  function initUploadZone() {
+    const zone = overlay.querySelector('#uploadZone');
+    const input = overlay.querySelector('#uploadInput');
+    if (!zone || !input) return;
+    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+    zone.addEventListener('drop', async e => {
+      e.preventDefault();
+      zone.classList.remove('dragover');
+      const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+      for (const f of files) await handleImageFile(f);
+    });
+    input.addEventListener('change', async e => {
+      const files = [...e.target.files];
+      for (const f of files) await handleImageFile(f);
+      input.value = '';
+    });
+  }
+
+  async function handleImageFile(file) {
+    const slugBase = (overlay.querySelector('#adminSeed').value.trim() || overlay.querySelector('#adminName').value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'artwork-' + Date.now());
+    // resize/compress via canvas
+    try {
+      const { blob, dataUrl } = await resizeImage(file, 1600, 0.85);
+      const idx = pendingImages.length;
+      const ext = (blob.type === 'image/png') ? 'png' : 'jpg';
+      const filename = `assets/${slugBase}${idx === 0 ? '' : '-' + (idx+1)}.${ext}`;
+      pendingImages.push({ dataUrl, blob, filename });
+      renderPendingImages();
+      // Auto-append filename to image field
+      const inp = overlay.querySelector('#adminImage');
+      const cur = inp.value.trim();
+      inp.value = cur ? cur + ', ' + filename : filename;
+      updateImgPreview();
+    } catch(e) {
+      console.error('Image processing error:', e);
+      status('adminStatus2', 'Image processing error: ' + e.message, true);
+    }
+  }
+
+  function resizeImage(file, maxDim, quality) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
+          else { width = Math.round(width * maxDim / height); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height); // black bg for PNG transparency
+        ctx.drawImage(img, 0, 0, width, height);
+        const outType = (file.type === 'image/png') ? 'image/png' : 'image/jpeg';
+        canvas.toBlob(blob => {
+          if (!blob) return reject(new Error('blob failed'));
+          const dataUrl = canvas.toDataURL(outType, quality);
+          resolve({ blob, dataUrl });
+        }, outType, quality);
+      };
+      img.onerror = () => reject(new Error('image load failed'));
+      const reader = new FileReader();
+      reader.onload = e => { img.src = e.target.result; };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderPendingImages() {
+    const wrap = overlay.querySelector('#uploadPreview');
+    wrap.innerHTML = pendingImages.map((p, i) => `
+      <div class="upload-preview-item">
+        <img src="${p.dataUrl}" alt="">
+        <button class="upload-del" data-action="removePendingImg" data-idx="${i}" title="Remove">✕</button>
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.7);font-size:0.55rem;padding:2px 4px;color:#c9a96e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.filename.replace('assets/','')}</div>
       </div>`).join('');
   }
 
+  function removePendingImage(idx) {
+    if (idx < 0 || idx >= pendingImages.length) return;
+    const removed = pendingImages.splice(idx, 1)[0];
+    renderPendingImages();
+    // Remove its filename from text field
+    const inp = overlay.querySelector('#adminImage');
+    const list = inp.value.split(',').map(s => s.trim()).filter(s => s !== removed.filename);
+    inp.value = list.join(', ');
+    updateImgPreview();
+  }
+
+  async function uploadPendingImagesToGitHub(token, prog) {
+    if (!pendingImages.length) return true;
+    for (let i = 0; i < pendingImages.length; i++) {
+      const p = pendingImages[i];
+      prog(`Uploading image ${i+1}/${pendingImages.length}: ${p.filename}…`);
+      // Convert blob to base64
+      const base64 = await blobToBase64(p.blob);
+      const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${p.filename}`;
+      // Check if exists (need sha for update)
+      let sha = undefined;
+      try {
+        const r0 = await fetch(url + `?ref=${GH_BRANCH}`, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
+        if (r0.ok) { const j = await r0.json(); sha = j.sha; }
+      } catch {}
+      const body = { message: `Upload image: ${p.filename}`, content: base64, branch: GH_BRANCH };
+      if (sha) body.sha = sha;
+      const r = await fetch(url, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) {
+        const t = await r.text();
+        throw new Error(`Image upload failed (${p.filename}): ${r.status} ${t.slice(0,150)}`);
+      }
+    }
+    return true;
+  }
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result.split(',')[1]);
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+  }
+
+  /* ======== DRAFTS LIST ======== */
   function renderDrafts() {
     const list = overlay.querySelector('#adminDraftsList');
     const drafts = Drafts.all();
     if (!drafts.length) {
-      list.innerHTML = '<div class="admin-drafts-empty">No drafts yet. Switch to Draft mode and save one to preview it on the live site.</div>';
+      list.innerHTML = '<div class="admin-drafts-empty">No drafts yet.</div>';
       return;
     }
     list.innerHTML = drafts.map(d => `
@@ -6295,71 +6837,100 @@ const AdminPanel = (function() {
         <button class="admin-draft-btn danger" data-action="deleteDraft" data-id="${d.id}">Delete</button>
       </div>`).join('');
   }
-
   function afterDraftsChanged() {
     Drafts.mergeIntoArtworks();
     renderDrafts();
     if (typeof renderShopGrid === 'function') {
-      const activeFilter = document.querySelector('.filter-btn.active');
-      renderShopGrid(activeFilter ? activeFilter.dataset.filter : 'all');
+      const fb = document.querySelector('.filter-btn.active');
+      renderShopGrid(fb ? fb.dataset.filter : 'all');
     }
     if (window.LiveStock) window.LiveStock.refresh();
   }
 
+  /* ======== FORM I/O ======== */
   function readForm() {
     const name = overlay.querySelector('#adminName').value.trim();
     const category = overlay.querySelector('#adminCategory').value;
     const price = parseInt(overlay.querySelector('#adminPrice').value);
-    const sold = parseInt(overlay.querySelector('#adminSold').value);
-    const image = overlay.querySelector('#adminImage').value.trim();
+    const sold = parseInt(overlay.querySelector('#adminSold').value) || 0;
+    const imgRaw = overlay.querySelector('#adminImage').value.trim();
+    const images = imgRaw ? imgRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
     const seed = overlay.querySelector('#adminSeed').value.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const desc = overlay.querySelector('#adminDesc').value.trim();
     if (!name || !category || !price || !desc) return null;
-    return {
-      name, category, price,
-      edition: `${sold}/250`, seed, desc,
-      images: image ? [image] : []
-    };
+    return { name, category, price, edition: `${sold}/250`, seed, desc, images };
   }
   function clearForm() {
-    ['adminName','adminImage','adminSeed','adminDesc'].forEach(id => {
-      overlay.querySelector('#' + id).value = '';
-    });
+    ['adminName','adminImage','adminSeed','adminDesc'].forEach(id => { overlay.querySelector('#' + id).value = ''; });
     overlay.querySelector('#adminPrice').value = '449';
     overlay.querySelector('#adminSold').value = '0';
+    overlay.querySelector('#adminImgPreview').classList.remove('show');
+    pendingImages = [];
+    renderPendingImages();
+    editingId = null;
+    overlay.querySelector('#formTitle').textContent = 'Add new artwork';
+    applyMode();
   }
+
+  function startEdit(id) {
+    const art = allArtworks.find(a => a.id === id);
+    if (!art) return;
+    editingId = id;
+    overlay.querySelector('#formTitle').textContent = `Edit: ${art.name}`;
+    overlay.querySelector('#adminName').value = art.name;
+    overlay.querySelector('#adminCategory').value = art.category;
+    overlay.querySelector('#adminPrice').value = art.price;
+    overlay.querySelector('#adminSold').value = parseInt(String(art.edition).split('/')[0]) || 0;
+    overlay.querySelector('#adminImage').value = (art.images || []).join(', ');
+    overlay.querySelector('#adminSeed').value = art.seed || '';
+    overlay.querySelector('#adminDesc').value = art.desc || '';
+    pendingImages = [];
+    renderPendingImages();
+    updateImgPreview();
+    applyMode();
+    // scroll to form
+    overlay.querySelector('#formTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function cancelEdit() { clearForm(); status('adminStatus2', 'Edit cancelled.'); }
 
   async function saveArtwork() {
     const mode = getMode();
     const data = readForm();
     if (!data) { status('adminStatus2', 'Fill name, category, price, description.', true); return; }
+    // LOCAL
     if (mode === 'local') {
-      const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
-      const preview = { ...data, id: maxId + 1 };
       console.group('%c[Aure Admin · LOCAL test]', 'color:#c9a96e;font-weight:bold;');
-      console.log('Artwork preview (NOT saved):', preview);
-      console.log('JS literal:', `{ id:${preview.id}, name:"${preview.name}", category:"${preview.category}", price:${preview.price}, edition:"${preview.edition}", seed:"${preview.seed}", desc:"${preview.desc}", images:${JSON.stringify(preview.images)} }`);
+      console.log('Artwork preview (NOT saved):', { id: editingId || 'NEW', ...data });
       console.groupEnd();
-      status('adminStatus2', '✓ Local preview — see browser console (F12) for full JSON. Nothing was saved.');
+      status('adminStatus2', '✓ Local preview — see browser console. Nothing saved.');
       return;
     }
+    // DRAFT
     if (mode === 'draft') {
-      const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
-      const draft = Drafts.add({ ...data, id: maxId + 1 });
-      status('adminStatus2', `✓ Saved as draft. Visible on your site with DRAFT badge. Switch tabs to see it.`);
+      if (editingId !== null) {
+        // editing existing — apply changes in place (no draft created)
+        const art = allArtworks.find(a => a.id === editingId);
+        if (art) { Object.assign(art, data); }
+        status('adminStatus2', `✓ Edits applied locally (not committed). Switch to Publish mode to push to GitHub.`);
+      } else {
+        const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
+        Drafts.add({ ...data, id: maxId + 1 });
+        status('adminStatus2', `✓ Saved as draft.`);
+      }
       clearForm();
       afterDraftsChanged();
+      renderList();
       return;
     }
-    // publish mode
-    await tryCommit(data);
+    // PUBLISH
+    await commitArtworkCreateOrEdit(data);
   }
 
   function exportJSON() {
     const data = readForm();
     if (!data) { status('adminStatus2', 'Fill all fields.', true); return; }
     const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
-    const newArt = { id: maxId + 1, ...data };
+    const newArt = { id: editingId || maxId + 1, ...data };
     const updated = [...allArtworks.filter(a => !a.isDraft), newArt];
     const json = JSON.stringify(updated, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
@@ -6373,30 +6944,34 @@ const AdminPanel = (function() {
   async function publishDraft(draftId) {
     const draft = Drafts.find(draftId);
     if (!draft) return;
-    if (!confirm(`Publish draft "${draft.name}" to live site? This will commit to GitHub.`)) return;
+    if (!confirm(`Publish draft "${draft.name}" to live site?`)) return;
     const { isDraft, createdAt, id, ...data } = draft;
-    const ok = await tryCommit(data);
-    if (ok) {
-      Drafts.remove(draftId);
-      afterDraftsChanged();
-    }
+    const ok = await commitArtworkCreateOrEdit(data);
+    if (ok) { Drafts.remove(draftId); afterDraftsChanged(); }
   }
 
-  async function tryCommit(data) {
+  /* ======== GITHUB COMMITS ======== */
+  // Helper: read current index.html, mutate allArtworks block, commit back
+  async function commitArtworksArray(commitMessage) {
     const token = overlay.querySelector('#adminGhToken').value.trim() || getToken();
-    if (!token) { status('adminStatus2', 'Provide GitHub token first (Publish mode requires it).', true); return false; }
+    if (!token) { status('adminStatus2', 'Provide GitHub token (Publish mode).', true); return false; }
     setToken(token);
-    status('adminStatus2', 'Reading current index.html from GitHub…');
     try {
-      const indexUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/index.html?ref=${GH_BRANCH}`;
-      const r1 = await fetch(indexUrl, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
-      if (!r1.ok) throw new Error('Failed to read index.html: ' + r1.status);
+      const idxUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/index.html?ref=${GH_BRANCH}`;
+      const r1 = await fetch(idxUrl, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
+      if (!r1.ok) throw new Error('Read failed: ' + r1.status);
       const meta = await r1.json();
       const current = atob(meta.content.replace(/\n/g, ''));
-      const startMarker = 'const allArtworks = [';
-      const startIdx = current.indexOf(startMarker);
-      if (startIdx === -1) throw new Error('Could not locate allArtworks in index.html');
-      let i = startIdx + startMarker.length, depth = 1;
+      const startMarker = 'let allArtworks = [';
+      let s = current.indexOf(startMarker);
+      if (s === -1) {
+        // backward-compat with old const
+        const alt = 'const allArtworks = [';
+        s = current.indexOf(alt);
+        if (s === -1) throw new Error('Could not locate allArtworks');
+      }
+      // find closing ]
+      let i = s + current.substr(s).indexOf('[') + 1, depth = 1;
       while (i < current.length && depth > 0) {
         const c = current[i];
         if (c === '[') depth++;
@@ -6405,37 +6980,71 @@ const AdminPanel = (function() {
         i++;
       }
       const endIdx = i;
-      const before = current.slice(0, endIdx);
+      const before = current.slice(0, current.indexOf('[', s) + 1);
       const after = current.slice(endIdx);
-      // Find max id in published artworks
-      const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
-      const newArt = { id: maxId + 1, ...data };
-      const esc = s => String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-      const imgArr = (newArt.images || []).map(x => `"${esc(x)}"`).join(',');
-      const entry = `,\n  { id:${newArt.id}, name:"${esc(newArt.name)}", category:"${esc(newArt.category)}", price:${newArt.price}, edition:"${esc(newArt.edition)}", seed:"${esc(newArt.seed)}", desc:"${esc(newArt.desc)}", images:[${imgArr}] }`;
-      const updated = before + entry + '\n' + after;
-
-      status('adminStatus2', 'Committing to GitHub…');
-      const putR = await fetch(indexUrl, {
+      // Serialize current allArtworks (published only)
+      const published = allArtworks.filter(a => !a.isDraft);
+      const esc = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const body = published.map(a => {
+        const imgs = (a.images || []).map(x => `"${esc(x)}"`).join(',');
+        return `\n  { id:${a.id}, name:"${esc(a.name)}", category:"${esc(a.category)}", price:${a.price}, edition:"${esc(a.edition)}", seed:"${esc(a.seed)}", desc:"${esc(a.desc)}", images:[${imgs}] }`;
+      }).join(',');
+      const updated = before + body + '\n' + after;
+      const putR = await fetch(idxUrl, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `Add artwork: ${newArt.name} (via admin panel)`,
+          message: commitMessage,
           content: btoa(unescape(encodeURIComponent(updated))),
           sha: meta.sha,
           branch: GH_BRANCH
         })
       });
-      if (!putR.ok) {
-        const errBody = await putR.text();
-        throw new Error('Commit failed: ' + putR.status + ' — ' + errBody.slice(0, 200));
-      }
-      status('adminStatus2', `✓ Committed! GitHub Pages will redeploy in ~60s.`);
-      allArtworks.push(newArt);
-      renderList();
-      clearForm();
+      if (!putR.ok) { const t = await putR.text(); throw new Error('Commit failed: ' + putR.status + ' — ' + t.slice(0,150)); }
+      status('adminStatus2', `✓ Committed: ${commitMessage}. GH Pages rebuild ~60s.`);
       return true;
-    } catch (e) {
+    } catch(e) {
+      status('adminStatus2', 'Error: ' + e.message, true);
+      return false;
+    }
+  }
+
+  async function commitArtworkCreateOrEdit(data) {
+    const token = overlay.querySelector('#adminGhToken').value.trim() || getToken();
+    if (!token) { status('adminStatus2', 'Provide GitHub token (Publish mode).', true); return false; }
+    setToken(token);
+    const prog = overlay.querySelector('#uploadProgress');
+    function setProg(msg) { prog.textContent = msg; prog.classList.add('show'); status('adminStatus2', msg); }
+    try {
+      // 1) Upload pending images first
+      if (pendingImages.length) {
+        setProg(`Uploading ${pendingImages.length} image(s)…`);
+        await uploadPendingImagesToGitHub(token, setProg);
+        pendingImages = []; renderPendingImages();
+      }
+      // 2) Update artwork in memory
+      if (editingId !== null) {
+        const art = allArtworks.find(a => a.id === editingId);
+        if (!art) throw new Error('Editing target not found');
+        Object.assign(art, data);
+      } else {
+        const maxId = Math.max(0, ...allArtworks.filter(a => !a.isDraft).map(a => a.id));
+        allArtworks.push({ id: maxId + 1, ...data });
+      }
+      // 3) Commit entire artworks array
+      const ok = await commitArtworksArray(editingId !== null ? `Edit artwork: ${data.name}` : `Add artwork: ${data.name}`);
+      prog.classList.remove('show');
+      if (ok) {
+        clearForm();
+        renderList();
+        if (typeof renderShopGrid === 'function') {
+          const fb = document.querySelector('.filter-btn.active');
+          renderShopGrid(fb ? fb.dataset.filter : 'all');
+        }
+      }
+      return ok;
+    } catch(e) {
+      prog.classList.remove('show');
       status('adminStatus2', 'Error: ' + e.message, true);
       return false;
     }
@@ -6445,59 +7054,456 @@ const AdminPanel = (function() {
     const art = allArtworks.find(a => a.id === id);
     if (!art) return;
     if (!confirm(`Delete "${art.name}"? This will commit to GitHub.`)) return;
+    const mode = getMode();
+    if (mode !== 'publish') {
+      status('adminStatus2', 'Switch to Publish mode to delete (local-only delete not supported).', true);
+      return;
+    }
+    // Remove from in-memory array and recommit
+    const idx = allArtworks.findIndex(a => a.id === id);
+    if (idx >= 0) allArtworks.splice(idx, 1);
+    const ok = await commitArtworksArray(`Remove artwork: ${art.name}`);
+    if (ok) {
+      renderList();
+      if (typeof renderShopGrid === 'function') {
+        const fb = document.querySelector('.filter-btn.active');
+        renderShopGrid(fb ? fb.dataset.filter : 'all');
+      }
+    } else {
+      // rollback
+      allArtworks.splice(idx, 0, art);
+      renderList();
+    }
+  }
+
+  /* ======== DASHBOARD ======== */
+  function renderDashboard() {
+    const published = allArtworks.filter(a => !a.isDraft);
+    const totalEditions = published.reduce((s, a) => {
+      const t = parseInt(String(a.edition).split('/')[1]) || 250;
+      return s + t;
+    }, 0);
+    const soldTotal = published.reduce((s, a) => s + (parseInt(String(a.edition).split('/')[0]) || 0), 0);
+    const revenue = published.reduce((s, a) => s + a.price * (parseInt(String(a.edition).split('/')[0]) || 0), 0);
+    const avgPrice = published.length ? Math.round(published.reduce((s,a) => s + a.price, 0) / published.length) : 0;
+    // best-seller
+    const best = published.slice().sort((a,b) => (parseInt(String(b.edition).split('/')[0]) || 0) - (parseInt(String(a.edition).split('/')[0]) || 0))[0];
+    // category split
+    const byCat = {};
+    published.forEach(a => { byCat[a.category] = (byCat[a.category] || 0) + 1; });
+    const maxCat = Math.max(1, ...Object.values(byCat));
+    // orders
+    const orders = JSON.parse(localStorage.getItem('aure_orders') || '[]');
+    const orderRev = orders.reduce((s, o) => s + (o.total || 0), 0);
+    const pendingOrders = orders.filter(o => o.status === 'pending').length;
+    // low stock
+    const lowStock = published.filter(a => {
+      const sold = parseInt(String(a.edition).split('/')[0]) || 0;
+      const total = parseInt(String(a.edition).split('/')[1]) || 250;
+      return (total - sold) <= 15 && (total - sold) > 0;
+    });
+
+    const fmt = n => n.toLocaleString('pl-PL');
+    const dash = overlay.querySelector('#dashContent');
+    dash.innerHTML = `
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-card-label">Total revenue (catalog)</div>
+          <div class="dash-card-value">${fmt(revenue)}<span class="dash-suffix">PLN</span></div>
+          <div class="dash-card-sub">${fmt(soldTotal)} prints sold of ${fmt(totalEditions)}</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-label">Orders revenue</div>
+          <div class="dash-card-value">${fmt(orderRev)}<span class="dash-suffix">PLN</span></div>
+          <div class="dash-card-sub">${orders.length} orders · ${pendingOrders} pending</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-label">Active artworks</div>
+          <div class="dash-card-value">${published.length}</div>
+          <div class="dash-card-sub">${Drafts.all().length} drafts in localStorage</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-label">Avg price</div>
+          <div class="dash-card-value">${avgPrice}<span class="dash-suffix">PLN</span></div>
+          <div class="dash-card-sub">across catalog</div>
+        </div>
+      </div>
+
+      ${best ? `
+      <div class="dash-section">
+        <h4>Best seller</h4>
+        <div class="dash-best">
+          <div class="dash-best-name">${best.name}</div>
+          <div class="dash-best-meta">${best.category} · ${best.edition} · ${best.price} PLN</div>
+        </div>
+      </div>` : ''}
+
+      <div class="dash-section">
+        <h4>Catalog by category</h4>
+        ${Object.entries(byCat).sort((a,b) => b[1]-a[1]).map(([cat, count]) => `
+          <div class="dash-bar-row">
+            <div class="dash-bar-label">${cat}</div>
+            <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${(count/maxCat*100).toFixed(0)}%"></div></div>
+            <div class="dash-bar-value">${count}</div>
+          </div>`).join('')}
+      </div>
+
+      ${lowStock.length ? `
+      <div class="dash-section">
+        <h4>Low stock (≤ 15 left)</h4>
+        ${lowStock.map(a => {
+          const sold = parseInt(String(a.edition).split('/')[0]) || 0;
+          const total = parseInt(String(a.edition).split('/')[1]) || 250;
+          return `<div class="dash-bar-row">
+            <div class="dash-bar-label">${a.name}</div>
+            <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${(sold/total*100).toFixed(0)}%"></div></div>
+            <div class="dash-bar-value">${total-sold} left</div>
+          </div>`;
+        }).join('')}
+      </div>` : ''}
+    `;
+  }
+
+  /* ======== FAQ EDITOR ======== */
+  function renderFaqEditor() {
+    const wrap = overlay.querySelector('#faqEditorList');
+    const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    wrap.innerHTML = faqData.map((f, i) => `
+      <div class="faq-editor-item" draggable="true" data-faq-idx="${i}">
+        <div class="faq-editor-row">
+          <div class="faq-handle">⋮⋮</div>
+          <div class="faq-editor-q">${esc(f.q_en) || '(empty)'}</div>
+          <div style="display:flex;gap:6px;">
+            <button class="faq-toggle" data-action="toggleFaq" data-idx="${i}" aria-label="Toggle"></button>
+            <button class="admin-art-btn danger" data-action="deleteFaq" data-idx="${i}">Delete</button>
+          </div>
+        </div>
+        <div class="faq-editor-body">
+          <label>Question (EN)</label>
+          <input type="text" data-faq-field="q_en" data-idx="${i}" value="${esc(f.q_en)}">
+          <label>Question (PL)</label>
+          <input type="text" data-faq-field="q_pl" data-idx="${i}" value="${esc(f.q_pl)}">
+          <label>Answer (EN)</label>
+          <textarea data-faq-field="a_en" data-idx="${i}">${esc(f.a_en)}</textarea>
+          <label>Answer (PL)</label>
+          <textarea data-faq-field="a_pl" data-idx="${i}">${esc(f.a_pl)}</textarea>
+        </div>
+      </div>`).join('');
+    // Field updates
+    wrap.querySelectorAll('[data-faq-field]').forEach(el => {
+      el.addEventListener('input', e => {
+        const i = parseInt(e.target.dataset.idx);
+        const f = e.target.dataset.faqField;
+        if (faqData[i]) {
+          faqData[i][f] = e.target.value;
+          // update preview label
+          if (f === 'q_en') {
+            const row = e.target.closest('.faq-editor-item');
+            if (row) row.querySelector('.faq-editor-q').textContent = e.target.value || '(empty)';
+          }
+        }
+      });
+    });
+    initFaqDrag();
+  }
+
+  function initFaqDrag() {
+    const items = overlay.querySelectorAll('.faq-editor-item');
+    let dragged = null;
+    items.forEach(it => {
+      it.addEventListener('dragstart', e => { dragged = it; it.classList.add('dragging'); });
+      it.addEventListener('dragend', () => { it.classList.remove('dragging'); items.forEach(x => x.classList.remove('drag-over')); });
+      it.addEventListener('dragover', e => { e.preventDefault(); if (dragged && dragged !== it) it.classList.add('drag-over'); });
+      it.addEventListener('dragleave', () => it.classList.remove('drag-over'));
+      it.addEventListener('drop', e => {
+        e.preventDefault(); it.classList.remove('drag-over');
+        if (!dragged || dragged === it) return;
+        const fromIdx = parseInt(dragged.dataset.faqIdx);
+        const toIdx = parseInt(it.dataset.faqIdx);
+        const [moved] = faqData.splice(fromIdx, 1);
+        faqData.splice(toIdx, 0, moved);
+        renderFaqEditor();
+        if (window.renderFAQ) window.renderFAQ();
+      });
+    });
+  }
+
+  function toggleFaqItem(idx) {
+    const it = overlay.querySelector(`.faq-editor-item[data-faq-idx="${idx}"]`);
+    if (it) it.classList.toggle('expanded');
+  }
+  function addFaqItem() {
+    faqData.push({ q_en: 'New question', q_pl: 'Nowe pytanie', a_en: '', a_pl: '' });
+    renderFaqEditor();
+    if (window.renderFAQ) window.renderFAQ();
+    // expand the new one
+    const items = overlay.querySelectorAll('.faq-editor-item');
+    if (items.length) items[items.length-1].classList.add('expanded');
+  }
+  function deleteFaqItem(idx) {
+    if (!confirm('Delete this FAQ item?')) return;
+    faqData.splice(idx, 1);
+    renderFaqEditor();
+    if (window.renderFAQ) window.renderFAQ();
+  }
+
+  async function saveFaqToGitHub() {
+    const mode = getMode();
+    if (mode === 'local') {
+      console.log('FAQ data (local preview):', faqData);
+      status('adminFaqStatus', '✓ Local preview — see console. Nothing saved.');
+      return;
+    }
+    if (mode === 'draft') {
+      try { localStorage.setItem('aure_faq_draft', JSON.stringify(faqData)); } catch {}
+      if (window.renderFAQ) window.renderFAQ();
+      status('adminFaqStatus', '✓ Saved to localStorage. Visible on your site. Not yet committed.');
+      return;
+    }
+    // Publish
     const token = overlay.querySelector('#adminGhToken').value.trim() || getToken();
-    if (!token) { status('adminStatus2', 'Provide GitHub token first.', true); return; }
+    if (!token) { status('adminFaqStatus', 'Provide GitHub token.', true); return; }
     setToken(token);
-    status('adminStatus2', 'Deleting via GitHub…');
+    status('adminFaqStatus', 'Reading index.html…');
     try {
-      const indexUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/index.html?ref=${GH_BRANCH}`;
-      const r1 = await fetch(indexUrl, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
-      if (!r1.ok) throw new Error('Failed to read index.html: ' + r1.status);
+      const idxUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/index.html?ref=${GH_BRANCH}`;
+      const r1 = await fetch(idxUrl, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
+      if (!r1.ok) throw new Error('Read failed: ' + r1.status);
       const meta = await r1.json();
       const current = atob(meta.content.replace(/\n/g, ''));
-      const pattern = new RegExp(`,?\\s*\\{\\s*id\\s*:\\s*${id}\\s*,[^}]*\\}`, 'm');
-      if (!pattern.test(current)) throw new Error('Could not locate artwork entry id=' + id);
-      const updated = current.replace(pattern, '');
-      const putR = await fetch(indexUrl, {
+      const startMarker = 'let faqData = [';
+      const s = current.indexOf(startMarker);
+      if (s === -1) throw new Error('Could not locate faqData');
+      let i = s + startMarker.length, depth = 1;
+      while (i < current.length && depth > 0) {
+        const c = current[i];
+        if (c === '[') depth++;
+        else if (c === ']') depth--;
+        if (depth === 0) break;
+        i++;
+      }
+      const endIdx = i;
+      const before = current.slice(0, s + startMarker.length);
+      const after = current.slice(endIdx);
+      const esc = s => String(s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const body = faqData.map(f => `\n  { q_en: "${esc(f.q_en)}", q_pl: "${esc(f.q_pl)}", a_en: "${esc(f.a_en)}", a_pl: "${esc(f.a_pl)}" }`).join(',');
+      const updated = before + body + '\n' + after;
+      const putR = await fetch(idxUrl, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: `Remove artwork: ${art.name} (via admin panel)`,
+          message: `Update FAQ (${faqData.length} items)`,
           content: btoa(unescape(encodeURIComponent(updated))),
-          sha: meta.sha,
-          branch: GH_BRANCH
+          sha: meta.sha, branch: GH_BRANCH
         })
       });
-      if (!putR.ok) throw new Error('Commit failed: ' + putR.status);
-      status('adminStatus2', `✓ Deleted! Redeploy in ~60s.`);
-      const idx = allArtworks.findIndex(a => a.id === id);
-      if (idx >= 0) allArtworks.splice(idx, 1);
-      renderList();
-    } catch (e) {
-      status('adminStatus2', 'Error: ' + e.message, true);
+      if (!putR.ok) { const t = await putR.text(); throw new Error('Commit failed: ' + putR.status + ' — ' + t.slice(0,150)); }
+      status('adminFaqStatus', '✓ FAQ committed. Rebuild ~60s.');
+      if (window.renderFAQ) window.renderFAQ();
+    } catch(e) {
+      status('adminFaqStatus', 'Error: ' + e.message, true);
     }
+  }
+
+  /* ======== PROMO ======== */
+  function loadPromoForm() {
+    overlay.querySelector('#promoEnabled').checked = !!siteConfig.promo.enabled;
+    overlay.querySelector('#promoTextEN').value = siteConfig.promo.textEN || '';
+    overlay.querySelector('#promoTextPL').value = siteConfig.promo.textPL || '';
+    overlay.querySelector('#promoLinkText').value = siteConfig.promo.linkText || '';
+    overlay.querySelector('#promoLinkUrl').value = siteConfig.promo.linkUrl || '';
+  }
+  function readPromoForm() {
+    return {
+      enabled: overlay.querySelector('#promoEnabled').checked,
+      textEN: overlay.querySelector('#promoTextEN').value.trim(),
+      textPL: overlay.querySelector('#promoTextPL').value.trim(),
+      linkText: overlay.querySelector('#promoLinkText').value.trim(),
+      linkUrl: overlay.querySelector('#promoLinkUrl').value.trim()
+    };
+  }
+  function previewPromo() {
+    siteConfig.promo = readPromoForm();
+    sessionStorage.removeItem('aure_promo_dismissed');
+    if (window.renderPromoBanner) window.renderPromoBanner();
+    status('adminPromoStatus', '✓ Local preview applied. Close panel to see banner.');
+  }
+  async function savePromoToGitHub() {
+    const mode = getMode();
+    siteConfig.promo = readPromoForm();
+    sessionStorage.removeItem('aure_promo_dismissed');
+    if (window.renderPromoBanner) window.renderPromoBanner();
+    if (mode === 'local') {
+      console.log('Promo (local preview):', siteConfig.promo);
+      status('adminPromoStatus', '✓ Local preview — see console.');
+      return;
+    }
+    if (mode === 'draft') {
+      try { localStorage.setItem('aure_promo_draft', JSON.stringify(siteConfig.promo)); } catch {}
+      status('adminPromoStatus', '✓ Saved to localStorage. Not yet on live site.');
+      return;
+    }
+    const token = overlay.querySelector('#adminGhToken').value.trim() || getToken();
+    if (!token) { status('adminPromoStatus', 'Provide GitHub token.', true); return; }
+    setToken(token);
+    status('adminPromoStatus', 'Reading index.html…');
+    try {
+      const idxUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/index.html?ref=${GH_BRANCH}`;
+      const r1 = await fetch(idxUrl, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' } });
+      if (!r1.ok) throw new Error('Read failed: ' + r1.status);
+      const meta = await r1.json();
+      const current = atob(meta.content.replace(/\n/g, ''));
+      const startMarker = 'let siteConfig = {';
+      const s = current.indexOf(startMarker);
+      if (s === -1) throw new Error('Could not locate siteConfig');
+      // find matching }
+      let i = s + startMarker.length, depth = 1;
+      while (i < current.length && depth > 0) {
+        const c = current[i];
+        if (c === '{') depth++;
+        else if (c === '}') depth--;
+        if (depth === 0) break;
+        i++;
+      }
+      const endIdx = i + 1; // include }
+      // Build new object literal
+      const p = siteConfig.promo;
+      const esc = s => String(s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const newObj = `let siteConfig = {
+  promo: {
+    enabled: ${p.enabled ? 'true' : 'false'},
+    textEN: "${esc(p.textEN)}",
+    textPL: "${esc(p.textPL)}",
+    linkText: "${esc(p.linkText)}",
+    linkUrl: "${esc(p.linkUrl)}"
+  }
+}`;
+      const updated = current.slice(0, s) + newObj + current.slice(endIdx);
+      const putR = await fetch(idxUrl, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: `Update promo banner (${p.enabled ? 'enabled' : 'disabled'})`,
+          content: btoa(unescape(encodeURIComponent(updated))),
+          sha: meta.sha, branch: GH_BRANCH
+        })
+      });
+      if (!putR.ok) { const t = await putR.text(); throw new Error('Commit failed: ' + putR.status + ' — ' + t.slice(0,150)); }
+      status('adminPromoStatus', '✓ Promo committed. Rebuild ~60s.');
+    } catch(e) {
+      status('adminPromoStatus', 'Error: ' + e.message, true);
+    }
+  }
+
+  /* ======== ORDERS ======== */
+  function renderOrders() {
+    const wrap = overlay.querySelector('#ordersList');
+    const orders = JSON.parse(localStorage.getItem('aure_orders') || '[]');
+    overlay.querySelector('#ordersCount').textContent = orders.length ? `${orders.length} order${orders.length === 1 ? '' : 's'}` : '';
+    if (!orders.length) { wrap.innerHTML = '<div class="order-empty">No orders yet. Orders saved by customers in this browser appear here.</div>'; return; }
+    const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const sorted = orders.slice().sort((a,b) => new Date(b.date) - new Date(a.date));
+    wrap.innerHTML = sorted.map(o => {
+      const d = new Date(o.date);
+      const dt = d.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const st = o.status || 'pending';
+      return `
+        <div class="order-row" data-order-id="${esc(o.id)}">
+          <div class="order-head">
+            <div>
+              <div class="order-id">${esc(o.id)}</div>
+              <div class="order-meta">${dt} · ${esc(o.customer.firstName)} ${esc(o.customer.lastName)} · ${esc(o.customer.email)}</div>
+            </div>
+            <div class="order-total">${o.total} ${o.currency || 'PLN'}</div>
+            <select class="order-status ${st}" data-action="setOrderStatus" data-id="${esc(o.id)}">
+              ${['pending','shipped','delivered','cancelled'].map(s => `<option value="${s}" ${s===st?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <button class="admin-draft-btn" data-action="toggleOrder" data-id="${esc(o.id)}" style="margin-top:8px;">Show details</button>
+          <div class="order-body">
+            <div class="order-customer">
+              <b>${esc(o.customer.firstName)} ${esc(o.customer.lastName)}</b><br>
+              ${esc(o.customer.email)} · ${esc(o.customer.phone) || '—'}<br>
+              ${esc(o.customer.address)}<br>
+              ${esc(o.customer.postalCode)} ${esc(o.customer.city)}, ${esc(o.customer.country)}
+            </div>
+            <div class="order-items">
+              <b style="color:var(--text-primary);font-size:0.78rem;">Items (${o.items.length}):</b>
+              ${o.items.map(i => `<div class="order-item-line">→ <b>${esc(i.name)}</b> · ${esc(i.sizeLabel || i.size || '')} · ${esc(i.frame || '')} · ${i.price} PLN</div>`).join('')}
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+    // status change handler is in handleClick via 'setOrderStatus' (but it's <select>, handle via change)
+    wrap.querySelectorAll('.order-status').forEach(sel => {
+      sel.addEventListener('change', e => setOrderStatus(e.target.dataset.id, e.target.value));
+    });
+  }
+
+  function toggleOrder(id) {
+    const row = overlay.querySelector(`.order-row[data-order-id="${CSS.escape(id)}"]`);
+    if (row) row.classList.toggle('expanded');
+  }
+
+  function setOrderStatus(id, newStatus) {
+    const orders = JSON.parse(localStorage.getItem('aure_orders') || '[]');
+    const o = orders.find(x => x.id === id);
+    if (!o) return;
+    o.status = newStatus;
+    localStorage.setItem('aure_orders', JSON.stringify(orders));
+    renderOrders();
+    status('adminStatus2', `Order ${id} → ${newStatus}.`);
+  }
+
+  function clearOrders() {
+    if (!confirm('Clear all orders from this browser? This is permanent.')) return;
+    localStorage.setItem('aure_orders', '[]');
+    renderOrders();
+  }
+
+  function exportOrdersCSV() {
+    const orders = JSON.parse(localStorage.getItem('aure_orders') || '[]');
+    if (!orders.length) { alert('No orders to export.'); return; }
+    const headers = ['id','date','status','firstName','lastName','email','phone','address','city','postalCode','country','total','currency','itemCount','items'];
+    const rows = orders.map(o => [
+      o.id, o.date, o.status || 'pending',
+      o.customer.firstName, o.customer.lastName, o.customer.email, o.customer.phone || '',
+      o.customer.address, o.customer.city, o.customer.postalCode, o.customer.country,
+      o.total, o.currency || 'PLN', o.items.length,
+      o.items.map(i => `${i.name} (${i.sizeLabel || i.size || ''}) - ${i.price}`).join(' | ')
+    ]);
+    const csvEsc = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows].map(r => r.map(csvEsc).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `aure-orders-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
   }
 
   return {
     init() {
-      // Merge any drafts saved from previous sessions BEFORE first render
+      // Apply any locally-saved overrides BEFORE first render
+      try {
+        const faqDraft = localStorage.getItem('aure_faq_draft');
+        if (faqDraft) { try { faqData = JSON.parse(faqDraft); } catch {} }
+        const promoDraft = localStorage.getItem('aure_promo_draft');
+        if (promoDraft) { try { siteConfig.promo = JSON.parse(promoDraft); } catch {} }
+      } catch {}
       Drafts.mergeIntoArtworks();
-      // Re-render the shop grid so drafts appear
-      if (typeof renderShopGrid === 'function') {
-        try { renderShopGrid('all'); } catch(e) {}
-      }
+      if (typeof renderShopGrid === 'function') { try { renderShopGrid('all'); } catch(e) {} }
+      if (window.renderFAQ) window.renderFAQ();
+      if (window.renderPromoBanner) window.renderPromoBanner();
       const params = new URLSearchParams(window.location.search);
       if (params.get('admin') === '1') show();
       document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.shiftKey && e.key === 'A') {
-          e.preventDefault();
-          show();
-        }
+        if (e.ctrlKey && e.shiftKey && e.key === 'A') { e.preventDefault(); show(); }
       });
     }
   };
 })();
 AdminPanel.init();
+
 
 </script>
 </body>
