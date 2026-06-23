@@ -2732,6 +2732,111 @@ body.has-promo .header { top: 36px; }
 /* Image preview in form */
 .admin-img-preview { width: 100%; max-height: 200px; object-fit: contain; background: #111; margin-top: 8px; display: none; }
 .admin-img-preview.show { display: block; }
+
+/* === ADMIN PANEL V4 === */
+
+/* Bulk operations */
+.admin-bulk-bar { position: sticky; top: 0; z-index: 5; background: rgba(20,20,20,0.96); border: 1px solid var(--gold); padding: 10px 14px; margin: 12px 0; display: none; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.72rem; }
+.admin-bulk-bar.active { display: flex; }
+.admin-bulk-bar .bulk-count { color: var(--gold); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 8px; }
+.admin-bulk-bar button { background: transparent; border: 1px solid #333; color: var(--text-secondary); padding: 6px 10px; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+.admin-bulk-bar button:hover { border-color: var(--gold); color: var(--gold); }
+.admin-bulk-bar button.danger:hover { border-color: #c44; color: #d66; }
+.admin-bulk-bar input[type="number"], .admin-bulk-bar select { background: #0a0a0a; border: 1px solid #333; color: var(--text-primary); padding: 4px 8px; font-size: 0.72rem; width: 70px; }
+.admin-art-row .row-check { width: 16px; height: 16px; accent-color: var(--gold); margin-right: 8px; cursor: pointer; }
+.admin-art-row.selected { background: rgba(201,169,110,0.05); border-color: rgba(201,169,110,0.3); }
+
+/* Multi-image manager */
+.admin-images-section { margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid #1a1a1a; }
+.admin-images-section h4 { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 10px; font-weight: 500; }
+.admin-img-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-img-tile { position: relative; width: 90px; height: 110px; border: 1px solid #2a2a2a; background: #0a0a0a; cursor: grab; overflow: hidden; }
+.admin-img-tile.dragging { opacity: 0.4; }
+.admin-img-tile.drag-over { border-color: var(--gold); }
+.admin-img-tile img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.admin-img-tile .tile-badge { position: absolute; top: 2px; left: 2px; background: var(--gold); color: #0a0a0a; font-size: 0.55rem; padding: 1px 5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.admin-img-tile .tile-remove { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: rgba(0,0,0,0.7); border: none; color: #f0efe8; font-size: 14px; cursor: pointer; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center; }
+.admin-img-tile .tile-remove:hover { background: #c44; }
+.admin-img-tile .tile-idx { position: absolute; bottom: 2px; right: 4px; color: #f0efe8; font-size: 0.6rem; background: rgba(0,0,0,0.6); padding: 1px 4px; }
+
+/* Discount codes */
+.discount-row { display: grid; grid-template-columns: 110px 1fr 90px 90px 80px 80px auto; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid #1a1a1a; background: #0d0d0d; margin-bottom: 6px; font-size: 0.74rem; }
+.discount-row .disc-code { font-family: 'Courier New', monospace; color: var(--gold); font-weight: 600; letter-spacing: 0.08em; }
+.discount-row .disc-type { color: var(--text-muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.discount-row .disc-val { color: var(--text-primary); }
+.discount-row input, .discount-row select { background: #050505; border: 1px solid #222; color: var(--text-primary); padding: 4px 6px; font-size: 0.7rem; width: 100%; }
+.discount-row .disc-actions { display: flex; gap: 4px; }
+.discount-row button { background: transparent; border: 1px solid #2a2a2a; color: var(--text-secondary); padding: 4px 8px; font-size: 0.65rem; cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; }
+.discount-row button:hover { border-color: var(--gold); color: var(--gold); }
+.discount-row button.danger:hover { border-color: #c44; color: #d66; }
+.discount-row.expired { opacity: 0.45; }
+.discount-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.discount-stats .dash-card { padding: 10px; }
+
+/* Promo code input in checkout */
+.promo-input-wrap { display: flex; gap: 6px; margin: 14px 0 6px; }
+.promo-input-wrap input { flex: 1; background: #0a0a0a; border: 1px solid #2a2a2a; color: var(--text-primary); padding: 9px 12px; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Courier New', monospace; }
+.promo-input-wrap input:focus { border-color: var(--gold); outline: none; }
+.promo-input-wrap button { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 9px 16px; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+.promo-input-wrap button:hover { background: var(--gold); color: #0a0a0a; }
+.promo-applied { font-size: 0.72rem; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.promo-applied b { font-family: 'Courier New', monospace; letter-spacing: 0.08em; }
+.promo-applied .promo-remove { background: transparent; border: none; color: #888; cursor: pointer; font-size: 0.7rem; text-decoration: underline; }
+.promo-applied .promo-remove:hover { color: #d66; }
+.promo-error { font-size: 0.7rem; color: #d66; margin-bottom: 8px; }
+.order-line.discount-line { color: var(--gold); }
+.order-line.discount-line .order-line-value { color: var(--gold); }
+
+/* SEO editor */
+.seo-section { padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid #1a1a1a; margin-bottom: 12px; }
+.seo-section h4 { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-primary); margin: 0 0 8px; font-weight: 500; }
+.seo-section p.seo-desc { font-size: 0.72rem; color: var(--text-muted); margin: 0 0 10px; line-height: 1.5; }
+.seo-row { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid #161616; font-size: 0.72rem; }
+.seo-row:last-child { border-bottom: none; }
+.seo-row .seo-name { color: var(--text-primary); font-weight: 500; }
+.seo-row .seo-meta { color: var(--text-muted); font-size: 0.68rem; line-height: 1.4; }
+.seo-row input { background: #0a0a0a; border: 1px solid #222; color: var(--text-primary); padding: 5px 7px; font-size: 0.7rem; width: 100%; }
+.seo-row button { background: transparent; border: 1px solid #2a2a2a; color: var(--text-secondary); padding: 5px 10px; font-size: 0.65rem; cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; }
+.seo-row button:hover { border-color: var(--gold); color: var(--gold); }
+.seo-preview { background: #050505; border: 1px solid #1a1a1a; padding: 10px 12px; margin-top: 8px; font-family: Arial, sans-serif; }
+.seo-preview .sp-title { color: #8ab4f8; font-size: 0.95rem; line-height: 1.3; margin-bottom: 2px; }
+.seo-preview .sp-url { color: #5f8a4e; font-size: 0.72rem; margin-bottom: 4px; }
+.seo-preview .sp-desc { color: #bdc1c6; font-size: 0.78rem; line-height: 1.4; }
+
+/* Live chat widget */
+.chat-widget { position: fixed; bottom: 24px; right: 24px; z-index: 9000; }
+.chat-toggle { width: 52px; height: 52px; background: var(--gold); color: #0a0a0a; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); transition: transform 0.2s ease, background 0.2s; }
+.chat-toggle:hover { transform: translateY(-2px); background: #d4b57e; }
+.chat-toggle svg { width: 22px; height: 22px; }
+.chat-toggle .chat-badge { position: absolute; top: -4px; right: -4px; background: #0a0a0a; color: var(--gold); border: 1px solid var(--gold); width: 18px; height: 18px; border-radius: 50%; font-size: 0.62rem; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+.chat-panel { position: absolute; bottom: 64px; right: 0; width: 320px; background: #0d0d0d; border: 1px solid #222; box-shadow: 0 12px 40px rgba(0,0,0,0.7); display: none; flex-direction: column; max-height: 480px; }
+.chat-panel.open { display: flex; }
+.chat-head { padding: 14px 16px; border-bottom: 1px solid #1a1a1a; display: flex; align-items: center; justify-content: space-between; }
+.chat-head h4 { margin: 0; font-family: var(--font-display); font-weight: 300; font-size: 1.05rem; color: var(--text-primary); letter-spacing: 0.02em; }
+.chat-head .chat-close { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 0; line-height: 1; }
+.chat-head .chat-close:hover { color: var(--text-primary); }
+.chat-body { padding: 14px 16px; flex: 1; overflow-y: auto; }
+.chat-body .chat-intro { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; margin: 0 0 12px; }
+.chat-form input, .chat-form textarea { width: 100%; background: #050505; border: 1px solid #222; color: var(--text-primary); padding: 8px 10px; font-size: 0.78rem; margin-bottom: 8px; font-family: var(--font-body, inherit); resize: vertical; }
+.chat-form input:focus, .chat-form textarea:focus { border-color: var(--gold); outline: none; }
+.chat-form textarea { min-height: 80px; }
+.chat-form button { width: 100%; background: var(--gold); color: #0a0a0a; border: none; padding: 10px; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+.chat-form button:hover { background: #d4b57e; }
+.chat-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+.chat-success { text-align: center; padding: 20px 10px; color: var(--gold); font-size: 0.82rem; }
+.chat-error { font-size: 0.72rem; color: #d66; margin-bottom: 8px; }
+@media (max-width: 480px) {
+  .chat-widget { bottom: 16px; right: 16px; }
+  .chat-panel { width: calc(100vw - 32px); right: -8px; }
+}
+
+/* Messages tab in admin */
+.msg-row { padding: 10px 12px; border: 1px solid #1a1a1a; background: #0d0d0d; margin-bottom: 6px; font-size: 0.76rem; }
+.msg-row .msg-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.msg-row .msg-from { color: var(--text-primary); font-weight: 500; }
+.msg-row .msg-date { color: var(--text-muted); font-size: 0.68rem; }
+.msg-row .msg-email { color: var(--gold); font-size: 0.7rem; margin-bottom: 4px; font-family: 'Courier New', monospace; }
+.msg-row .msg-text { color: var(--text-secondary); line-height: 1.5; white-space: pre-wrap; }
 </style>
 </head>
 <body>
@@ -3426,11 +3531,29 @@ body.has-promo .header { top: 36px; }
             <span><span data-lang="en">Shipping</span><span data-lang="pl">Wysyłka</span></span>
             <span class="order-line-value"><span data-lang="en">Free</span><span data-lang="pl">Gratis</span></span>
           </div>
+          <div class="order-line" id="orderDiscountLine" style="display:none;">
+            <span><span data-lang="en">Discount</span><span data-lang="pl">Rabat</span> <b id="orderDiscountCode" style="color:var(--gold);font-family:'Courier New',monospace;"></b></span>
+            <span class="order-line-value" id="orderDiscountValue" style="color:var(--gold);">0 PLN</span>
+          </div>
           <div class="order-line order-total-grand">
             <span>Total</span>
             <span class="order-line-value" id="orderGrandTotal">0 PLN</span>
           </div>
         </div>
+
+        <!-- Promo code -->
+        <div id="promoCodeWrap">
+          <div class="promo-input-wrap" id="promoInputRow">
+            <input type="text" id="promoCodeInput" placeholder="PROMO CODE" autocomplete="off" maxlength="32">
+            <button type="button" onclick="applyPromoCode()"><span data-lang="en">Apply</span><span data-lang="pl">Aplikuj</span></button>
+          </div>
+          <div class="promo-applied" id="promoAppliedRow" style="display:none;">
+            <span><span data-lang="en">Code</span><span data-lang="pl">Kod</span> <b id="promoAppliedCode"></b> <span id="promoAppliedLabel"></span></span>
+            <button type="button" class="promo-remove" onclick="removePromoCode()"><span data-lang="en">remove</span><span data-lang="pl">usuń</span></button>
+          </div>
+          <div class="promo-error" id="promoErrorMsg" style="display:none;"></div>
+        </div>
+
         <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">
           <span data-lang="en">Place Order</span><span data-lang="pl">Złóż Zamówienie</span>
         </button>
@@ -3745,8 +3868,102 @@ let siteConfig = {
     textPL: "Świąteczna kolekcja — 15% rabatu kodem AURE15",
     linkText: "",
     linkUrl: ""
+  },
+  // Live chat — Discord webhook URL (set via Admin → Settings)
+  chatWebhook: "",
+  // SEO global override (optional). If empty, defaults from <head> are used.
+  seoGlobal: {
+    title: "",
+    description: "",
+    ogImage: ""
   }
 };
+
+/* ========== DISCOUNT CODES ==========
+   Types:
+     - percent  → value = 10 means 10%
+     - amount   → value = 50 means -50 PLN
+     - shipping → value = 0 means free shipping (no extra reduction on subtotal — site already free)
+     - bogo     → value = 0 means buy any 2 prints, cheapest is free (50% off lowest item)
+   limit  = max uses (0 = unlimited); used = counter; expires = ISO date or "".
+   Edit via Admin → Codes tab. Stored locally; commit to publish on production.
+=================================================== */
+let discountCodes = [
+  { code: "AURE10",       type: "percent",  value: 10, label: "-10% on entire order",      limit: 0,   used: 0, expires: "" },
+  { code: "WELCOME50",    type: "amount",   value: 50, label: "-50 PLN on first order",     limit: 100, used: 0, expires: "" },
+  { code: "FREESHIP",     type: "shipping", value: 0,  label: "Free shipping worldwide",    limit: 0,   used: 0, expires: "" },
+  { code: "BOGO",         type: "bogo",     value: 50, label: "Buy 2, cheapest 50% off",    limit: 50,  used: 0, expires: "" }
+];
+
+/* ========== SEO OVERRIDES per artwork ==========
+   Keyed by artwork id. Empty fields fallback to auto-generated meta.
+=================================================== */
+let seoOverrides = {
+  // 1: { title: "...", description: "...", ogImage: "..." }
+};
+
+/* ========== ACTIVE DISCOUNT (session) ========== */
+let activeDiscount = null; // { code, type, value, label, savings }
+
+/* ========== Helper: auto-generate SEO for artwork ========== */
+function generateSEOForArtwork(art) {
+  if (!art) return null;
+  const ov = seoOverrides[art.id] || {};
+  const title = ov.title || `${art.name} — Limited Edition ${art.category} Print | Aure D'Arte`;
+  const desc  = ov.description || `${art.name}. ${art.desc.slice(0, 140)}${art.desc.length > 140 ? '…' : ''} Limited edition of 250 prints. ${art.price} PLN.`;
+  const img   = ov.ogImage || (art.images && art.images[0]) || `https://picsum.photos/seed/${art.seed}/1200/630`;
+  return { title, description: desc, ogImage: img };
+}
+
+/* ========== Apply SEO meta tags dynamically ========== */
+function applySEOMeta(meta) {
+  if (!meta) return;
+  document.title = meta.title;
+  const setMeta = (name, content, attr = 'name') => {
+    let el = document.querySelector(`meta[${attr}="${name}"]`);
+    if (!el) { el = document.createElement('meta'); el.setAttribute(attr, name); document.head.appendChild(el); }
+    el.setAttribute('content', content);
+  };
+  setMeta('description', meta.description);
+  setMeta('og:title', meta.title, 'property');
+  setMeta('og:description', meta.description, 'property');
+  setMeta('og:image', meta.ogImage, 'property');
+  setMeta('twitter:title', meta.title);
+  setMeta('twitter:description', meta.description);
+  setMeta('twitter:image', meta.ogImage);
+  setMeta('twitter:card', 'summary_large_image');
+}
+
+/* ========== JSON-LD Product schema ========== */
+function injectProductSchema(art) {
+  // Remove old
+  document.querySelectorAll('script[data-product-schema]').forEach(s => s.remove());
+  if (!art) return;
+  const meta = generateSEOForArtwork(art);
+  const sold = parseInt((art.edition || '0/250').split('/')[0]) || 0;
+  const available = sold < 250 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock';
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": art.name,
+    "description": meta.description,
+    "image": (art.images && art.images.length ? art.images : [meta.ogImage]),
+    "sku": `ADA-${art.id}`,
+    "brand": { "@type": "Brand", "name": "Aure D'Arte" },
+    "offers": {
+      "@type": "Offer",
+      "price": art.price,
+      "priceCurrency": "PLN",
+      "availability": available,
+      "url": location.href
+    }
+  };
+  const s = document.createElement('script');
+  s.type = 'application/ld+json';
+  s.setAttribute('data-product-schema', '');
+  s.textContent = JSON.stringify(schema);
+  document.head.appendChild(s);
+}
 
 function renderPromoBanner() {
   const el = document.getElementById('promoBanner');
@@ -3780,7 +3997,105 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('promoBanner').classList.remove('active');
     document.body.classList.remove('has-promo');
   });
+
+  // === V4: Chat widget init ===
+  initChatWidget();
 });
+
+/* ========== LIVE CHAT WIDGET ========== */
+function initChatWidget() {
+  const toggle = document.getElementById('chatToggle');
+  const panel = document.getElementById('chatPanel');
+  const close = document.getElementById('chatClose');
+  if (!toggle || !panel) return;
+  toggle.addEventListener('click', () => {
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open')) {
+      // Reset to form view
+      document.getElementById('chatFormWrap').style.display = '';
+      document.getElementById('chatSuccess').style.display = 'none';
+    }
+  });
+  if (close) close.addEventListener('click', () => panel.classList.remove('open'));
+  // Close on Esc
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel.classList.contains('open')) panel.classList.remove('open');
+  });
+}
+
+async function submitChatForm(ev) {
+  ev.preventDefault();
+  const nameEl = document.getElementById('chatName');
+  const emailEl = document.getElementById('chatEmail');
+  const msgEl = document.getElementById('chatMessage');
+  const errEl = document.getElementById('chatError');
+  const btn = document.getElementById('chatSendBtn');
+  errEl.style.display = 'none';
+  const isPL = document.documentElement.lang === 'pl';
+
+  const name = nameEl.value.trim();
+  const email = emailEl.value.trim();
+  const message = msgEl.value.trim();
+  if (!name || !email || !message) {
+    errEl.textContent = isPL ? 'Wypełnij wszystkie pola.' : 'Please fill all fields.';
+    errEl.style.display = 'block';
+    return false;
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    errEl.textContent = isPL ? 'Niepoprawny email.' : 'Invalid email.';
+    errEl.style.display = 'block';
+    return false;
+  }
+
+  btn.disabled = true;
+  btn.textContent = isPL ? 'Wysyłam...' : 'Sending...';
+
+  // Always save to localStorage (admin sees these in Messages tab)
+  const msgs = JSON.parse(localStorage.getItem('aure_messages') || '[]');
+  const entry = { id: 'MSG-' + Date.now(), date: new Date().toISOString(), name, email, message, page: location.pathname + location.hash, sent: false };
+  msgs.push(entry);
+  localStorage.setItem('aure_messages', JSON.stringify(msgs));
+
+  // POST to Discord webhook if configured
+  const hook = (siteConfig.chatWebhook || '').trim();
+  if (hook && /^https:\/\/(discord|discordapp)\.com\/api\/webhooks\//.test(hook)) {
+    try {
+      const embed = {
+        title: '✨ New message from ' + name,
+        color: 13215854, // gold #c9a96e
+        fields: [
+          { name: 'Email', value: email, inline: true },
+          { name: 'Page',  value: entry.page || '/', inline: true },
+          { name: 'Message', value: message.slice(0, 1800) }
+        ],
+        footer: { text: "Aure D'Arte · " + new Date().toLocaleString() }
+      };
+      const res = await fetch(hook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: "Aure D'Arte Contact", embeds: [embed] })
+      });
+      if (res.ok) {
+        entry.sent = true;
+        msgs[msgs.length - 1] = entry;
+        localStorage.setItem('aure_messages', JSON.stringify(msgs));
+      }
+    } catch (e) { console.warn('Discord webhook failed', e); }
+  }
+
+  // Success UI
+  document.getElementById('chatFormWrap').style.display = 'none';
+  document.getElementById('chatSuccess').style.display = 'block';
+  nameEl.value = ''; emailEl.value = ''; msgEl.value = '';
+  btn.disabled = false;
+  btn.innerHTML = '<span data-lang="en">Send message</span><span data-lang="pl">Wyślij wiadomość</span>';
+  // Auto-close after 3s
+  setTimeout(() => {
+    const panel = document.getElementById('chatPanel');
+    if (panel) panel.classList.remove('open');
+  }, 3000);
+  return false;
+}
 
 /* ========== FAQ DATA ==========
    Edit, add, remove via Admin panel → FAQ tab.
@@ -4212,6 +4527,13 @@ function openProductModal(id) {
   // Edition bar
   const edNum = parseInt(currentProduct.edition.split('/')[0]);
   document.getElementById('modalEditionFill').style.width = (edNum / 250 * 100) + '%';
+
+  // === V4: SEO meta + JSON-LD per artwork (not apparel) ===
+  if (!currentProduct.isApparel) {
+    const seoMeta = generateSEOForArtwork(currentProduct);
+    applySEOMeta(seoMeta);
+    injectProductSchema(currentProduct);
+  }
 
   // Show/hide Frame section depending on product type
   const frameSection = document.getElementById('frameSection');
@@ -5314,8 +5636,88 @@ function initFancyEffects() {
 }
 
 /* ========== CHECKOUT ========== */
+
+/* === V4: Discount helpers === */
+function findDiscount(code) {
+  if (!code) return null;
+  const c = code.trim().toUpperCase();
+  return discountCodes.find(d => d.code.toUpperCase() === c) || null;
+}
+function isDiscountActive(d) {
+  if (!d) return false;
+  if (d.expires) {
+    const exp = new Date(d.expires);
+    if (!isNaN(exp.getTime()) && exp < new Date()) return false;
+  }
+  if (d.limit > 0 && d.used >= d.limit) return false;
+  return true;
+}
+function calcDiscountSavings(d, items) {
+  if (!d || !items || !items.length) return 0;
+  const subtotal = items.reduce((s, i) => s + i.price, 0);
+  if (d.type === 'percent') return Math.round(subtotal * (d.value / 100));
+  if (d.type === 'amount')  return Math.min(d.value, subtotal);
+  if (d.type === 'shipping') return 0; // shipping already free; reserved for future use
+  if (d.type === 'bogo') {
+    if (items.length < 2) return 0;
+    // 50% off the cheapest item (or value%, default 50)
+    const sorted = items.slice().sort((a, b) => a.price - b.price);
+    const off = (d.value > 0 ? d.value : 50) / 100;
+    return Math.round(sorted[0].price * off);
+  }
+  return 0;
+}
+
+function applyPromoCode() {
+  const input = document.getElementById('promoCodeInput');
+  const errEl = document.getElementById('promoErrorMsg');
+  const code = (input.value || '').trim().toUpperCase();
+  errEl.style.display = 'none';
+  const isPL = document.documentElement.lang === 'pl';
+  if (!code) {
+    errEl.textContent = isPL ? 'Wpisz kod promocyjny.' : 'Enter a promo code.';
+    errEl.style.display = 'block';
+    return;
+  }
+  const d = findDiscount(code);
+  if (!d) {
+    errEl.textContent = isPL ? 'Niepoprawny kod.' : 'Invalid code.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!isDiscountActive(d)) {
+    errEl.textContent = isPL ? 'Kod wygasł lub osiągnięto limit użyć.' : 'Code expired or usage limit reached.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (d.type === 'bogo' && cart.length < 2) {
+    errEl.textContent = isPL ? 'Kod BOGO wymaga co najmniej 2 produktów w koszyku.' : 'BOGO code requires at least 2 items in cart.';
+    errEl.style.display = 'block';
+    return;
+  }
+  const savings = calcDiscountSavings(d, cart);
+  activeDiscount = { code: d.code, type: d.type, value: d.value, label: d.label, savings };
+  sessionStorage.setItem('aure_active_discount', JSON.stringify(activeDiscount));
+  input.value = '';
+  renderCheckoutSummary();
+}
+function removePromoCode() {
+  activeDiscount = null;
+  sessionStorage.removeItem('aure_active_discount');
+  document.getElementById('promoErrorMsg').style.display = 'none';
+  renderCheckoutSummary();
+}
+// Restore active discount on load
+(function restoreActiveDiscount() {
+  try {
+    const saved = sessionStorage.getItem('aure_active_discount');
+    if (saved) activeDiscount = JSON.parse(saved);
+  } catch(e){}
+})();
+
 function renderCheckoutSummary() {
   const itemsCont = document.getElementById('orderItems');
+  if (!itemsCont) return;
   itemsCont.innerHTML = '';
   cart.forEach(item => {
     const el = document.createElement('div');
@@ -5332,8 +5734,40 @@ function renderCheckoutSummary() {
     itemsCont.appendChild(el);
   });
   const subtotal = cart.reduce((s, i) => s + i.price, 0);
+
+  // Re-validate active discount against current cart
+  let savings = 0;
+  if (activeDiscount) {
+    const d = findDiscount(activeDiscount.code);
+    if (d && isDiscountActive(d) && (d.type !== 'bogo' || cart.length >= 2)) {
+      savings = calcDiscountSavings(d, cart);
+      activeDiscount.savings = savings;
+    } else {
+      activeDiscount = null;
+      sessionStorage.removeItem('aure_active_discount');
+    }
+  }
+  const total = Math.max(0, subtotal - savings);
+
   document.getElementById('orderSubtotal').textContent = subtotal + ' PLN';
-  document.getElementById('orderGrandTotal').textContent = subtotal + ' PLN';
+  document.getElementById('orderGrandTotal').textContent = total + ' PLN';
+
+  const discLine = document.getElementById('orderDiscountLine');
+  const inputRow = document.getElementById('promoInputRow');
+  const appliedRow = document.getElementById('promoAppliedRow');
+  if (activeDiscount && savings >= 0) {
+    discLine.style.display = '';
+    document.getElementById('orderDiscountCode').textContent = activeDiscount.code;
+    document.getElementById('orderDiscountValue').textContent = '−' + savings + ' PLN';
+    inputRow.style.display = 'none';
+    appliedRow.style.display = '';
+    document.getElementById('promoAppliedCode').textContent = activeDiscount.code;
+    document.getElementById('promoAppliedLabel').textContent = activeDiscount.label ? ' — ' + activeDiscount.label : '';
+  } else {
+    discLine.style.display = 'none';
+    inputRow.style.display = '';
+    appliedRow.style.display = 'none';
+  }
 }
 
 async function placeOrder() {
@@ -5361,6 +5795,21 @@ async function placeOrder() {
     btn.querySelectorAll('[data-lang="en"]').forEach(e => e.style.display = 'none');
   }
 
+  // === V4: Compute final total with active discount ===
+  const subtotal = cart.reduce((s, i) => s + i.price, 0);
+  let discountInfo = null;
+  let total = subtotal;
+  if (activeDiscount) {
+    const d = findDiscount(activeDiscount.code);
+    if (d && isDiscountActive(d)) {
+      const savings = calcDiscountSavings(d, cart);
+      total = Math.max(0, subtotal - savings);
+      discountInfo = { code: d.code, type: d.type, value: d.value, label: d.label, savings };
+      // Increment used counter
+      d.used = (d.used || 0) + 1;
+    }
+  }
+
   const order = {
     id: 'ADA-' + Date.now(),
     date: new Date().toISOString(),
@@ -5382,10 +5831,15 @@ async function placeOrder() {
       frame: i.frame,
       price: i.price,
     })),
-    total: cart.reduce((s, i) => s + i.price, 0),
+    subtotal: subtotal,
+    discount: discountInfo,
+    total: total,
     currency: 'PLN',
     status: 'pending',
   };
+  // Clear active discount after order
+  activeDiscount = null;
+  sessionStorage.removeItem('aure_active_discount');
 
   // Save to localStorage
   const orders = JSON.parse(localStorage.getItem('aure_orders') || '[]');
@@ -6263,6 +6717,9 @@ const AdminPanel = (function() {
             <button class="admin-tab" data-tab="artworks">Artworks</button>
             <button class="admin-tab" data-tab="dashboard">Dashboard</button>
             <button class="admin-tab" data-tab="orders">Orders</button>
+            <button class="admin-tab" data-tab="codes">Codes</button>
+            <button class="admin-tab" data-tab="seo">SEO</button>
+            <button class="admin-tab" data-tab="messages">Messages</button>
             <button class="admin-tab" data-tab="faq">FAQ</button>
             <button class="admin-tab" data-tab="promo">Promo</button>
             <button class="admin-tab" data-tab="settings">Settings</button>
@@ -6301,6 +6758,13 @@ const AdminPanel = (function() {
             <div class="admin-hint" id="adminImageHint">Każda wgrana grafika pojawi się tu jako ścieżka. Wiele zdjęć = slider w karcie produktu.</div>
             <img class="admin-img-preview" id="adminImgPreview" alt="preview">
 
+            <!-- Multi-image manager (visible when editing) -->
+            <div class="admin-images-section" id="imageManagerWrap" style="display:none;">
+              <h4>Gallery — drag to reorder · first image is cover</h4>
+              <div class="admin-img-list" id="imageManagerList"></div>
+              <div class="admin-hint" style="margin-top:8px;">Hover image → click × to remove. Drag tiles to change order. Changes save when you click <b>Update</b>.</div>
+            </div>
+
             <label>Seed (URL slug)</label>
             <input type="text" id="adminSeed" placeholder="crimson-reverie">
             <label>Description (EN)</label>
@@ -6319,10 +6783,36 @@ const AdminPanel = (function() {
 
             <div class="admin-list">
               <h3>Published collection <span id="adminListCount" style="color:var(--text-muted);font-size:0.8rem;"></span></h3>
-              <div class="admin-hint" style="margin-bottom:10px;">Drag rows by the ⋮⋮ handle to reorder. Click Edit to change a piece.</div>
+              <div class="admin-hint" style="margin-bottom:10px;">Drag rows by the ⋮⋮ handle to reorder. Click Edit to change a piece. Check boxes for bulk operations.</div>
+              <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                <label style="display:flex;align-items:center;gap:6px;font-size:0.72rem;color:var(--text-muted);cursor:pointer;">
+                  <input type="checkbox" id="bulkSelectAll" style="width:auto;margin:0;accent-color:var(--gold);"> Select all
+                </label>
+              </div>
+              <div class="admin-bulk-bar" id="bulkBar">
+                <span class="bulk-count" id="bulkCount">0 selected</span>
+                <select id="bulkAction">
+                  <option value="">Choose action...</option>
+                  <option value="pricePct">Adjust price by %</option>
+                  <option value="setCategory">Set category</option>
+                  <option value="resetSold">Reset sold to 0</option>
+                  <option value="markSoldOut">Mark sold out (250/250)</option>
+                  <option value="delete">Delete selected</option>
+                </select>
+                <input type="number" id="bulkParam" placeholder="value" style="display:none;">
+                <select id="bulkParamSelect" style="display:none;">
+                  <option value="Dark Art">Dark Art</option>
+                  <option value="Surrealism">Surrealism</option>
+                  <option value="Portrait">Portrait</option>
+                  <option value="Abstract">Abstract</option>
+                </select>
+                <button data-action="applyBulk" class="primary">Apply</button>
+                <button data-action="clearBulk">Clear</button>
+              </div>
               <div id="adminList"></div>
               <div class="admin-actions" style="margin-top:16px;">
                 <button class="admin-btn" data-action="saveOrder" id="saveOrderBtn" style="display:none;">Commit new order to GitHub</button>
+                <button class="admin-btn" data-action="commitBulk" id="commitBulkBtn" style="display:none;">Commit bulk changes to GitHub</button>
               </div>
             </div>
           </div>
@@ -6343,6 +6833,97 @@ const AdminPanel = (function() {
               </div>
             </div>
             <div id="ordersList"></div>
+          </div>
+
+          <!-- TAB: CODES (Discount codes) -->
+          <div class="admin-tab-content" data-tab-content="codes">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Discount codes</h3>
+            <div class="admin-hint" style="margin-bottom:14px;">Percent off, fixed amount off, free shipping, or BOGO (cheapest item discounted). Customers apply at checkout. Local mode = test in this browser; Publish = commit to GitHub.</div>
+
+            <div class="discount-stats" id="codesStats"></div>
+
+            <div class="admin-row" style="margin-bottom:14px;">
+              <div><label>New code (e.g. AURE10)</label><input type="text" id="newDiscCode" placeholder="AURE10" style="text-transform:uppercase;"></div>
+              <div><label>Type</label>
+                <select id="newDiscType">
+                  <option value="percent">Percent (% off)</option>
+                  <option value="amount">Amount (PLN off)</option>
+                  <option value="shipping">Free shipping</option>
+                  <option value="bogo">BOGO (cheapest % off)</option>
+                </select>
+              </div>
+            </div>
+            <div class="admin-row">
+              <div><label>Value</label><input type="number" id="newDiscValue" value="10" min="0"></div>
+              <div><label>Limit (0 = unlimited)</label><input type="number" id="newDiscLimit" value="0" min="0"></div>
+            </div>
+            <div class="admin-row">
+              <div><label>Label / description</label><input type="text" id="newDiscLabel" placeholder="-10% on entire order"></div>
+              <div><label>Expires (optional)</label><input type="date" id="newDiscExpires"></div>
+            </div>
+            <div class="admin-actions">
+              <button class="admin-btn primary" data-action="addDiscount">Add code</button>
+              <button class="admin-btn" data-action="saveCodes">Save codes to GitHub</button>
+            </div>
+            <div class="admin-status" id="adminCodesStatus"></div>
+
+            <div style="margin-top:20px;">
+              <h4 style="font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin:0 0 10px;font-weight:500;">Active codes</h4>
+              <div id="codesList"></div>
+            </div>
+          </div>
+
+          <!-- TAB: SEO -->
+          <div class="admin-tab-content" data-tab-content="seo">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">SEO meta editor</h3>
+            <div class="admin-hint" style="margin-bottom:14px;">Auto-generated meta tags (title, description, OG image) + per-artwork overrides + sitemap.xml generation + Product JSON-LD schema (Google rich results).</div>
+
+            <div class="seo-section">
+              <h4>Site-wide defaults</h4>
+              <p class="seo-desc">These show on homepage and any non-product page. Leave empty to use the existing &lt;head&gt; values from index.html.</p>
+              <label>Site title override</label>
+              <input type="text" id="seoGlobalTitle" placeholder="Aure D'Arte — Limited Edition AI Art">
+              <label>Site description override</label>
+              <input type="text" id="seoGlobalDesc" placeholder="Exclusive AI-generated fine art. Limited editions of 250 prints..." maxlength="160">
+              <label>Default OG image URL (1200x630)</label>
+              <input type="text" id="seoGlobalOg" placeholder="https://aure-d-arte.example.com/og-default.jpg">
+            </div>
+
+            <div class="seo-section">
+              <h4>Tools</h4>
+              <p class="seo-desc">Generate sitemap.xml from current artwork catalog. Includes priority + lastmod. Save with &laquo;Save SEO to GitHub&raquo; below.</p>
+              <div class="admin-actions">
+                <button class="admin-btn" data-action="previewSitemap">Preview sitemap.xml</button>
+                <button class="admin-btn" data-action="copySitemap">Copy to clipboard</button>
+                <button class="admin-btn primary" data-action="commitSitemap">Commit sitemap.xml to GitHub</button>
+              </div>
+              <textarea id="sitemapPreview" placeholder="sitemap.xml preview..." style="min-height:120px;font-family:'Courier New',monospace;font-size:0.7rem;display:none;margin-top:10px;"></textarea>
+            </div>
+
+            <div class="seo-section">
+              <h4>Per-artwork SEO</h4>
+              <p class="seo-desc">Override auto-generated meta per artwork. Empty fields = auto-generated from name + description.</p>
+              <div id="seoArtworkList"></div>
+            </div>
+
+            <div class="admin-actions">
+              <button class="admin-btn primary" data-action="saveSeo">Save SEO to GitHub</button>
+              <button class="admin-btn" data-action="previewSeo">Live preview meta</button>
+            </div>
+            <div class="admin-status" id="adminSeoStatus"></div>
+          </div>
+
+          <!-- TAB: MESSAGES (chat widget inbox) -->
+          <div class="admin-tab-content" data-tab-content="messages">
+            <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Messages · Contact inbox</h3>
+            <div class="admin-hint" style="margin-bottom:14px;">Messages from the live chat widget. Stored locally; if Discord webhook is set in Settings, they also push to Discord in real time.</div>
+            <div class="admin-actions">
+              <button class="admin-btn" data-action="refreshMessages">Refresh</button>
+              <button class="admin-btn" data-action="exportMessagesCsv">Export CSV</button>
+              <button class="admin-btn" data-action="clearMessages">Clear all (local)</button>
+              <span class="admin-hint" id="messagesCount" style="margin-left:auto;"></span>
+            </div>
+            <div id="messagesList" style="margin-top:14px;"></div>
           </div>
 
           <!-- TAB: FAQ -->
@@ -6382,6 +6963,19 @@ const AdminPanel = (function() {
           <!-- TAB: SETTINGS -->
           <div class="admin-tab-content" data-tab-content="settings">
             <h3 style="font-family:var(--font-display);font-weight:300;margin:0 0 14px;color:var(--text-primary);">Settings</h3>
+
+            <details open style="margin-bottom:18px;border:1px solid #1a1a1a;padding:12px;background:rgba(255,255,255,0.02);">
+              <summary style="cursor:pointer;color:var(--text-primary);font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;">Live chat · Discord webhook</summary>
+              <div style="margin-top:10px;">
+                <div class="admin-hint" style="margin-bottom:8px;">Paste your Discord channel webhook URL. Messages from the floating chat widget will arrive in real time. Create one at: Server Settings → Integrations → Webhooks → New.</div>
+                <input type="text" id="settingsDiscordHook" placeholder="https://discord.com/api/webhooks/..." autocomplete="off">
+                <div class="admin-actions">
+                  <button class="admin-btn primary" data-action="saveDiscordHook">Save webhook</button>
+                  <button class="admin-btn" data-action="testDiscordHook">Send test message</button>
+                </div>
+              </div>
+            </details>
+
             <details class="admin-pwd-change" open>
               <summary>Change studio password</summary>
               <label>New password</label>
@@ -6454,10 +7048,45 @@ const AdminPanel = (function() {
     if (act === 'setOrderStatus') setOrderStatus(e.target.dataset.id, e.target.dataset.status);
     if (act === 'toggleOrder') toggleOrder(e.target.dataset.id);
     if (act === 'removePendingImg') removePendingImage(parseInt(e.target.dataset.idx));
+
+    // === V4: Bulk operations ===
+    if (act === 'applyBulk') applyBulkAction();
+    if (act === 'clearBulk') clearBulkSelection();
+    if (act === 'commitBulk') commitBulkChanges();
+
+    // === V4: Discount codes ===
+    if (act === 'addDiscount') addDiscount();
+    if (act === 'deleteDiscount') deleteDiscount(e.target.dataset.code);
+    if (act === 'saveCodes') saveCodesToGitHub();
+
+    // === V4: SEO ===
+    if (act === 'previewSitemap') previewSitemap();
+    if (act === 'copySitemap') copySitemap();
+    if (act === 'commitSitemap') commitSitemap();
+    if (act === 'saveSeo') saveSeoToGitHub();
+    if (act === 'previewSeo') previewSeo(parseInt(e.target.dataset.id));
+    if (act === 'saveSeoRow') saveSeoRow(parseInt(e.target.dataset.id));
+
+    // === V4: Messages ===
+    if (act === 'refreshMessages') renderMessages();
+    if (act === 'exportMessagesCsv') exportMessagesCSV();
+    if (act === 'clearMessages') clearMessagesAll();
+    if (act === 'deleteMessage') deleteMessage(e.target.dataset.id);
+
+    // === V4: Settings (Discord webhook) ===
+    if (act === 'saveDiscordHook') saveDiscordHook();
+    if (act === 'testDiscordHook') testDiscordHook();
+
+    // === V4: Multi-image manager ===
+    if (act === 'removeGalleryImg') removeGalleryImage(parseInt(e.target.dataset.idx));
   }
   function handleChange(e) {
     if (e.target.name === 'adminMode') { setMode(e.target.value); applyMode(); }
     if (e.target.id === 'adminGhToken') setToken(e.target.value.trim());
+    // V4 bulk
+    if (e.target.id === 'bulkAction') updateBulkParamUI();
+    if (e.target.id === 'bulkSelectAll') toggleSelectAll(e.target.checked);
+    if (e.target.classList && e.target.classList.contains('row-check')) updateBulkBar();
   }
   function handleInput(e) {
     if (e.target.id === 'adminImage') updateImgPreview();
@@ -6500,8 +7129,12 @@ const AdminPanel = (function() {
     if (tab === 'artworks') { renderList(); renderDrafts(); }
     if (tab === 'dashboard') renderDashboard();
     if (tab === 'orders') renderOrders();
+    if (tab === 'codes') renderCodesTab();
+    if (tab === 'seo') renderSeoTab();
+    if (tab === 'messages') renderMessages();
     if (tab === 'faq') renderFaqEditor();
     if (tab === 'promo') loadPromoForm();
+    if (tab === 'settings') loadSettingsForm();
   }
 
   function applyMode() {
@@ -6575,6 +7208,7 @@ const AdminPanel = (function() {
       const img = (a.images && a.images[0]) || '';
       return `
         <div class="admin-art-row" draggable="true" data-art-id="${a.id}">
+          <input type="checkbox" class="row-check" data-row-id="${a.id}" title="Select for bulk">
           <div class="admin-art-handle" title="Drag to reorder">⋮⋮</div>
           <div class="admin-art-thumb">${img ? `<img src="${esc(img)}" alt="" loading="lazy">` : ''}</div>
           <div class="admin-art-info">
@@ -6595,6 +7229,7 @@ const AdminPanel = (function() {
     initRowDrag();
     orderDirty = false;
     overlay.querySelector('#saveOrderBtn').style.display = 'none';
+    updateBulkBar();
   }
 
   function initRowDrag() {
@@ -6869,6 +7504,8 @@ const AdminPanel = (function() {
     renderPendingImages();
     editingId = null;
     overlay.querySelector('#formTitle').textContent = 'Add new artwork';
+    const wrap = overlay.querySelector('#imageManagerWrap');
+    if (wrap) wrap.style.display = 'none';
     applyMode();
   }
 
@@ -6887,11 +7524,67 @@ const AdminPanel = (function() {
     pendingImages = [];
     renderPendingImages();
     updateImgPreview();
+    // V4: show multi-image manager
+    renderImageManager(art);
     applyMode();
     // scroll to form
     overlay.querySelector('#formTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function cancelEdit() { clearForm(); status('adminStatus2', 'Edit cancelled.'); }
+
+  /* ============================================
+   *  V4: Multi-image manager
+   * ============================================ */
+  let galleryImages = []; // local mutable list for currently-edited artwork
+  function renderImageManager(art) {
+    const wrap = overlay.querySelector('#imageManagerWrap');
+    const list = overlay.querySelector('#imageManagerList');
+    if (!wrap || !list) return;
+    galleryImages = (art.images || []).slice();
+    wrap.style.display = '';
+    const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    list.innerHTML = galleryImages.map((src, i) => `
+      <div class="admin-img-tile" draggable="true" data-gimg-idx="${i}">
+        ${i === 0 ? '<span class="tile-badge">cover</span>' : ''}
+        <img src="${esc(src)}" alt="">
+        <button class="tile-remove" data-action="removeGalleryImg" data-idx="${i}" title="Remove">×</button>
+        <span class="tile-idx">${i + 1}</span>
+      </div>
+    `).join('');
+    // Sync to image input
+    overlay.querySelector('#adminImage').value = galleryImages.join(', ');
+    initGalleryDrag();
+  }
+  function initGalleryDrag() {
+    const tiles = overlay.querySelectorAll('.admin-img-tile');
+    let dragged = null;
+    tiles.forEach(t => {
+      t.addEventListener('dragstart', e => {
+        dragged = t;
+        t.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      t.addEventListener('dragend', () => { t.classList.remove('dragging'); tiles.forEach(x => x.classList.remove('drag-over')); });
+      t.addEventListener('dragover', e => { e.preventDefault(); if (dragged && dragged !== t) t.classList.add('drag-over'); });
+      t.addEventListener('dragleave', () => t.classList.remove('drag-over'));
+      t.addEventListener('drop', e => {
+        e.preventDefault();
+        t.classList.remove('drag-over');
+        if (!dragged || dragged === t) return;
+        const from = parseInt(dragged.dataset.gimgIdx);
+        const to = parseInt(t.dataset.gimgIdx);
+        const [moved] = galleryImages.splice(from, 1);
+        galleryImages.splice(to, 0, moved);
+        // Re-render with art-like wrapper
+        renderImageManager({ images: galleryImages });
+      });
+    });
+  }
+  function removeGalleryImage(idx) {
+    if (idx < 0 || idx >= galleryImages.length) return;
+    galleryImages.splice(idx, 1);
+    renderImageManager({ images: galleryImages });
+  }
 
   async function saveArtwork() {
     const mode = getMode();
@@ -7481,6 +8174,533 @@ const AdminPanel = (function() {
     URL.revokeObjectURL(url);
   }
 
+  /* =========================================================
+   *  V4: BULK OPERATIONS
+   * ========================================================= */
+  let bulkDirty = false;
+  function getSelectedIds() {
+    return Array.from(overlay.querySelectorAll('.row-check:checked')).map(c => parseInt(c.dataset.rowId));
+  }
+  function updateBulkBar() {
+    const ids = getSelectedIds();
+    const bar = overlay.querySelector('#bulkBar');
+    const count = overlay.querySelector('#bulkCount');
+    if (!bar) return;
+    if (ids.length > 0) {
+      bar.classList.add('active');
+      count.textContent = ids.length + ' selected';
+    } else {
+      bar.classList.remove('active');
+    }
+    // Highlight selected rows
+    overlay.querySelectorAll('.admin-art-row').forEach(r => {
+      const id = parseInt(r.dataset.artId);
+      r.classList.toggle('selected', ids.includes(id));
+    });
+  }
+  function updateBulkParamUI() {
+    const action = overlay.querySelector('#bulkAction').value;
+    const paramNum = overlay.querySelector('#bulkParam');
+    const paramSel = overlay.querySelector('#bulkParamSelect');
+    paramNum.style.display = 'none';
+    paramSel.style.display = 'none';
+    if (action === 'pricePct') { paramNum.style.display = ''; paramNum.placeholder = '%'; paramNum.value = '10'; }
+    else if (action === 'setCategory') { paramSel.style.display = ''; }
+  }
+  function toggleSelectAll(checked) {
+    overlay.querySelectorAll('.row-check').forEach(c => c.checked = checked);
+    updateBulkBar();
+  }
+  function clearBulkSelection() {
+    overlay.querySelectorAll('.row-check').forEach(c => c.checked = false);
+    overlay.querySelector('#bulkSelectAll').checked = false;
+    updateBulkBar();
+  }
+  function applyBulkAction() {
+    const ids = getSelectedIds();
+    if (ids.length === 0) { alert('Select at least one artwork.'); return; }
+    const action = overlay.querySelector('#bulkAction').value;
+    if (!action) { alert('Choose a bulk action.'); return; }
+    const paramNum = overlay.querySelector('#bulkParam');
+    const paramSel = overlay.querySelector('#bulkParamSelect');
+    let changed = 0;
+    if (action === 'pricePct') {
+      const pct = parseFloat(paramNum.value) || 0;
+      if (pct === 0) { alert('Enter a non-zero percentage.'); return; }
+      if (!confirm(`Adjust price by ${pct}% on ${ids.length} artwork(s)?`)) return;
+      allArtworks.forEach(a => {
+        if (ids.includes(a.id)) {
+          a.price = Math.max(99, Math.round(a.price * (1 + pct / 100)));
+          changed++;
+        }
+      });
+    } else if (action === 'setCategory') {
+      const cat = paramSel.value;
+      if (!confirm(`Set category "${cat}" on ${ids.length} artwork(s)?`)) return;
+      allArtworks.forEach(a => { if (ids.includes(a.id)) { a.category = cat; changed++; } });
+    } else if (action === 'resetSold') {
+      if (!confirm(`Reset sold counter to 0 on ${ids.length} artwork(s)?`)) return;
+      allArtworks.forEach(a => {
+        if (ids.includes(a.id)) {
+          const total = parseInt(String(a.edition).split('/')[1]) || 250;
+          a.edition = `0/${total}`;
+          changed++;
+        }
+      });
+    } else if (action === 'markSoldOut') {
+      if (!confirm(`Mark ${ids.length} artwork(s) as SOLD OUT (250/250)?`)) return;
+      allArtworks.forEach(a => {
+        if (ids.includes(a.id)) {
+          const total = parseInt(String(a.edition).split('/')[1]) || 250;
+          a.edition = `${total}/${total}`;
+          changed++;
+        }
+      });
+    } else if (action === 'delete') {
+      if (!confirm(`PERMANENTLY DELETE ${ids.length} artwork(s)? This cannot be undone.`)) return;
+      allArtworks = allArtworks.filter(a => !ids.includes(a.id));
+      changed = ids.length;
+    }
+    if (changed > 0) {
+      bulkDirty = true;
+      renderList();
+      if (typeof renderShopGrid === 'function') { try { renderShopGrid('all'); } catch(e){} }
+      overlay.querySelector('#commitBulkBtn').style.display = (getMode() === 'publish') ? '' : 'none';
+      status('adminStatus2', `✓ Bulk: ${changed} artwork(s) updated (${action}). ${getMode() === 'publish' ? 'Click "Commit bulk changes" to push.' : 'Local change only.'}`);
+    }
+  }
+  async function commitBulkChanges() {
+    const mode = getMode();
+    if (mode !== 'publish') { alert('Switch to Publish mode to commit.'); return; }
+    const token = getToken();
+    if (!token) { alert('Set GitHub token first.'); return; }
+    try {
+      await commitArtworksArray('chore(admin): bulk operations on artwork catalog');
+      bulkDirty = false;
+      overlay.querySelector('#commitBulkBtn').style.display = 'none';
+      status('adminStatus2', '✓ Bulk changes committed to GitHub.');
+    } catch (e) {
+      status('adminStatus2', 'Commit failed: ' + e.message, true);
+    }
+  }
+
+  /* =========================================================
+   *  V4: DISCOUNT CODES
+   * ========================================================= */
+  function renderCodesTab() {
+    renderCodesStats();
+    renderCodesList();
+  }
+  function renderCodesStats() {
+    const cont = overlay.querySelector('#codesStats');
+    if (!cont) return;
+    const total = discountCodes.length;
+    const active = discountCodes.filter(d => isDiscountActive(d)).length;
+    const expired = total - active;
+    const totalUses = discountCodes.reduce((s, d) => s + (d.used || 0), 0);
+    cont.innerHTML = `
+      <div class="dash-card"><div class="dash-card-label">Total codes</div><div class="dash-card-value">${total}</div></div>
+      <div class="dash-card"><div class="dash-card-label">Active</div><div class="dash-card-value">${active}</div></div>
+      <div class="dash-card"><div class="dash-card-label">Expired/used up</div><div class="dash-card-value">${expired}</div></div>
+      <div class="dash-card"><div class="dash-card-label">Total uses</div><div class="dash-card-value">${totalUses}</div></div>
+    `;
+  }
+  function renderCodesList() {
+    const cont = overlay.querySelector('#codesList');
+    if (!cont) return;
+    if (discountCodes.length === 0) {
+      cont.innerHTML = '<div class="order-empty">No discount codes yet. Create one above.</div>';
+      return;
+    }
+    const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    cont.innerHTML = discountCodes.map(d => {
+      const active = isDiscountActive(d);
+      const typeLabel = { percent: '% off', amount: 'PLN off', shipping: 'free ship', bogo: 'BOGO' }[d.type] || d.type;
+      const valDisplay = d.type === 'percent' ? d.value + '%' : (d.type === 'amount' ? '-' + d.value + ' PLN' : (d.type === 'bogo' ? '-' + (d.value || 50) + '%' : 'free'));
+      const usedDisplay = d.limit > 0 ? `${d.used || 0}/${d.limit}` : `${d.used || 0}/∞`;
+      const exp = d.expires ? d.expires : '—';
+      return `
+        <div class="discount-row ${active ? '' : 'expired'}">
+          <span class="disc-code">${esc(d.code)}</span>
+          <span style="color:var(--text-secondary);">${esc(d.label || '')} <span class="disc-type">· ${typeLabel}</span></span>
+          <span class="disc-val">${valDisplay}</span>
+          <span class="disc-val">${usedDisplay}</span>
+          <span class="disc-type">${exp}</span>
+          <span class="disc-type">${active ? 'ACTIVE' : 'INACTIVE'}</span>
+          <div class="disc-actions">
+            <button class="danger" data-action="deleteDiscount" data-code="${esc(d.code)}">Delete</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  function addDiscount() {
+    const code = overlay.querySelector('#newDiscCode').value.trim().toUpperCase();
+    const type = overlay.querySelector('#newDiscType').value;
+    const value = parseFloat(overlay.querySelector('#newDiscValue').value) || 0;
+    const limit = parseInt(overlay.querySelector('#newDiscLimit').value) || 0;
+    const label = overlay.querySelector('#newDiscLabel').value.trim();
+    const expires = overlay.querySelector('#newDiscExpires').value;
+    if (!code) { status('adminCodesStatus', 'Code required.', true); return; }
+    if (discountCodes.some(d => d.code.toUpperCase() === code)) { status('adminCodesStatus', 'Code already exists.', true); return; }
+    if (type === 'percent' && (value <= 0 || value > 100)) { status('adminCodesStatus', 'Percent must be 1-100.', true); return; }
+    if (type === 'amount' && value <= 0) { status('adminCodesStatus', 'Amount must be > 0.', true); return; }
+    discountCodes.push({ code, type, value, label: label || code, limit, used: 0, expires: expires || '' });
+    saveDiscountCodesDraft();
+    renderCodesTab();
+    overlay.querySelector('#newDiscCode').value = '';
+    overlay.querySelector('#newDiscLabel').value = '';
+    overlay.querySelector('#newDiscExpires').value = '';
+    status('adminCodesStatus', `✓ Added "${code}". ${getMode() === 'publish' ? 'Click "Save codes to GitHub" to persist.' : 'Local only — won\'t persist across reloads in browser unless committed.'}`);
+  }
+  function deleteDiscount(code) {
+    if (!confirm(`Delete code "${code}"?`)) return;
+    discountCodes = discountCodes.filter(d => d.code !== code);
+    saveDiscountCodesDraft();
+    renderCodesTab();
+    status('adminCodesStatus', `✓ Deleted "${code}".`);
+  }
+  function saveDiscountCodesDraft() {
+    try { localStorage.setItem('aure_discount_codes_draft', JSON.stringify(discountCodes)); } catch(e){}
+  }
+  async function saveCodesToGitHub() {
+    const mode = getMode();
+    if (mode !== 'publish') { status('adminCodesStatus', 'Switch to Publish mode first.', true); return; }
+    const token = getToken();
+    if (!token) { status('adminCodesStatus', 'GitHub token required.', true); return; }
+    status('adminCodesStatus', 'Committing discount codes...');
+    try {
+      const path = 'index.html';
+      const cur = await ghGetFile(token, path);
+      const html = atob(cur.content.replace(/\n/g, ''));
+      const startMarker = 'let discountCodes = [';
+      const s = html.indexOf(startMarker);
+      if (s < 0) throw new Error('discountCodes marker not found');
+      // Find matching ];
+      let i = s + startMarker.length, depth = 1;
+      while (i < html.length && depth > 0) {
+        if (html[i] === '[') depth++;
+        else if (html[i] === ']') depth--;
+        i++;
+      }
+      while (i < html.length && html[i] !== ';') i++;
+      const newSerialized = 'let discountCodes = ' + JSON.stringify(discountCodes, null, 2) + ';';
+      const newHtml = html.slice(0, s) + newSerialized + html.slice(i + 1);
+      await ghPutFile(token, path, newHtml, 'feat(codes): update discount codes via admin panel', cur.sha);
+      status('adminCodesStatus', '✓ Codes committed to GitHub.');
+    } catch (e) {
+      status('adminCodesStatus', 'Failed: ' + e.message, true);
+    }
+  }
+
+  /* =========================================================
+   *  V4: SEO
+   * ========================================================= */
+  function renderSeoTab() {
+    overlay.querySelector('#seoGlobalTitle').value = (siteConfig.seoGlobal && siteConfig.seoGlobal.title) || '';
+    overlay.querySelector('#seoGlobalDesc').value = (siteConfig.seoGlobal && siteConfig.seoGlobal.description) || '';
+    overlay.querySelector('#seoGlobalOg').value = (siteConfig.seoGlobal && siteConfig.seoGlobal.ogImage) || '';
+    const cont = overlay.querySelector('#seoArtworkList');
+    const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const published = allArtworks.filter(a => !a.isDraft);
+    cont.innerHTML = published.map(a => {
+      const auto = generateSEOForArtwork(a);
+      const ov = seoOverrides[a.id] || {};
+      return `
+        <div class="seo-row" data-seo-id="${a.id}">
+          <div>
+            <div class="seo-name">${esc(a.name)}</div>
+            <div class="seo-meta">${esc(a.category)} · ${a.price} PLN</div>
+          </div>
+          <div>
+            <input type="text" data-seo-field="title" data-id="${a.id}" value="${esc(ov.title || '')}" placeholder="${esc(auto.title)}">
+            <input type="text" data-seo-field="description" data-id="${a.id}" value="${esc(ov.description || '')}" placeholder="${esc(auto.description.slice(0,100))}" style="margin-top:4px;">
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button data-action="saveSeoRow" data-id="${a.id}">Save</button>
+            <button data-action="previewSeo" data-id="${a.id}">Preview</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    // Append global change handler for inputs
+    cont.querySelectorAll('input[data-seo-field]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const id = parseInt(inp.dataset.id);
+        const field = inp.dataset.seoField;
+        seoOverrides[id] = seoOverrides[id] || {};
+        seoOverrides[id][field] = inp.value.trim();
+        saveSeoDraft();
+      });
+    });
+  }
+  function saveSeoDraft() {
+    try {
+      localStorage.setItem('aure_seo_overrides_draft', JSON.stringify(seoOverrides));
+      siteConfig.seoGlobal = {
+        title: overlay.querySelector('#seoGlobalTitle').value.trim(),
+        description: overlay.querySelector('#seoGlobalDesc').value.trim(),
+        ogImage: overlay.querySelector('#seoGlobalOg').value.trim()
+      };
+      localStorage.setItem('aure_seo_global_draft', JSON.stringify(siteConfig.seoGlobal));
+    } catch(e){}
+  }
+  function saveSeoRow(id) {
+    saveSeoDraft();
+    const art = allArtworks.find(a => a.id === id);
+    if (art) {
+      const meta = generateSEOForArtwork(art);
+      // Live preview if product modal happens to be open
+      applySEOMeta(meta);
+    }
+    status('adminSeoStatus', `✓ SEO override saved for artwork ${id}.`);
+  }
+  function previewSeo(id) {
+    const art = allArtworks.find(a => a.id === id);
+    if (!art) return;
+    const meta = generateSEOForArtwork(art);
+    const cont = overlay.querySelector(`.seo-row[data-seo-id="${id}"]`);
+    if (!cont) return;
+    let prev = cont.querySelector('.seo-preview');
+    if (prev) prev.remove();
+    prev = document.createElement('div');
+    prev.className = 'seo-preview';
+    prev.style.gridColumn = '1 / -1';
+    prev.innerHTML = `
+      <div class="sp-title">${escHtml(meta.title)}</div>
+      <div class="sp-url">aure-d-arte.com › artwork › ${escHtml(art.seed)}</div>
+      <div class="sp-desc">${escHtml(meta.description)}</div>
+    `;
+    cont.appendChild(prev);
+  }
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function buildSitemapXML() {
+    const baseUrl = location.origin && location.origin !== 'null' ? location.origin : 'https://bestkry.github.io/aure-d-arte';
+    const today = new Date().toISOString().split('T')[0];
+    const urls = [
+      { loc: baseUrl + '/', priority: '1.0', changefreq: 'weekly' },
+      { loc: baseUrl + '/#shop', priority: '0.9', changefreq: 'weekly' },
+      { loc: baseUrl + '/#clothing', priority: '0.8', changefreq: 'weekly' },
+      { loc: baseUrl + '/#about', priority: '0.6', changefreq: 'monthly' },
+      { loc: baseUrl + '/#faq', priority: '0.5', changefreq: 'monthly' }
+    ];
+    allArtworks.filter(a => !a.isDraft).forEach(a => {
+      urls.push({
+        loc: `${baseUrl}/?artwork=${a.seed}`,
+        priority: '0.7',
+        changefreq: 'monthly',
+        image: (a.images && a.images[0]) ? (a.images[0].startsWith('http') ? a.images[0] : baseUrl + '/' + a.images[0]) : null,
+        title: a.name
+      });
+    });
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/0.9">\n';
+    urls.forEach(u => {
+      xml += '  <url>\n';
+      xml += `    <loc>${u.loc}</loc>\n`;
+      xml += `    <lastmod>${today}</lastmod>\n`;
+      xml += `    <changefreq>${u.changefreq}</changefreq>\n`;
+      xml += `    <priority>${u.priority}</priority>\n`;
+      if (u.image) {
+        xml += '    <image:image>\n';
+        xml += `      <image:loc>${u.image}</image:loc>\n`;
+        xml += `      <image:title>${escHtml(u.title)}</image:title>\n`;
+        xml += '    </image:image>\n';
+      }
+      xml += '  </url>\n';
+    });
+    xml += '</urlset>\n';
+    return xml;
+  }
+  function previewSitemap() {
+    const ta = overlay.querySelector('#sitemapPreview');
+    ta.value = buildSitemapXML();
+    ta.style.display = '';
+  }
+  async function copySitemap() {
+    try {
+      await navigator.clipboard.writeText(buildSitemapXML());
+      status('adminSeoStatus', '✓ sitemap.xml copied to clipboard.');
+    } catch(e) { status('adminSeoStatus', 'Copy failed.', true); }
+  }
+  async function commitSitemap() {
+    const mode = getMode();
+    if (mode !== 'publish') { status('adminSeoStatus', 'Switch to Publish mode first.', true); return; }
+    const token = getToken();
+    if (!token) { status('adminSeoStatus', 'GitHub token required.', true); return; }
+    status('adminSeoStatus', 'Committing sitemap.xml...');
+    try {
+      const xml = buildSitemapXML();
+      let sha = null;
+      try { const ex = await ghGetFile(token, 'sitemap.xml'); sha = ex.sha; } catch(e){}
+      await ghPutFile(token, 'sitemap.xml', xml, 'chore(seo): regenerate sitemap.xml', sha);
+      status('adminSeoStatus', '✓ sitemap.xml committed. Submit to Google Search Console for indexing.');
+    } catch (e) {
+      status('adminSeoStatus', 'Failed: ' + e.message, true);
+    }
+  }
+  async function saveSeoToGitHub() {
+    const mode = getMode();
+    if (mode !== 'publish') { status('adminSeoStatus', 'Switch to Publish mode first.', true); return; }
+    const token = getToken();
+    if (!token) { status('adminSeoStatus', 'GitHub token required.', true); return; }
+    saveSeoDraft();
+    status('adminSeoStatus', 'Committing SEO overrides...');
+    try {
+      const path = 'index.html';
+      const cur = await ghGetFile(token, path);
+      let html = atob(cur.content.replace(/\n/g, ''));
+      // Replace seoOverrides
+      const sStart = 'let seoOverrides = {';
+      const sIdx = html.indexOf(sStart);
+      if (sIdx < 0) throw new Error('seoOverrides marker not found');
+      let i = sIdx + sStart.length, depth = 1;
+      while (i < html.length && depth > 0) {
+        if (html[i] === '{') depth++;
+        else if (html[i] === '}') depth--;
+        i++;
+      }
+      while (i < html.length && html[i] !== ';') i++;
+      const newSer = 'let seoOverrides = ' + JSON.stringify(seoOverrides, null, 2) + ';';
+      html = html.slice(0, sIdx) + newSer + html.slice(i + 1);
+      // Also replace siteConfig (for seoGlobal change)
+      const cStart = 'let siteConfig = {';
+      const cIdx = html.indexOf(cStart);
+      if (cIdx >= 0) {
+        i = cIdx + cStart.length; depth = 1;
+        while (i < html.length && depth > 0) {
+          if (html[i] === '{') depth++;
+          else if (html[i] === '}') depth--;
+          i++;
+        }
+        while (i < html.length && html[i] !== ';') i++;
+        const cSer = 'let siteConfig = ' + JSON.stringify(siteConfig, null, 2) + ';';
+        html = html.slice(0, cIdx) + cSer + html.slice(i + 1);
+      }
+      await ghPutFile(token, path, html, 'feat(seo): update SEO overrides + site-wide defaults', cur.sha);
+      status('adminSeoStatus', '✓ SEO committed to GitHub.');
+    } catch (e) {
+      status('adminSeoStatus', 'Failed: ' + e.message, true);
+    }
+  }
+
+  /* =========================================================
+   *  V4: MESSAGES (chat inbox)
+   * ========================================================= */
+  function getMessages() { try { return JSON.parse(localStorage.getItem('aure_messages') || '[]'); } catch(e) { return []; } }
+  function setMessages(arr) { try { localStorage.setItem('aure_messages', JSON.stringify(arr)); } catch(e){} }
+  function renderMessages() {
+    const cont = overlay.querySelector('#messagesList');
+    const count = overlay.querySelector('#messagesCount');
+    if (!cont) return;
+    const msgs = getMessages().slice().reverse(); // newest first
+    count.textContent = `${msgs.length} message(s)`;
+    if (msgs.length === 0) {
+      cont.innerHTML = '<div class="order-empty">No messages yet. Customers can write you via the floating chat button.</div>';
+      return;
+    }
+    cont.innerHTML = msgs.map(m => {
+      const date = new Date(m.date).toLocaleString();
+      const sentBadge = m.sent ? '<span style="color:var(--gold);font-size:0.62rem;margin-left:8px;">✓ sent to Discord</span>' : '<span style="color:#888;font-size:0.62rem;margin-left:8px;">local only</span>';
+      return `
+        <div class="msg-row">
+          <div class="msg-head">
+            <span class="msg-from">${escHtml(m.name)}${sentBadge}</span>
+            <span class="msg-date">${date}</span>
+          </div>
+          <div class="msg-email">${escHtml(m.email)}</div>
+          <div class="msg-text">${escHtml(m.message)}</div>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <a href="mailto:${escHtml(m.email)}?subject=Re: your message" class="admin-btn" style="text-decoration:none;display:inline-block;">Reply via email</a>
+            <button class="admin-btn" data-action="deleteMessage" data-id="${escHtml(m.id)}">Delete</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+  function deleteMessage(id) {
+    if (!confirm('Delete this message?')) return;
+    const msgs = getMessages().filter(m => m.id !== id);
+    setMessages(msgs);
+    renderMessages();
+  }
+  function clearMessagesAll() {
+    if (!confirm('Delete ALL messages? This cannot be undone.')) return;
+    setMessages([]);
+    renderMessages();
+  }
+  function exportMessagesCSV() {
+    const msgs = getMessages();
+    if (msgs.length === 0) { alert('No messages to export.'); return; }
+    const rows = [['id','date','name','email','message','page','sent']];
+    msgs.forEach(m => rows.push([m.id, m.date, m.name, m.email, m.message.replace(/\n/g,' '), m.page || '', m.sent ? 'yes' : 'no']));
+    const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `aure-messages-${Date.now()}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /* =========================================================
+   *  V4: SETTINGS — Discord webhook
+   * ========================================================= */
+  function loadSettingsForm() {
+    const inp = overlay.querySelector('#settingsDiscordHook');
+    if (inp) inp.value = (siteConfig.chatWebhook || '');
+  }
+  function saveDiscordHook() {
+    const val = overlay.querySelector('#settingsDiscordHook').value.trim();
+    if (val && !/^https:\/\/(discord|discordapp)\.com\/api\/webhooks\//.test(val)) {
+      status('adminSettingsStatus', 'Not a valid Discord webhook URL.', true);
+      return;
+    }
+    siteConfig.chatWebhook = val;
+    try { localStorage.setItem('aure_chat_webhook_draft', val); } catch(e){}
+    status('adminSettingsStatus', `✓ Webhook saved locally. ${getMode() === 'publish' ? 'Click "Commit promo to GitHub" or use SEO save — webhook lives in siteConfig.' : 'Local only.'}`);
+  }
+  async function testDiscordHook() {
+    const val = (overlay.querySelector('#settingsDiscordHook').value || '').trim();
+    if (!val) { status('adminSettingsStatus', 'Paste webhook URL first.', true); return; }
+    if (!/^https:\/\/(discord|discordapp)\.com\/api\/webhooks\//.test(val)) { status('adminSettingsStatus', 'Invalid Discord URL.', true); return; }
+    status('adminSettingsStatus', 'Sending test message...');
+    try {
+      const res = await fetch(val, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: "Aure D'Arte Test",
+          content: "✨ Test from admin panel — your live chat is connected. New messages will arrive here."
+        })
+      });
+      if (res.ok) status('adminSettingsStatus', '✓ Test sent! Check your Discord channel.');
+      else status('adminSettingsStatus', 'Discord returned ' + res.status, true);
+    } catch (e) { status('adminSettingsStatus', 'Failed: ' + e.message, true); }
+  }
+
+  /* =========================================================
+   *  V4: GitHub helpers (re-use, but here in case)
+   * ========================================================= */
+  async function ghGetFile(token, path) {
+    const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) throw new Error('Get failed: ' + res.status);
+    return await res.json();
+  }
+  async function ghPutFile(token, path, content, message, sha) {
+    const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: GH_BRANCH };
+    if (sha) body.sha = sha;
+    const res = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      throw new Error('Put failed: ' + res.status + ' ' + t.slice(0, 200));
+    }
+    return await res.json();
+  }
+
   return {
     init() {
       // Apply any locally-saved overrides BEFORE first render
@@ -7489,6 +8709,15 @@ const AdminPanel = (function() {
         if (faqDraft) { try { faqData = JSON.parse(faqDraft); } catch {} }
         const promoDraft = localStorage.getItem('aure_promo_draft');
         if (promoDraft) { try { siteConfig.promo = JSON.parse(promoDraft); } catch {} }
+        // V4 drafts
+        const codesDraft = localStorage.getItem('aure_discount_codes_draft');
+        if (codesDraft) { try { discountCodes = JSON.parse(codesDraft); } catch {} }
+        const seoOvDraft = localStorage.getItem('aure_seo_overrides_draft');
+        if (seoOvDraft) { try { seoOverrides = JSON.parse(seoOvDraft); } catch {} }
+        const seoGlobalDraft = localStorage.getItem('aure_seo_global_draft');
+        if (seoGlobalDraft) { try { siteConfig.seoGlobal = JSON.parse(seoGlobalDraft); } catch {} }
+        const webhookDraft = localStorage.getItem('aure_chat_webhook_draft');
+        if (webhookDraft) siteConfig.chatWebhook = webhookDraft;
       } catch {}
       Drafts.mergeIntoArtworks();
       if (typeof renderShopGrid === 'function') { try { renderShopGrid('all'); } catch(e) {} }
@@ -7506,5 +8735,37 @@ AdminPanel.init();
 
 
 </script>
+<!-- LIVE CHAT WIDGET -->
+<div class="chat-widget" id="chatWidget">
+  <button class="chat-toggle" id="chatToggle" aria-label="Open chat" title="Contact us">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  </button>
+  <div class="chat-panel" id="chatPanel" role="dialog" aria-label="Contact">
+    <div class="chat-head">
+      <h4><span data-lang="en">Get in touch</span><span data-lang="pl">Napisz do nas</span></h4>
+      <button class="chat-close" id="chatClose" aria-label="Close">×</button>
+    </div>
+    <div class="chat-body">
+      <div id="chatFormWrap">
+        <p class="chat-intro">
+          <span data-lang="en">Questions about prints, shipping, or commissions? We typically reply within a few hours.</span>
+          <span data-lang="pl">Pytania o printy, wysyłkę lub zlecenia? Zwykle odpowiadamy w ciągu kilku godzin.</span>
+        </p>
+        <form class="chat-form" id="chatForm" onsubmit="return submitChatForm(event);">
+          <input type="text" id="chatName" placeholder="Name" required maxlength="80" autocomplete="name">
+          <input type="email" id="chatEmail" placeholder="Email" required maxlength="120" autocomplete="email">
+          <textarea id="chatMessage" placeholder="Your message..." required maxlength="2000"></textarea>
+          <div class="chat-error" id="chatError" style="display:none;"></div>
+          <button type="submit" id="chatSendBtn"><span data-lang="en">Send message</span><span data-lang="pl">Wyślij wiadomość</span></button>
+        </form>
+      </div>
+      <div class="chat-success" id="chatSuccess" style="display:none;">
+        <span data-lang="en">Thanks! We'll be in touch soon.</span>
+        <span data-lang="pl">Dziękujemy! Odezwiemy się wkrótce.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
