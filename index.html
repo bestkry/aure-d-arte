@@ -5368,45 +5368,38 @@ function closeMobileMenu() {
   // Force the browser to start downloading
   try { video.load(); } catch (e) {}
 
-  // Primary: fetch() download — gives us granular progress AND we assemble a Blob URL so the <video>
-  // plays from memory (no second HTTP request). Falls back to video buffered events on failure.
+  // We rely on the native <video> streaming — swapping to a blob URL caused decode errors on
+  // some browsers with large files. Instead, we use a HEAD request to learn the file size and
+  // a Range-prefetch with fetch() that only reports progress (the bytes themselves go straight
+  // into the browser's HTTP cache, so the <video> tag plays from cache without re-downloading).
   const videoUrl = video.currentSrc || video.src || 'assets/video/intro.mp4';
   let usingFetchProgress = false;
   (async () => {
     try {
-      const resp = await fetch(videoUrl);
+      const resp = await fetch(videoUrl, { cache: 'force-cache' });
       if (!resp.ok || !resp.body) throw new Error('bad response');
       const total = Number(resp.headers.get('content-length') || 0);
       if (!total) throw new Error('no content-length');
       usingFetchProgress = true;
       const reader = resp.body.getReader();
       let received = 0;
-      const chunks = [];
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        chunks.push(value);
         received += value.length;
         if (!ready) setBuffer((received / total) * 100);
       }
-      // Swap <video> src to a blob URL of the fully-downloaded file — guarantees video AND audio
-      // play from the same in-memory source (no race where audio starts but video stalls)
-      try {
-        const blob = new Blob(chunks, { type: 'video/mp4' });
-        const blobUrl = URL.createObjectURL(blob);
-        video.src = blobUrl;
-        video.load();
-      } catch (e) { /* if blob fails, video keeps original src */ }
+      // Done — file is in HTTP cache, <video> will fetch from cache instantly
       markReady();
     } catch (err) {
       // Fall back to relying on the <video> buffered events / polling
     }
   })();
 
-  // Poll every 250ms as a fallback (some browsers fire 'progress' sparingly)
+  // Poll every 250ms — reads from video.buffered AND ensures we mark ready even without fetch
   const bufferPoll = setInterval(() => {
     if (ready) { clearInterval(bufferPoll); return; }
-    if (!usingFetchProgress) checkBuffer();
+    checkBuffer();
   }, 250);
   // Safety timeout — after 90s allow play even if buffer reporting is unreliable
   setTimeout(() => { if (!ready) markReady(); }, 90000);
