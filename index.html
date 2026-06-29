@@ -2914,6 +2914,99 @@ body.has-promo .header { top: 36px; }
 .msg-row .msg-email { color: var(--gold); font-size: 0.7rem; margin-bottom: 4px; font-family: 'Courier New', monospace; }
 .msg-row .msg-text { color: var(--text-secondary); line-height: 1.5; white-space: pre-wrap; }
 /* ============================================ */
+/* CINEMAGRAPH — galeria + modal */
+/* ============================================ */
+/* Card video matches existing <img> sizing exactly. */
+.gallery-item video.gallery-cinemagraph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0a0a0a;
+  /* Same aspect-ratio behaviour as gallery <img> */
+}
+/* Subtle gold MOTION badge top-right on cards */
+.gallery-item .cinemagraph-tag {
+  position: absolute;
+  top: 12px; right: 12px;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  background: rgba(10,10,10,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 10px;
+  border: 1px solid rgba(201,169,110,0.3);
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.gallery-item.has-cinemagraph .cinemagraph-tag {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+/* Subtle pulsing gold dot before tag */
+.gallery-item .cinemagraph-tag::before {
+  content: '';
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+  margin-right: 8px;
+  vertical-align: middle;
+  animation: cgPulse 2.4s ease-in-out infinite;
+}
+@keyframes cgPulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+/* Modal cinemagraph fills same area as #modalMainImg */
+video.modal-cinemagraph {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 75vh;
+  object-fit: cover;
+  background: #0a0a0a;
+}
+
+/* Motion thumbnail in product modal */
+.product-thumb-motion {
+  position: relative;
+}
+.product-thumb-motion .product-thumb-motion-tag {
+  position: absolute;
+  bottom: 4px; left: 4px;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.45rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  color: #0a0a0a;
+  background: var(--gold);
+  padding: 2px 6px;
+  pointer-events: none;
+  z-index: 2;
+}
+/* Pulse dot accent on motion thumb */
+.product-thumb-motion::after {
+  content: '';
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(201,169,110,0.7);
+  animation: cgPulse 2.4s ease-in-out infinite;
+  z-index: 2;
+}
+
+/* ============================================ */
 /* MANIFESTO PAGE — kinematograficzne credo */
 /* ============================================ */
 .manifesto-page {
@@ -3738,6 +3831,7 @@ body.has-promo .header { top: 36px; }
       <div class="product-gallery">
         <div class="product-main-image" id="productMainImage" role="button" tabindex="0" aria-label="Open image lightbox">
           <img id="modalMainImg" src="" alt="" width="600" height="750">
+          <video id="modalMainVideo" class="modal-cinemagraph" muted playsinline loop preload="none" style="display:none;" width="600" height="750" aria-label="Cinemagraph preview"></video>
         </div>
         <div class="product-thumbs" id="modalThumbs"></div>
       </div>
@@ -4501,21 +4595,21 @@ let faqData = [
 
 /* ========== PRODUCT DATA — 15 ARTWORKS ========== */
 let allArtworks = [
-  { id:1,  name:"Velvet Abyss",        category:"Dark Art",    price:399, edition:"12/250",  seed:"velvet-abyss",     desc:"A descent into layered darkness where soft textures meet the void. Velvet Abyss explores the beauty hidden in absolute blackness.", images: ["assets/velvet-abyss-main.jpg","assets/velvet-abyss-detail.jpg","assets/velvet-abyss-close.jpg","assets/velvet-abyss-print.jpg"] },
+  { id:1,  name:"Velvet Abyss",        category:"Dark Art",    price:399, edition:"12/250",  seed:"velvet-abyss",     desc:"A descent into layered darkness where soft textures meet the void. Velvet Abyss explores the beauty hidden in absolute blackness.", images: ["assets/velvet-abyss-main.jpg","assets/velvet-abyss-detail.jpg","assets/velvet-abyss-close.jpg","assets/velvet-abyss-print.jpg"], cinemagraph: { mp4: "assets/cinemagraph/cinemagraph-velvet-abyss.mp4", webm: "assets/cinemagraph/cinemagraph-velvet-abyss.webm", poster: "assets/cinemagraph/cinemagraph-velvet-abyss-poster.jpg" } },
   { id:2,  name:"Cathedral of Dust",   category:"Surrealism",  price:499, edition:"31/250",  seed:"cathedral-dust",   desc:"Crumbling arches of an impossible cathedral, where dust particles become constellations in forgotten light.", images: ["assets/cathedral-dust.jpg"] },
   { id:3,  name:"Neon Requiem",        category:"Portrait",    price:349, edition:"7/250",   seed:"neon-requiem",     desc:"A portrait suspended between life and electricity. The subject's gaze pierces through synthetic haze.", images: ["assets/neon-requiem.jpg"] },
   { id:4,  name:"The Last Sovereign",  category:"Dark Art",    price:599, edition:"44/250",  seed:"last-sovereign",   desc:"Power corrupted, throne abandoned. This piece examines the weight of authority in its final, crumbling moments.", images: ["assets/last-sovereign.jpg"] },
   { id:5,  name:"Obsidian Garden",     category:"Abstract",    price:449, edition:"89/250",  seed:"obsidian-garden",  desc:"Organic forms crystallized in volcanic glass. Nature reimagined through the lens of geological time.", images: ["assets/obsidian-garden.jpg"] },
   { id:6,  name:"Throne of Shadows",   category:"Surrealism",  price:549, edition:"22/250",  seed:"throne-shadows",   desc:"A seat of power that exists only when no one watches. The shadows themselves form the architecture.", images: ["assets/throne-shadows.jpg"] },
-  { id:7,  name:"Crimson Reverie",     category:"Portrait",    price:699, edition:"243/250", seed:"crimson-reverie",  desc:"Lost in thought, bathed in red. This intimate portrait captures the moment between waking and dream.", images: ["assets/crimson-reverie.jpg"] },
+  { id:7,  name:"Crimson Reverie",     category:"Portrait",    price:699, edition:"243/250", seed:"crimson-reverie",  desc:"Lost in thought, bathed in red. This intimate portrait captures the moment between waking and dream.", images: ["assets/crimson-reverie.jpg"], cinemagraph: { mp4: "assets/cinemagraph/cinemagraph-crimson-reverie.mp4", webm: "assets/cinemagraph/cinemagraph-crimson-reverie.webm", poster: "assets/cinemagraph/cinemagraph-crimson-reverie-poster.jpg" } },
   { id:8,  name:"Silent Monarch",      category:"Dark Art",    price:399, edition:"61/250",  seed:"silent-monarch",   desc:"Rule without words, lead without sound. The silent monarch commands through presence alone.", images: ["assets/silent-monarch.jpg"] },
   { id:9,  name:"Fractured Divinity",  category:"Abstract",    price:529, edition:"18/250",  seed:"fractured-divine", desc:"Sacred geometry shattered and reassembled by machine intelligence. Each fragment holds a different truth.", images: ["assets/fractured-divinity.jpg"] },
   { id:10, name:"Hollow Saints",       category:"Dark Art",    price:479, edition:"33/250",  seed:"hollow-saints",    desc:"Empty vessels wearing haloes of rust. A meditation on the erosion of idols over centuries.", images: ["assets/hollow-saints.jpg"] },
   { id:11, name:"Lucid Phantom",       category:"Portrait",    price:559, edition:"14/250",  seed:"lucid-phantom",    desc:"A face materializing from digital fog — neither fully present nor fully gone. The phantom chooses when to be seen.", images: ["assets/lucid-phantom.jpg"] },
   { id:12, name:"Ash Meridian",        category:"Surrealism",  price:419, edition:"52/250",  seed:"ash-meridian",     desc:"The meridian line redrawn in ash across impossible landscapes. Geography redefined by entropy.", images: ["assets/ash-meridian.jpg"] },
-  { id:13, name:"Void Architect",      category:"Abstract",    price:639, edition:"238/250", seed:"void-architect",   desc:"Structures built from nothing, designed to hold nothing. The architect of void constructs pure negative space.", images: ["assets/void-architect.jpg"] },
+  { id:13, name:"Void Architect",      category:"Abstract",    price:639, edition:"238/250", seed:"void-architect",   desc:"Structures built from nothing, designed to hold nothing. The architect of void constructs pure negative space.", images: ["assets/void-architect.jpg"], cinemagraph: { mp4: "assets/cinemagraph/cinemagraph-void-architect.mp4", webm: "assets/cinemagraph/cinemagraph-void-architect.webm", poster: "assets/cinemagraph/cinemagraph-void-architect-poster.jpg" } },
   { id:14, name:"Burning Serenade",    category:"Dark Art",    price:489, edition:"41/250",  seed:"burning-serenade", desc:"Music made visible through flame. Each note leaves a trail of fire across the composition.", images: ["assets/burning-serenade.jpg"] },
-  { id:15, name:"Eternal Revenant",    category:"Surrealism",  price:579, edition:"27/250",  seed:"eternal-revenant", desc:"Returning endlessly, never arriving. The revenant walks through layers of time, each step a new epoch.", images: ["assets/eternal-revenant.jpg"] },
+  { id:15, name:"Eternal Revenant",    category:"Surrealism",  price:579, edition:"27/250",  seed:"eternal-revenant", desc:"Returning endlessly, never arriving. The revenant walks through layers of time, each step a new epoch.", images: ["assets/eternal-revenant.jpg"], cinemagraph: { mp4: "assets/cinemagraph/cinemagraph-eternal-revenant.mp4", webm: "assets/cinemagraph/cinemagraph-eternal-revenant.webm", poster: "assets/cinemagraph/cinemagraph-eternal-revenant-poster.jpg" } },
 ];
 
 /* ========== CLOTHING DATA (6 hoodies) ========== */
@@ -4622,15 +4716,43 @@ const RecentlyViewed = (function() {
 })();
 
 /* ========== HOME GALLERY (8 items) ========== */
+/* Featured artworks may have a `cinemagraph` field (mp4/webm/poster).
+   Cards with cinemagraph render a <video> element instead of <img>.
+   Lazy-load: video source is empty until card enters viewport (IntersectionObserver).
+   Pause when fully off-screen to save resources.
+   Honor prefers-reduced-motion: show poster image only, no video playback. */
 const homeGalleryData = allArtworks.slice(0, 8);
 const grid = document.getElementById('galleryGrid');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 homeGalleryData.forEach(art => {
   const item = document.createElement('div');
   item.className = 'gallery-item reveal wipe';
+  if (art.cinemagraph) item.classList.add('has-cinemagraph');
   item.onclick = () => { showView('shop'); setTimeout(() => openProductModal(art.id), 300); };
   const mainSrc = art.images ? art.images[0] : `https://picsum.photos/seed/${art.seed}/600/800`;
+
+  let mediaHTML;
+  if (art.cinemagraph && !prefersReducedMotion) {
+    // Lazy <video>: src empty initially, populated via IntersectionObserver
+    mediaHTML = `
+      <video class="gallery-cinemagraph"
+             poster="${art.cinemagraph.poster}"
+             muted playsinline loop preload="none"
+             aria-label="${art.name} — cinemagraph"
+             data-cinemagraph-mp4="${art.cinemagraph.mp4}"
+             data-cinemagraph-webm="${art.cinemagraph.webm}"
+             width="600" height="800"></video>
+      <span class="cinemagraph-tag" aria-hidden="true">MOTION</span>`;
+  } else if (art.cinemagraph && prefersReducedMotion) {
+    // Reduced-motion fallback: show poster as still image
+    mediaHTML = `<img src="${art.cinemagraph.poster}" alt="${art.name}" width="600" height="800" loading="lazy">`;
+  } else {
+    mediaHTML = `<img src="${mainSrc}" alt="${art.name}" width="600" height="800" loading="lazy">`;
+  }
+
   item.innerHTML = `
-    <img src="${mainSrc}" alt="${art.name}" width="600" height="800" loading="lazy">
+    ${mediaHTML}
     <div class="gallery-overlay">
       <span class="gallery-category">${art.category}</span>
       <h3 class="gallery-name">${art.name}</h3>
@@ -4641,6 +4763,60 @@ homeGalleryData.forEach(art => {
     </div>`;
   grid.appendChild(item);
 });
+
+/* ========== CINEMAGRAPH lazy-load + viewport-pause ========== */
+(function initCinemagraphs(){
+  const videos = document.querySelectorAll('video.gallery-cinemagraph[data-cinemagraph-mp4]');
+  if (!videos.length) return;
+
+  function attachSources(video){
+    if (video.dataset.loaded) return;
+    video.dataset.loaded = '1';
+    const webm = video.dataset.cinemagraphWebm;
+    const mp4 = video.dataset.cinemagraphMp4;
+    // Prefer WebM (smaller) for browsers that support it, fallback to MP4
+    if (webm) {
+      const sWebm = document.createElement('source');
+      sWebm.src = webm; sWebm.type = 'video/webm';
+      video.appendChild(sWebm);
+    }
+    if (mp4) {
+      const sMp4 = document.createElement('source');
+      sMp4.src = mp4; sMp4.type = 'video/mp4';
+      video.appendChild(sMp4);
+    }
+    video.load();
+  }
+
+  // Stage 1: load video sources when near viewport (200px ahead)
+  const loadObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        attachSources(entry.target);
+        loadObserver.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '200px 0px 200px 0px' });
+
+  // Stage 2: play/pause when actually visible (saves CPU on offscreen videos)
+  const playObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const v = entry.target;
+      if (entry.isIntersecting && entry.intersectionRatio > 0.15) {
+        // play() returns a promise that may reject on autoplay policy
+        const p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } else {
+        v.pause();
+      }
+    });
+  }, { threshold: [0, 0.15, 0.5] });
+
+  videos.forEach(v => {
+    loadObserver.observe(v);
+    playObserver.observe(v);
+  });
+})();
 
 /* ========== SHOP GRID (15 items) ========== */
 function buildShopCardInner(art) {
@@ -4927,25 +5103,90 @@ function openProductModal(id) {
   selectedSize = currentProduct.isApparel ? 1 : 2; // M default for apparel, L for art
   selectedFrame = 0;
 
-  // Main image
+  // Main image + optional cinemagraph video
   const mainImg = document.getElementById('modalMainImg');
+  const mainVideo = document.getElementById('modalMainVideo');
   const hasReal = currentProduct.images && currentProduct.images.length > 0;
-  mainImg.src = hasReal ? currentProduct.images[0] : `https://picsum.photos/seed/${currentProduct.seed}/600/750`;
+  const hasCinemagraph = !!currentProduct.cinemagraph;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Helpers to swap between image / video modes
+  function showImageInModal(src) {
+    mainImg.src = src;
+    mainImg.style.display = '';
+    if (mainVideo) {
+      mainVideo.pause();
+      mainVideo.style.display = 'none';
+      // Clear sources so the video stops downloading
+      while (mainVideo.firstChild) mainVideo.removeChild(mainVideo.firstChild);
+      mainVideo.removeAttribute('src');
+      mainVideo.load();
+    }
+  }
+  function showCinemagraphInModal(cg) {
+    if (!mainVideo) return;
+    mainImg.style.display = 'none';
+    mainVideo.style.display = '';
+    mainVideo.setAttribute('poster', cg.poster);
+    // Rebuild <source> children
+    while (mainVideo.firstChild) mainVideo.removeChild(mainVideo.firstChild);
+    if (cg.webm) {
+      const sW = document.createElement('source');
+      sW.src = cg.webm; sW.type = 'video/webm';
+      mainVideo.appendChild(sW);
+    }
+    if (cg.mp4) {
+      const sM = document.createElement('source');
+      sM.src = cg.mp4; sM.type = 'video/mp4';
+      mainVideo.appendChild(sM);
+    }
+    mainVideo.load();
+    const p = mainVideo.play();
+    if (p && typeof p.catch === 'function') p.catch(() => {});
+  }
+  // Expose for thumbnail handlers below
+  window._showImageInModal = showImageInModal;
+  window._showCinemagraphInModal = showCinemagraphInModal;
+
+  // Initial main media: cinemagraph if available (and motion allowed), else first image
+  if (hasCinemagraph && !reducedMotion) {
+    showCinemagraphInModal(currentProduct.cinemagraph);
+  } else {
+    showImageInModal(hasReal ? currentProduct.images[0] : `https://picsum.photos/seed/${currentProduct.seed}/600/750`);
+  }
   mainImg.alt = currentProduct.name;
 
-  // Thumbnails — use real images if available, else picsum
+  // Thumbnails — first thumb is Motion (if cinemagraph), then regular image thumbs
   const thumbsCont = document.getElementById('modalThumbs');
   thumbsCont.innerHTML = '';
+
+  if (hasCinemagraph && !reducedMotion) {
+    const motionBtn = document.createElement('button');
+    motionBtn.className = 'product-thumb product-thumb-motion active';
+    motionBtn.setAttribute('aria-label', 'Cinemagraph');
+    motionBtn.onclick = () => {
+      thumbsCont.querySelectorAll('.product-thumb').forEach(t => t.classList.remove('active'));
+      motionBtn.classList.add('active');
+      showCinemagraphInModal(currentProduct.cinemagraph);
+    };
+    motionBtn.innerHTML = `
+      <img src="${currentProduct.cinemagraph.poster}" alt="Cinemagraph" width="150" height="150">
+      <span class="product-thumb-motion-tag">MOTION</span>`;
+    thumbsCont.appendChild(motionBtn);
+  }
+
   const thumbSources = hasReal
     ? currentProduct.images
     : [currentProduct.seed, currentProduct.seed + '-side', currentProduct.seed + '-detail', currentProduct.seed + '-room'];
   thumbSources.forEach((src, i) => {
     const btn = document.createElement('button');
-    btn.className = 'product-thumb' + (i === 0 ? ' active' : '');
+    // If cinemagraph exists, motion thumb is already 'active' — image thumbs start inactive
+    const isFirstImageActive = !(hasCinemagraph && !reducedMotion) && i === 0;
+    btn.className = 'product-thumb' + (isFirstImageActive ? ' active' : '');
     const fullSrc = hasReal ? src : `https://picsum.photos/seed/${src}/600/750`;
     const thumbSrc = hasReal ? src : `https://picsum.photos/seed/${src}/150/150`;
     btn.onclick = () => {
-      mainImg.src = fullSrc;
+      showImageInModal(fullSrc);
       thumbsCont.querySelectorAll('.product-thumb').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
     };
@@ -5039,6 +5280,17 @@ function updateFavCountUI() {
 function closeProductModal() {
   document.getElementById('productModal').classList.remove('active');
   document.body.style.overflow = '';
+  // Pause and unload modal cinemagraph video so it stops downloading/playing
+  const mainVideo = document.getElementById('modalMainVideo');
+  if (mainVideo) {
+    mainVideo.pause();
+    while (mainVideo.firstChild) mainVideo.removeChild(mainVideo.firstChild);
+    mainVideo.removeAttribute('src');
+    mainVideo.load();
+    mainVideo.style.display = 'none';
+  }
+  const mainImg = document.getElementById('modalMainImg');
+  if (mainImg) mainImg.style.display = '';
   currentProduct = null;
 }
 
