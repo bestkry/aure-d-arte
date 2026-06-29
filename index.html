@@ -185,6 +185,50 @@ input { font-family: inherit; }
   border-color: rgba(201,169,110,0.5);
   background: rgba(10,10,10,0.6);
 }
+.loader-volume {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 110px;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
+.loader-volume::-webkit-slider-runnable-track {
+  height: 2px;
+  background: linear-gradient(to right, #c9a96e var(--vol, 35%), rgba(240,239,232,0.18) var(--vol, 35%));
+  border-radius: 1px;
+}
+.loader-volume::-moz-range-track {
+  height: 2px;
+  background: rgba(240,239,232,0.18);
+  border-radius: 1px;
+}
+.loader-volume::-moz-range-progress {
+  height: 2px;
+  background: #c9a96e;
+  border-radius: 1px;
+}
+.loader-volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px; height: 12px;
+  background: #c9a96e;
+  border-radius: 50%;
+  margin-top: -5px;
+  box-shadow: 0 0 8px rgba(201,169,110,0.5);
+  transition: transform 0.15s ease;
+}
+.loader-volume::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.loader-volume::-moz-range-thumb {
+  width: 12px; height: 12px;
+  background: #c9a96e;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(201,169,110,0.5);
+}
+.loader-volume:focus { outline: none; }
 .loader-skip {
   display: inline-flex; align-items: center; gap: 0.6rem;
   font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
@@ -3059,6 +3103,7 @@ body.has-promo .header { top: 36px; }
         <line x1="17" y1="9" x2="23" y2="15"/>
       </svg>
     </button>
+    <input type="range" id="loaderVolume" class="loader-volume" min="0" max="100" value="35" step="1" aria-label="Volume">
     <button class="loader-skip" id="loaderSkip" type="button" aria-label="Skip intro">
       <span data-lang="en">Skip</span><span data-lang="pl">Pomiń</span>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -5217,6 +5262,7 @@ function closeMobileMenu() {
   const muteIcon = document.getElementById('loaderMuteIcon');
   const skipBtn = document.getElementById('loaderSkip');
   const progress = document.getElementById('loaderProgress');
+  const volSlider = document.getElementById('loaderVolume');
   const bufferEl = document.getElementById('loaderBuffer');
   const bufferFill = document.getElementById('loaderBufferFill');
   const bufferLabel = document.getElementById('loaderBufferLabel');
@@ -5244,12 +5290,17 @@ function closeMobileMenu() {
     setTimeout(() => { screen.style.display = 'none'; }, 900);
   }
 
+  // Default volume — user can adjust via slider before starting
+  const initialVol = volSlider ? (Number(volSlider.value) / 100) : 0.35;
+  video.volume = initialVol;
+  if (volSlider) volSlider.style.setProperty('--vol', (initialVol * 100) + '%');
+
   function startIntro() {
     if (started) return;
     started = true;
     // User clicked — we have a gesture, audio is unlocked
     video.muted = false;
-    video.volume = 1.0;
+    video.volume = volSlider ? (Number(volSlider.value) / 100) : 0.35;
     setMuteIcon(false);
     video.play().catch(() => {
       // If for some reason play fails, just dismiss
@@ -5317,8 +5368,8 @@ function closeMobileMenu() {
   // Force the browser to start downloading
   try { video.load(); } catch (e) {}
 
-  // Primary: fetch() download — gives us granular progress AND ensures the file lands in the HTTP cache,
-  // so the <video> tag plays it from cache instantly. Falls back to video buffered events on failure.
+  // Primary: fetch() download — gives us granular progress AND we assemble a Blob URL so the <video>
+  // plays from memory (no second HTTP request). Falls back to video buffered events on failure.
   const videoUrl = video.currentSrc || video.src || 'assets/video/intro.mp4';
   let usingFetchProgress = false;
   (async () => {
@@ -5338,8 +5389,14 @@ function closeMobileMenu() {
         received += value.length;
         if (!ready) setBuffer((received / total) * 100);
       }
-      // Reload from cache so the <video> uses the fully-downloaded file
-      try { video.load(); } catch (e) {}
+      // Swap <video> src to a blob URL of the fully-downloaded file — guarantees video AND audio
+      // play from the same in-memory source (no race where audio starts but video stalls)
+      try {
+        const blob = new Blob(chunks, { type: 'video/mp4' });
+        const blobUrl = URL.createObjectURL(blob);
+        video.src = blobUrl;
+        video.load();
+      } catch (e) { /* if blob fails, video keeps original src */ }
       markReady();
     } catch (err) {
       // Fall back to relying on the <video> buffered events / polling
@@ -5368,9 +5425,19 @@ function closeMobileMenu() {
   // Mute toggle
   muteBtn.addEventListener('click', () => {
     video.muted = !video.muted;
-    if (!video.muted) video.volume = 1.0;
+    if (!video.muted) video.volume = volSlider ? (Number(volSlider.value) / 100) : 0.35;
     setMuteIcon(video.muted);
   });
+
+  // Volume slider
+  if (volSlider) {
+    volSlider.addEventListener('input', () => {
+      const v = Number(volSlider.value) / 100;
+      video.volume = v;
+      if (v > 0 && video.muted) { video.muted = false; setMuteIcon(false); }
+      volSlider.style.setProperty('--vol', (v * 100) + '%');
+    });
+  }
 
   // Skip
   skipBtn.addEventListener('click', dismissLoader);
