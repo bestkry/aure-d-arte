@@ -314,6 +314,38 @@ input { font-family: inherit; }
   box-shadow: 0 0 40px rgba(201,169,110,0.3);
 }
 .loader-play svg { margin-left: 4px; }
+.loader-buffer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  width: min(320px, 70vw);
+  margin-top: 0.5rem;
+}
+.loader-buffer.hidden { display: none; }
+.loader-buffer-track {
+  width: 100%;
+  height: 1px;
+  background: rgba(240,239,232,0.12);
+  overflow: hidden;
+  position: relative;
+}
+.loader-buffer-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(90deg, transparent, #c9a96e 50%, #c9a96e);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 12px rgba(201,169,110,0.5);
+}
+.loader-buffer-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: rgba(240,239,232,0.5);
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+}
 .loader-gate-hint {
   font-size: 0.6rem;
   letter-spacing: 0.25em;
@@ -3003,13 +3035,17 @@ body.has-promo .header { top: 36px; }
       <p class="loader-gate-sub">
         <span data-lang="en">Step into the world of curated darkness — limited editions of 250</span><span data-lang="pl">Wejdź w świat starannie wybranego mroku — limitowane edycje po 250 sztuk</span>
       </p>
-      <button class="loader-play" id="loaderPlay" type="button" aria-label="Play intro with sound">
+      <button class="loader-play" id="loaderPlay" type="button" aria-label="Play intro with sound" style="display:none;">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <polygon points="6 4 20 12 6 20 6 4"/>
         </svg>
       </button>
-      <span class="loader-gate-hint">
-        <span data-lang="en">Click to enter · with sound</span><span data-lang="pl">Kliknij aby wejść · z dźwiękiem</span>
+      <div class="loader-buffer" id="loaderBuffer" aria-hidden="true">
+        <div class="loader-buffer-track"><div class="loader-buffer-fill" id="loaderBufferFill"></div></div>
+        <span class="loader-buffer-label" id="loaderBufferLabel">0%</span>
+      </div>
+      <span class="loader-gate-hint" id="loaderGateHint">
+        <span data-lang="en">Preparing the experience…</span><span data-lang="pl">Przygotowujemy doznanie…</span>
       </span>
     </div>
   </div>
@@ -5181,10 +5217,15 @@ function closeMobileMenu() {
   const muteIcon = document.getElementById('loaderMuteIcon');
   const skipBtn = document.getElementById('loaderSkip');
   const progress = document.getElementById('loaderProgress');
+  const bufferEl = document.getElementById('loaderBuffer');
+  const bufferFill = document.getElementById('loaderBufferFill');
+  const bufferLabel = document.getElementById('loaderBufferLabel');
+  const gateHint = document.getElementById('loaderGateHint');
   if (!screen || !video || !gate) return;
 
   let dismissed = false;
   let started = false;
+  let ready = false;
 
   function setMuteIcon(muted) {
     if (muted) {
@@ -5222,12 +5263,96 @@ function closeMobileMenu() {
   // Lock scroll during intro
   document.body.style.overflow = 'hidden';
 
-  // Click on PLAY button (or anywhere on the gate) starts the intro
-  playBtn.addEventListener('click', (e) => { e.stopPropagation(); startIntro(); });
-  gate.addEventListener('click', startIntro);
+  // Click on PLAY button (or anywhere on the gate) starts the intro — but only when fully buffered
+  function guardedStart(e) {
+    if (e) e.stopPropagation();
+    if (!ready) return;
+    startIntro();
+  }
+  playBtn.addEventListener('click', guardedStart);
+  gate.addEventListener('click', guardedStart);
   gate.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startIntro(); }
+    if ((e.key === 'Enter' || e.key === ' ') && ready) { e.preventDefault(); startIntro(); }
   });
+
+  // Buffer monitor — show progress until video is 100% downloaded
+  function setBuffer(pct) {
+    const clamped = Math.max(0, Math.min(100, pct));
+    if (bufferFill) bufferFill.style.width = clamped + '%';
+    if (bufferLabel) bufferLabel.textContent = Math.round(clamped) + '%';
+  }
+  function markReady() {
+    if (ready) return;
+    ready = true;
+    setBuffer(100);
+    if (bufferEl) bufferEl.classList.add('hidden');
+    if (playBtn) playBtn.style.display = '';
+    if (gateHint) {
+      gateHint.innerHTML = '<span data-lang="en">Click to enter · with sound</span><span data-lang="pl">Kliknij aby wejść · z dźwiękiem</span>';
+      // Re-apply current language visibility
+      const lang = document.documentElement.getAttribute('data-lang') || 'en';
+      gateHint.querySelectorAll('[data-lang]').forEach(el => {
+        el.style.display = (el.getAttribute('data-lang') === lang) ? '' : 'none';
+      });
+    }
+  }
+  function checkBuffer() {
+    if (ready) return;
+    try {
+      const dur = video.duration;
+      if (dur && isFinite(dur) && video.buffered && video.buffered.length > 0) {
+        const end = video.buffered.end(video.buffered.length - 1);
+        const pct = (end / dur) * 100;
+        setBuffer(pct);
+        if (pct >= 99.5 || video.readyState >= 4) {
+          markReady();
+          return;
+        }
+      }
+    } catch (err) { /* ignore */ }
+  }
+  video.addEventListener('progress', checkBuffer);
+  video.addEventListener('loadedmetadata', checkBuffer);
+  video.addEventListener('canplaythrough', markReady);
+  // Force the browser to start downloading
+  try { video.load(); } catch (e) {}
+
+  // Primary: fetch() download — gives us granular progress AND ensures the file lands in the HTTP cache,
+  // so the <video> tag plays it from cache instantly. Falls back to video buffered events on failure.
+  const videoUrl = video.currentSrc || video.src || 'assets/video/intro.mp4';
+  let usingFetchProgress = false;
+  (async () => {
+    try {
+      const resp = await fetch(videoUrl);
+      if (!resp.ok || !resp.body) throw new Error('bad response');
+      const total = Number(resp.headers.get('content-length') || 0);
+      if (!total) throw new Error('no content-length');
+      usingFetchProgress = true;
+      const reader = resp.body.getReader();
+      let received = 0;
+      const chunks = [];
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        received += value.length;
+        if (!ready) setBuffer((received / total) * 100);
+      }
+      // Reload from cache so the <video> uses the fully-downloaded file
+      try { video.load(); } catch (e) {}
+      markReady();
+    } catch (err) {
+      // Fall back to relying on the <video> buffered events / polling
+    }
+  })();
+
+  // Poll every 250ms as a fallback (some browsers fire 'progress' sparingly)
+  const bufferPoll = setInterval(() => {
+    if (ready) { clearInterval(bufferPoll); return; }
+    if (!usingFetchProgress) checkBuffer();
+  }, 250);
+  // Safety timeout — after 90s allow play even if buffer reporting is unreliable
+  setTimeout(() => { if (!ready) markReady(); }, 90000);
 
   // Progress bar
   video.addEventListener('timeupdate', () => {
