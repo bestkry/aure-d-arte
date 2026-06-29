@@ -2913,6 +2913,194 @@ body.has-promo .header { top: 36px; }
 .msg-row .msg-date { color: var(--text-muted); font-size: 0.68rem; }
 .msg-row .msg-email { color: var(--gold); font-size: 0.7rem; margin-bottom: 4px; font-family: 'Courier New', monospace; }
 .msg-row .msg-text { color: var(--text-secondary); line-height: 1.5; white-space: pre-wrap; }
+/* ============================================ */
+/* MANIFESTO PAGE — kinematograficzne credo */
+/* ============================================ */
+.manifesto-page {
+  position: relative;
+  padding: clamp(6rem, 14vw, 12rem) clamp(1.5rem, 5vw, 4rem);
+  background: linear-gradient(180deg, #0a0a0a 0%, #050505 50%, #0a0a0a 100%);
+  overflow: hidden;
+  isolation: isolate;
+}
+.manifesto-grain {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='1'/></svg>");
+  mix-blend-mode: overlay;
+}
+.manifesto-vignette {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+}
+.manifesto-page > .manifesto-block { position: relative; z-index: 1; }
+
+.manifesto-block {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(3rem, 8vw, 8rem) 0;
+}
+.manifesto-intro { text-align: center; padding-top: 0; padding-bottom: clamp(2rem, 6vw, 6rem); }
+.manifesto-eyebrow {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 2rem;
+  font-weight: 500;
+}
+.manifesto-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(4rem, 12vw, 10rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #f0efe8;
+  margin: 0 0 3rem;
+}
+.manifesto-divider {
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(180deg, transparent, var(--gold), transparent);
+  margin: 2rem auto;
+  transform-origin: top;
+}
+
+.manifesto-lead { text-align: center; padding: clamp(3rem, 8vw, 7rem) 0; }
+.manifesto-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 5.5vw, 4.5rem);
+  font-weight: 300;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #f0efe8;
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-style: normal;
+}
+.manifesto-quote .gold { color: var(--gold); }
+.manifesto-quote .italic { font-style: italic; }
+.manifesto-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(40px);
+  filter: blur(8px);
+  transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1), transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), filter 1.1s ease;
+}
+.manifesto-line.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.manifesto-credo { padding: clamp(4rem, 10vw, 9rem) 0; }
+.manifesto-section-label {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: #7a7975;
+  text-align: center;
+  margin: 0 0 clamp(3rem, 6vw, 6rem);
+}
+.credo-item {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding: clamp(2.5rem, 5vw, 4rem) 0;
+  border-top: 1px solid rgba(201, 169, 110, 0.08);
+  align-items: start;
+}
+.credo-item:last-child { border-bottom: 1px solid rgba(201, 169, 110, 0.08); }
+.credo-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: 0;
+}
+.credo-body { padding-top: 0.5rem; }
+.credo-head {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 400;
+  font-style: italic;
+  color: #f0efe8;
+  margin: 0 0 1rem;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+}
+.credo-text {
+  font-family: 'Satoshi', sans-serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  line-height: 1.7;
+  color: #b8b6ad;
+  margin: 0;
+  max-width: 620px;
+  font-weight: 400;
+}
+
+.manifesto-closing { text-align: center; padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: 0; }
+.manifesto-closing-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.4;
+  color: #f0efe8;
+  margin: 2rem 0 3rem;
+  letter-spacing: -0.005em;
+}
+.manifesto-closing-text .gold { color: var(--gold); font-style: normal; }
+.manifesto-signature {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: #7a7975;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Reveal animation — applies to all [data-manifesto-reveal] except .manifesto-line */
+[data-manifesto-reveal]:not(.manifesto-line) {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-manifesto-reveal]:not(.manifesto-line).is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.manifesto-divider[data-manifesto-reveal] {
+  transform: scaleY(0);
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+}
+.manifesto-divider[data-manifesto-reveal].is-revealed {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+@media (max-width: 720px) {
+  .credo-item { grid-template-columns: 60px 1fr; gap: 1.25rem; }
+  .credo-num { font-size: 2.2rem; }
+  .manifesto-title { font-size: clamp(3.5rem, 18vw, 6rem); }
+  .manifesto-quote { font-size: clamp(1.75rem, 7vw, 2.5rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-manifesto-reveal],
+  .manifesto-line { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+  .manifesto-divider[data-manifesto-reveal] { transform: scaleY(1) !important; }
+}
+
 </style>
 </head>
 <body>
@@ -3270,16 +3458,137 @@ body.has-promo .header { top: 36px; }
 </section>
 
 <!-- MANIFEST -->
-<section class="manifest-section" id="about">
-  <div class="manifest-inner">
-    <div class="gold-divider reveal"></div>
-    <blockquote class="manifest-quote reveal">
-      <span data-lang="en">"We don't create art for <span class="gold">everyone</span>. We create it for those who refuse to live in a world of the <span class="gold">ordinary</span>."</span>
-      <span data-lang="pl">"Nie tworzymy sztuki dla <span class="gold">każdego</span>. Tworzymy ją dla tych, którzy odmawiają życia w świecie <span class="gold">przeciętności</span>."</span>
+<!-- ============================================ -->
+<!-- MANIFESTO PAGE — kinematograficzne credo galerii -->
+<!-- ============================================ -->
+<section class="manifesto-page" id="about" aria-label="Manifesto">
+  <div class="manifesto-grain" aria-hidden="true"></div>
+  <div class="manifesto-vignette" aria-hidden="true"></div>
+
+  <!-- INTRO -->
+  <div class="manifesto-block manifesto-intro">
+    <p class="manifesto-eyebrow" data-manifesto-reveal>
+      <span data-lang="en">A statement</span><span data-lang="pl">Deklaracja</span>
+    </p>
+    <h1 class="manifesto-title" data-manifesto-reveal>
+      <span data-lang="en">Manifesto</span><span data-lang="pl">Manifest</span>
+    </h1>
+    <div class="manifesto-divider" data-manifesto-reveal></div>
+  </div>
+
+  <!-- LEAD QUOTE -->
+  <div class="manifesto-block manifesto-lead">
+    <blockquote class="manifesto-quote">
+      <span data-lang="en">
+        <span class="manifesto-line" data-manifesto-reveal>We do not create art</span>
+        <span class="manifesto-line" data-manifesto-reveal>for <span class="gold">everyone</span>.</span>
+        <span class="manifesto-line" data-manifesto-reveal>We create it for those</span>
+        <span class="manifesto-line" data-manifesto-reveal>who refuse to live in</span>
+        <span class="manifesto-line" data-manifesto-reveal>a world of the <span class="gold italic">ordinary</span>.</span>
+      </span>
+      <span data-lang="pl">
+        <span class="manifesto-line" data-manifesto-reveal>Nie tworzymy sztuki</span>
+        <span class="manifesto-line" data-manifesto-reveal>dla <span class="gold">każdego</span>.</span>
+        <span class="manifesto-line" data-manifesto-reveal>Tworzymy ją dla tych,</span>
+        <span class="manifesto-line" data-manifesto-reveal>którzy odmawiają życia</span>
+        <span class="manifesto-line" data-manifesto-reveal>w świecie <span class="gold italic">przeciętności</span>.</span>
+      </span>
     </blockquote>
-    <p class="manifest-text reveal">
-      <span data-lang="en">Aure D'arte is a premium AI art brand dedicated to pushing the boundaries of digital creation. Each piece is carefully curated, generated through advanced artificial intelligence, and produced as a strictly limited edition of 250 prints on museum-grade archival paper. We don't do mass production. We don't do restocks. When an edition sells out, it's gone forever.</span>
-      <span data-lang="pl">Aure D'arte to premium marka sztuki AI. Każde dzieło jest starannie wyselekcjonowane i wyprodukowane jako limitowana edycja 250 wydruków na archiwalnym papierze muzealnej jakości. Nie robimy masowej produkcji. Nie robimy dodruku. Kiedy edycja się wyprzeda — znika na zawsze.</span>
+  </div>
+
+  <!-- CREDO — 7 zasad -->
+  <div class="manifesto-block manifesto-credo">
+    <p class="manifesto-section-label" data-manifesto-reveal>
+      <span data-lang="en">Seven principles</span><span data-lang="pl">Siedem zasad</span>
+    </p>
+
+    <div class="credo-item" data-manifesto-reveal>
+      <span class="credo-num">I.</span>
+      <div class="credo-body">
+        <h3 class="credo-head"><span data-lang="en">Darkness is not absence</span><span data-lang="pl">Ciemność to nie brak</span></h3>
+        <p class="credo-text">
+          <span data-lang="en">It is the canvas. The void from which every meaningful image emerges. We do not fear shadow — we worship it.</span>
+          <span data-lang="pl">To płótno. Pustka, z której wyłania się każdy znaczący obraz. Nie boimy się cienia — czcimy go.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="credo-item" data-manifesto-reveal>
+      <span class="credo-num">II.</span>
+      <div class="credo-body">
+        <h3 class="credo-head"><span data-lang="en">Scarcity is sacred</span><span data-lang="pl">Niedobór jest święty</span></h3>
+        <p class="credo-text">
+          <span data-lang="en">Two hundred and fifty. Never more. When an edition closes, it closes forever. No restocks. No re-releases. No second chances.</span>
+          <span data-lang="pl">Dwieście pięćdziesiąt. Nigdy więcej. Kiedy edycja się zamyka — zamyka się na zawsze. Bez dodruku. Bez powtórek. Bez drugich szans.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="credo-item" data-manifesto-reveal>
+      <span class="credo-num">III.</span>
+      <div class="credo-body">
+        <h3 class="credo-head"><span data-lang="en">The tool is not the art</span><span data-lang="pl">Narzędzie to nie sztuka</span></h3>
+        <p class="credo-text">
+          <span data-lang="en">A brush did not make Rembrandt. Algorithms do not make us. The eye that selects, the hand that refines, the silence that decides — that is the artist.</span>
+          <span data-lang="pl">Pędzel nie stworzył Rembrandta. Algorytm nie tworzy nas. Oko, które wybiera, ręka, która szlifuje, cisza, która decyduje — to jest artysta.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="credo-item" data-manifesto-reveal>
+      <span class="credo-num">IV.</span>
+      <div class="credo-body">
+        <h3 class="credo-head"><span data-lang="en">The frame is the threshold</span><span data-lang="pl">Rama jest progiem</span></h3>
+        <p class="credo-text">
+          <span data-lang="en">An image lives where it hangs. We print on museum archival paper, with pigments rated for a century. What you collect today, your grandchildren will inherit.</span>
+          <span data-lang="pl">Obraz żyje tam, gdzie wisi. Drukujemy na archiwalnym papierze muzealnym, pigmentami z certyfikatem na sto lat. To, co dziś kolekcjonujesz, odziedziczą twoje wnuki.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="credo-item" data-manifesto-reveal>
+      <span class="credo-num">V.</span>
+      <div class="credo-body">
+        <h3 class="credo-head"><span data-lang="en">Beauty without permission</span><span data-lang="pl">Piękno bez pozwolenia</span></h3>
+        <p class="credo-text">
+          <span data-lang="en">We answer to no school, no critic, no algorithm of taste. Our gallery does not ask what is acceptable. It asks only what is unforgettable.</span>
+          <span data-lang="pl">Nie odpowiadamy żadnej szkole, żadnemu krytykowi, żadnemu algorytmowi gustu. Nasza galeria nie pyta, co jest dopuszczalne. Pyta tylko, co jest niezapomniane.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="credo-item" data-manifesto-reveal>
+      <span class="credo-num">VI.</span>
+      <div class="credo-body">
+        <h3 class="credo-head"><span data-lang="en">The collector completes the work</span><span data-lang="pl">Kolekcjoner dopełnia dzieło</span></h3>
+        <p class="credo-text">
+          <span data-lang="en">An unhung print is a closed letter. The wall, the light, the room — these are co-authors. Choose carefully. The work chooses you back.</span>
+          <span data-lang="pl">Niezawieszony wydruk to zamknięty list. Ściana, światło, pokój — to współautorzy. Wybieraj uważnie. Dzieło wybiera ciebie z powrotem.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="credo-item" data-manifesto-reveal>
+      <span class="credo-num">VII.</span>
+      <div class="credo-body">
+        <h3 class="credo-head"><span data-lang="en">Silence over noise</span><span data-lang="pl">Cisza ponad hałasem</span></h3>
+        <p class="credo-text">
+          <span data-lang="en">We do not chase trends. We do not flood feeds. We release when we are ready, and only what we would hang on our own walls.</span>
+          <span data-lang="pl">Nie gonimy za trendami. Nie zalewamy feedów. Wydajemy, kiedy jesteśmy gotowi — i tylko to, co sami powiesilibyśmy na własnych ścianach.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="manifesto-block manifesto-closing">
+    <div class="manifesto-divider" data-manifesto-reveal></div>
+    <p class="manifesto-closing-text" data-manifesto-reveal>
+      <span data-lang="en">This is not a shop. It is a doctrine. Welcome to <span class="gold">Aure D'arte</span>.</span>
+      <span data-lang="pl">To nie jest sklep. To doktryna. Witaj w <span class="gold">Aure D'arte</span>.</span>
+    </p>
+    <p class="manifesto-signature" data-manifesto-reveal>
+      <span data-lang="en">— The Curator</span><span data-lang="pl">— Kurator</span>
     </p>
   </div>
 </section>
@@ -5613,6 +5922,29 @@ function initAnimations() {
 
   document.querySelectorAll('[data-letter-reveal]').forEach(el => letterObserver.observe(el));
   window._letterRevealObserver = letterObserver;
+
+  /* ===== MANIFESTO scroll reveal — staggered cinematic ===== */
+  (function initManifestoReveal(){
+    const manifestoEls = document.querySelectorAll('[data-manifesto-reveal]');
+    if (!manifestoEls.length) return;
+
+    // Group siblings by their direct parent so we can stagger together
+    const manifestoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        // Find siblings with same data attribute under same parent
+        const siblings = Array.from(el.parentNode.querySelectorAll(':scope > [data-manifesto-reveal]'));
+        const idx = siblings.indexOf(el);
+        const delay = idx >= 0 ? idx * 140 : 0;
+        setTimeout(() => el.classList.add('is-revealed'), delay);
+        manifestoObserver.unobserve(el);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+    manifestoEls.forEach(el => manifestoObserver.observe(el));
+    window._manifestoObserver = manifestoObserver;
+  })();
 
   /* ===== FAQ accordion ===== */
   window.renderFAQ = function() {
