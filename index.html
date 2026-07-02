@@ -910,7 +910,462 @@ a{ color: inherit; text-decoration: none; cursor: none; }
   .masthead-sub{ opacity: 1; animation: none; }
 }
 
-/* ---------- 17 · RESPONSIVE ---------- */
+
+/* ---------- 17 · INTRO OVERLAY (cinema) ---------- */
+.intro{
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--void);
+  overflow: hidden;
+  display: block;
+}
+.intro.gone{ display: none; }
+.intro-media{ position: absolute; inset: 0; }
+.intro-media video, .intro-media img{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.intro-media::after{
+  content:''; position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(7,7,6,0.55) 0%, transparent 25%, transparent 60%, rgba(7,7,6,0.92) 100%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+  pointer-events: none;
+}
+.intro-flicker{
+  position: absolute; inset: 0;
+  background: rgba(242,237,225,0.02);
+  animation: introflicker 3.8s steps(2) infinite;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+@keyframes introflicker{
+  0%,88%,100%{ opacity: 0; }
+  90%{ opacity: 0.15; }
+  92%{ opacity: 0; }
+  94%{ opacity: 0.25; }
+  96%{ opacity: 0.05; }
+}
+.intro-top{
+  position: absolute; top: 0; left: 0; right: 0;
+  padding: 2rem var(--pad-x);
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 2rem;
+  z-index: 3;
+}
+.intro-top .eyebrow{ color: var(--ink); opacity: 0.85; }
+.intro-top .mark{ font-size: 1.35rem; color: var(--ink); }
+.intro-skip{
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 10px 18px;
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--ink);
+  background: rgba(7,7,6,0.4);
+  border: 1px solid rgba(242,237,225,0.25);
+  backdrop-filter: blur(8px);
+  transition: all .4s var(--ease);
+  cursor: none;
+}
+.intro-skip:hover{ background: var(--ink); color: var(--void); border-color: var(--ink); }
+.intro-skip .dash{ width:18px; height:1px; background: currentColor; }
+.intro-bottom{
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 2.5rem var(--pad-x) 2.5rem;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem; align-items: end;
+}
+.intro-bottom .col-l{ text-align: left; }
+.intro-bottom .col-c{ text-align: center; }
+.intro-bottom .col-r{ text-align: right; }
+.intro-title{
+  font-family: var(--serif);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  line-height: 0.9;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.intro-title em{ color: var(--gold); }
+.intro-sub{
+  font-family: var(--sans);
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--ink); opacity: 0.7;
+}
+.intro-enter{
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 16px 28px;
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--void);
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  transition: all .5s var(--ease);
+  cursor: none;
+}
+.intro-enter:hover{ background: var(--gold); color: var(--void); border-color: var(--gold); }
+.intro-enter .arrow{
+  width: 24px; height: 1px; background: currentColor; position: relative;
+  transition: width .5s var(--ease);
+}
+.intro-enter .arrow::after{
+  content:''; position: absolute; right: 0; top: -3px;
+  width: 8px; height: 8px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+.intro-enter:hover .arrow{ width: 40px; }
+.intro-progress{
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: rgba(242,237,225,0.08);
+  z-index: 4;
+}
+.intro-progress .fill{
+  height: 100%;
+  background: var(--gold);
+  width: 0%;
+  transition: width .3s linear;
+}
+@media (max-width: 780px){
+  .intro-bottom{ grid-template-columns: 1fr; gap: 1.5rem; text-align: center; padding-bottom: 2rem; }
+  .intro-bottom .col-l, .intro-bottom .col-r{ text-align: center; }
+  .intro-top{ padding: 1.25rem var(--pad-x); }
+  .intro-top .hide-sm{ display: none; }
+}
+
+/* ---------- 18 · MARQUEE TITLES ---------- */
+.marquee-titles{
+  padding: 5rem 0 6rem;
+  border-bottom: var(--hair);
+  overflow: hidden;
+  position: relative;
+}
+.marquee-titles::before,
+.marquee-titles::after{
+  content:''; position: absolute; top: 0; bottom: 0; width: 12vw; z-index: 2;
+  pointer-events: none;
+}
+.marquee-titles::before{ left: 0; background: linear-gradient(to right, var(--page), transparent); }
+.marquee-titles::after { right: 0; background: linear-gradient(to left,  var(--page), transparent); }
+.marquee-titles .track{
+  display: flex; gap: 5rem; align-items: center;
+  white-space: nowrap;
+  animation: marquee-t 90s linear infinite;
+  width: max-content;
+}
+.marquee-titles .item{
+  display: inline-flex; align-items: baseline; gap: 1.25rem;
+  font-family: var(--serif);
+  font-style: italic; font-weight: 300;
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  line-height: 1;
+  color: var(--ink);
+}
+.marquee-titles .item .no{
+  font-family: var(--sans); font-style: normal;
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+  transform: translateY(-0.4em);
+}
+.marquee-titles .item .sep{ color: var(--ink-faint); opacity: 0.5; }
+@keyframes marquee-t{
+  from{ transform: translateX(0); }
+  to  { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce){
+  .marquee-titles .track{ animation: none; }
+}
+
+/* ---------- 19 · VESTMENTS (clothing) ---------- */
+.vestments{ position: relative; }
+.look{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  padding: clamp(3rem, 8vw, 7rem) var(--pad-x);
+  border-bottom: var(--hair);
+  align-items: center;
+  position: relative;
+}
+.look.flip .look-media{ order: 2; }
+.look.flip .look-info{ order: 1; }
+.look-media{
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: var(--panel);
+  position: relative;
+}
+.look-media img{
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  transition: transform 3s var(--ease);
+}
+.look:hover .look-media img{ transform: scale(1.05); }
+.look-media::after{
+  content:''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(201,169,110,0.05) 100%);
+  pointer-events: none;
+}
+.look-media .look-tag{
+  position: absolute; top: 1rem; left: 1rem; z-index: 2;
+  padding: 6px 10px;
+  background: rgba(7,7,6,0.72);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(242,237,225,0.15);
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ink);
+}
+.look-media .look-tag b{ color: var(--gold); font-weight: 500; }
+.look-info .look-idx{
+  font-family: var(--serif); font-style: italic;
+  color: var(--gold);
+  font-size: 0.95rem; letter-spacing: 0.06em;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+.look-info h3{
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+}
+.look-info h3 em{ font-style: italic; color: var(--gold); font-weight: 300; }
+.look-info .desc{
+  font-family: var(--serif);
+  font-size: clamp(1.05rem, 1.15vw, 1.2rem);
+  line-height: 1.55;
+  color: var(--ink-dim);
+  max-width: 46ch;
+  margin-bottom: 2rem;
+}
+.look-info .desc::first-letter{
+  font-family: var(--serif); font-size: 2.6rem; float: left;
+  line-height: 0.85; padding-right: 0.4rem; padding-top: 0.15rem;
+  color: var(--gold); font-style: italic;
+}
+.look-specs{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.5rem;
+  padding: 1.25rem 0;
+  border-top: var(--hair);
+  border-bottom: var(--hair);
+  margin-bottom: 1.5rem;
+}
+.look-specs .spec{ display: flex; flex-direction: column; gap: 4px; }
+.look-specs .k{
+  font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.look-specs .v{
+  font-family: var(--serif); font-size: 1rem; color: var(--ink);
+}
+.look-specs .v em{ color: var(--gold); font-style: normal; }
+.look-foot{
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1.5rem; flex-wrap: wrap;
+}
+.look-price{
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  color: var(--ink);
+}
+.look-price .cur{ color: var(--ink-faint); font-size: 0.7em; margin-right: 6px; }
+@media (max-width: 780px){
+  .look{ grid-template-columns: 1fr; padding: 3rem var(--pad-x); }
+  .look.flip .look-media{ order: 0; }
+  .look.flip .look-info{ order: 1; }
+}
+
+/* ---------- 20 · ATELIER (process) ---------- */
+.atelier{
+  padding: 4rem var(--pad-x) 6rem;
+  border-top: var(--hair);
+  border-bottom: var(--hair);
+  background: var(--void);
+}
+.atelier-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  margin-top: 3rem;
+}
+@media (max-width: 900px){ .atelier-grid{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px){ .atelier-grid{ grid-template-columns: 1fr; } }
+.step{
+  position: relative;
+  border-top: 1px solid var(--rule);
+  padding-top: 1.5rem;
+  transition: border-color .5s var(--ease);
+}
+.step:hover{ border-color: var(--gold); }
+.step .step-no{
+  font-family: var(--serif); font-style: italic;
+  font-size: 4.5rem; line-height: 0.9;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  transition: color .5s var(--ease);
+}
+.step:hover .step-no{ color: var(--gold); }
+.step .step-tag{
+  display: block;
+  font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold);
+  margin: 0.5rem 0 1rem;
+}
+.step h4{
+  font-family: var(--serif); font-weight: 400;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
+}
+.step p{
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ink-dim);
+}
+
+/* ---------- 21 · CONCORDIA (index) ---------- */
+.concordia{
+  padding: 4rem var(--pad-x) 5rem;
+  border-bottom: var(--hair);
+}
+.concordia-list{
+  columns: 3;
+  column-gap: clamp(2rem, 4vw, 4rem);
+  margin-top: 3rem;
+}
+@media (max-width: 900px){ .concordia-list{ columns: 2; } }
+@media (max-width: 500px){ .concordia-list{ columns: 1; } }
+.concordia-row{
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 8px;
+  padding: 0.55rem 0;
+  border-bottom: 1px dotted var(--rule);
+  break-inside: avoid;
+  font-family: var(--serif);
+  color: var(--ink);
+  cursor: none;
+  transition: color .3s var(--ease), padding .3s var(--ease);
+  width: 100%; text-align: left;
+}
+.concordia-row:hover{ color: var(--gold); padding-left: 8px; }
+.concordia-row .t{ font-size: 1rem; }
+.concordia-row .p{
+  font-family: var(--sans);
+  font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.concordia-row:hover .p{ color: var(--gold); }
+
+/* ---------- 22 · COMMAND BAR (Cmd/Ctrl+K) ---------- */
+.cmdk{
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(7,7,6,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: none;
+  padding: 12vh var(--pad-x) var(--pad-x);
+}
+.cmdk.open{ display: block; animation: modalIn .3s var(--ease); }
+.cmdk-shell{
+  max-width: 640px; margin: 0 auto;
+  background: var(--panel);
+  border: var(--hair);
+  overflow: hidden;
+}
+.cmdk-head{
+  display: flex; align-items: center; gap: 12px;
+  padding: 1rem 1.25rem;
+  border-bottom: var(--hair);
+}
+.cmdk-head .k{
+  font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold);
+}
+.cmdk-head input{
+  flex: 1;
+  background: transparent; border: 0; outline: none;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.35rem;
+  padding: 0;
+  cursor: text;
+}
+.cmdk-head input::placeholder{ color: var(--ink-faint); font-style: italic; }
+.cmdk-head kbd{
+  font-family: var(--sans); font-size: 10px;
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  color: var(--ink-dim);
+  letter-spacing: 0.15em;
+}
+.cmdk-results{ max-height: 44vh; overflow-y: auto; }
+.cmdk-item{
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  border-bottom: var(--hair);
+  width: 100%; text-align: left;
+  transition: all .2s var(--ease);
+  cursor: none;
+}
+.cmdk-item:hover, .cmdk-item.sel{ background: rgba(201,169,110,0.06); }
+.cmdk-item:last-child{ border-bottom: 0; }
+.cmdk-item .no{
+  font-family: var(--serif); font-style: italic;
+  color: var(--gold);
+  font-size: 0.85rem;
+  min-width: 3ch;
+}
+.cmdk-item .name{
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  color: var(--ink);
+  flex: 1;
+}
+.cmdk-item .meta{
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.cmdk-empty{
+  padding: 2rem 1.25rem;
+  font-family: var(--serif); font-style: italic;
+  color: var(--ink-dim);
+  text-align: center;
+}
+.cmdk-hint{
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 40;
+  padding: 8px 14px;
+  background: rgba(7,7,6,0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--rule);
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ink-dim);
+  display: none;
+  align-items: center; gap: 8px;
+  transition: opacity .4s var(--ease);
+}
+.cmdk-hint kbd{
+  padding: 2px 6px; border: 1px solid var(--rule);
+  color: var(--ink);
+  letter-spacing: 0.1em;
+}
+@media (min-width: 900px){ .cmdk-hint{ display: inline-flex; } }
+
+/* ---------- 99 · RESPONSIVE ---------- */
 @media (max-width: 480px){
   .plate-inner{ min-height: calc(100svh - 2 * var(--pad-x)); }
   .plate-meta{ font-size: 9px; letter-spacing: 0.28em; }
@@ -924,6 +1379,54 @@ a{ color: inherit; text-decoration: none; cursor: none; }
 </head>
 
 <body>
+
+<!-- ============================================================
+     INTRO CINEMA OVERLAY
+     Full-viewport film that greets the visitor on first arrival.
+     Auto-dismisses when the video ends. Persistent skip via localStorage.
+     ============================================================ -->
+<div class="intro" id="intro" aria-label="Opening film">
+  <div class="intro-media">
+    <video id="introVideo"
+           src="assets/intro/intro.mp4"
+           poster="assets/intro/intro-poster.jpg"
+           autoplay muted playsinline preload="auto"></video>
+  </div>
+  <div class="intro-flicker" aria-hidden="true"></div>
+
+  <div class="intro-top">
+    <div>
+      <div class="mark">Aure <span class="amp">·</span> d'Arte</div>
+      <div class="eyebrow" style="margin-top:0.5rem">Opening Film <span class="amp">/</span> Volume I</div>
+    </div>
+    <button type="button" class="intro-skip" id="introSkip" data-cursor="Skip">
+      <span>Skip Intro</span>
+      <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true">
+        <path d="M1 5h11M8 1l4 4-4 4" stroke="currentColor" stroke-width="1"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="intro-bottom">
+    <div class="col-l">
+      <div class="eyebrow">MMXXVI <span class="amp">·</span> Vol. I</div>
+      <div class="intro-sub" style="margin-top:0.6rem">A study in ruin, reverence, reverie</div>
+    </div>
+    <div class="col-c">
+      <h1 class="intro-title">Enter the <em>Gallery</em></h1>
+      <button type="button" class="intro-enter" id="introEnter" data-cursor="Enter">
+        <span>Enter</span>
+        <span class="arrow" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="col-r">
+      <div class="eyebrow">Apparitions</div>
+      <div class="intro-sub" style="margin-top:0.6rem">On View <span class="amp">·</span> Now</div>
+    </div>
+  </div>
+
+  <div class="intro-progress" aria-hidden="true"><i class="fill" id="introProgress"></i></div>
+</div>
 
 <!-- ============================================================
      OVERLAYS
@@ -960,7 +1463,9 @@ a{ color: inherit; text-decoration: none; cursor: none; }
   <a href="#top" class="mark" data-cursor="Home">Aure <span class="amp">·</span> d'Arte</a>
   <nav class="nav-meta" aria-label="Primary">
     <a href="#plates" data-cursor="See">Plates</a>
+    <a href="#vestments" data-cursor="Wear">Vestments</a>
     <a href="#catalogue" data-cursor="Browse">Catalogue</a>
+    <a href="#atelier" data-cursor="Study">Atelier</a>
     <a href="#provenance" data-cursor="Read">Provenance</a>
     <a href="#acquire" data-cursor="Write">Acquire</a>
     <span class="status"><span class="dot" aria-hidden="true"></span>Vol. I · On View</span>
@@ -1142,12 +1647,34 @@ a{ color: inherit; text-decoration: none; cursor: none; }
 </div>
 
 <!-- ============================================================
+     MARQUEE OF TITLES (visual breather)
+     ============================================================ -->
+<div class="marquee-titles" aria-hidden="true">
+  <div class="track" id="marqueeTrack"><!-- injected --></div>
+</div>
+
+<!-- ============================================================
+     SECTION § II · THE VESTMENTS (clothing)
+     ============================================================ -->
+<section class="vestments" id="vestments">
+  <div class="section-head">
+    <div>
+      <span class="roman">§ II</span>
+      <h2 class="reveal">The <em>vestments</em></h2>
+    </div>
+    <p class="lede reveal">Six garments cut from the same darkness as the plates. Heavyweight cotton, hand-applied graphics, editioned in fifty-count runs. Worn as one wears an argument.</p>
+  </div>
+
+  <div class="looks" id="looks"><!-- injected --></div>
+</section>
+
+<!-- ============================================================
      SECTION · CATALOGUE
      ============================================================ -->
 <section id="catalogue">
   <div class="section-head">
     <div>
-      <span class="roman">§ II</span>
+      <span class="roman">§ III</span>
       <h2 class="reveal">The <em>catalogue</em></h2>
     </div>
     <p class="lede reveal">Fifteen impressions organised by index rather than category. Each work is signed, numbered, and dispatched in an archival sleeve within seven working days.</p>
@@ -1169,12 +1696,52 @@ a{ color: inherit; text-decoration: none; cursor: none; }
 </section>
 
 <!-- ============================================================
+     SECTION § IV · THE ATELIER (process)
+     ============================================================ -->
+<section class="atelier" id="atelier">
+  <div class="section-head">
+    <div>
+      <span class="roman">§ IV</span>
+      <h2 class="reveal">The <em>atelier</em></h2>
+    </div>
+    <p class="lede reveal">Four passes from file to finished object. No factory, no reprint. What leaves the studio has been touched more times than it has been rendered.</p>
+  </div>
+
+  <div class="atelier-grid">
+    <div class="step">
+      <div class="step-no">i.</div>
+      <span class="step-tag">Study</span>
+      <h4>Machine-guided draft</h4>
+      <p>The plate begins as a directed image — a sequence of prompts refined against the volume's argument. Hundreds of frames are discarded before one is kept.</p>
+    </div>
+    <div class="step">
+      <div class="step-no">ii.</div>
+      <span class="step-tag">Print</span>
+      <h4>Cotton rag, pigment</h4>
+      <p>Chosen frames are printed on 310gsm archival cotton rag with twelve-channel pigment inks. Colour is calibrated to the studio's reference plate, not the screen.</p>
+    </div>
+    <div class="step">
+      <div class="step-no">iii.</div>
+      <span class="step-tag">Sign</span>
+      <h4>Graphite and seal</h4>
+      <p>Each impression is signed in graphite, numbered against the edition, and stamped with the studio's blind seal at the lower right. Notes are added by request.</p>
+    </div>
+    <div class="step">
+      <div class="step-no">iv.</div>
+      <span class="step-tag">Dispatch</span>
+      <h4>Sleeved, tubed, sent</h4>
+      <p>Prints ship inside an acid-free glassine sleeve, rolled into a rigid tube. Delivered by registered post to any address the Union recognises — usually within seven days.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
      SECTION · PROVENANCE
      ============================================================ -->
 <section class="provenance" id="provenance">
   <div class="prov-grid">
     <div class="prov-label">
-      <span class="roman" style="display:block; font-size: 0.7rem; margin-bottom: 1rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--ink-dim); font-style: normal;">§ III</span>
+      <span class="roman" style="display:block; font-size: 0.7rem; margin-bottom: 1rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--ink-dim); font-style: normal;">§ V</span>
       A note on <em>provenance</em>
     </div>
     <div class="prov-body">
@@ -1190,7 +1757,7 @@ a{ color: inherit; text-decoration: none; cursor: none; }
      ============================================================ -->
 <section class="acquire" id="acquire">
   <div>
-    <span class="roman" style="display:block; font-size: 0.7rem; margin-bottom: 1rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--ink-dim); font-style: normal;">§ IV</span>
+    <span class="roman" style="display:block; font-size: 0.7rem; margin-bottom: 1rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--ink-dim); font-style: normal;">§ VI</span>
     <h2 class="acquire-title reveal">Write to <em>acquire</em>.</h2>
   </div>
   <div class="acquire-form">
@@ -1206,6 +1773,21 @@ a{ color: inherit; text-decoration: none; cursor: none; }
       </a>
     </div>
   </div>
+</section>
+
+<!-- ============================================================
+     CONCORDIA (alphabetical index)
+     ============================================================ -->
+<section class="concordia" id="concordia">
+  <div class="section-head">
+    <div>
+      <span class="roman">Concordia</span>
+      <h2 class="reveal">An <em>index</em></h2>
+    </div>
+    <p class="lede reveal">Every plate, every vestment, alphabetically. Type anywhere <kbd style="font-family:var(--sans); font-size:9px; padding:2px 6px; border:1px solid var(--rule); color:var(--ink); letter-spacing:0.1em;">⌘</kbd> <kbd style="font-family:var(--sans); font-size:9px; padding:2px 6px; border:1px solid var(--rule); color:var(--ink); letter-spacing:0.1em;">K</kbd> to search.</p>
+  </div>
+
+  <div class="concordia-list" id="concordiaList"><!-- injected --></div>
 </section>
 
 <!-- ============================================================
@@ -1278,6 +1860,23 @@ a{ color: inherit; text-decoration: none; cursor: none; }
       </div>
     </div>
   </div>
+</div>
+
+<!-- ============================================================
+     COMMAND BAR (Cmd/Ctrl + K)
+     ============================================================ -->
+<div class="cmdk" id="cmdk" role="dialog" aria-modal="true" aria-label="Search">
+  <div class="cmdk-shell">
+    <div class="cmdk-head">
+      <span class="k">Search</span>
+      <input type="text" id="cmdkInput" placeholder="a plate, a vestment, a word…" autocomplete="off" spellcheck="false"/>
+      <kbd>ESC</kbd>
+    </div>
+    <div class="cmdk-results" id="cmdkResults"><!-- injected --></div>
+  </div>
+</div>
+<div class="cmdk-hint" id="cmdkHint" aria-hidden="true">
+  <span>Press</span><kbd>⌘</kbd><kbd>K</kbd><span>to search</span>
 </div>
 
 <!-- ============================================================
@@ -1536,6 +2135,195 @@ Shipping country:
       });
     }, {passive:true});
   }
+
+
+  /* ---------- Vestments data + injection ---------- */
+  const VESTMENTS = [
+    { id:101, name:"Obsidian Hoodie",       cat:"Hoodie",   price:499, edition:"47 / 250",  img:"assets/clothing/obsidian-hoodie.jpg",       desc:"Heavyweight 480gsm cotton fleece in deepest obsidian. Embroidered AD monogram at the chest, tonal stitching throughout.", weight:"480 gsm", fabric:"Cotton fleece" },
+    { id:102, name:"Crimson Cult Crewneck", cat:"Crewneck", price:449, edition:"73 / 250",  img:"assets/clothing/crimson-cult.jpg",          desc:"Crewneck silhouette in burnt crimson. Reverse weave construction, double-needle stitching at every seam.", weight:"420 gsm", fabric:"Reverse weave" },
+    { id:103, name:"Void Pullover",         cat:"Hoodie",   price:549, edition:"18 / 250",  img:"assets/clothing/void-pullover.jpg",         desc:"Oversized pullover hoodie cut from a boxed pattern. Drawstrings in matte gold cord, kangaroo pocket lined in raw jersey.", weight:"460 gsm", fabric:"Boxed cotton" },
+    { id:104, name:"Saint's Lament Hoodie", cat:"Hoodie",   price:599, edition:"240 / 250", img:"assets/clothing/saints-lament.jpg",         desc:"Statement piece. Hand-applied screenprint of a kneeling figure on the back panel. Distressed treatment at the cuffs.", weight:"500 gsm", fabric:"Cotton fleece" },
+    { id:105, name:"Phantom Zip-Up",        cat:"Zip-Up",   price:529, edition:"91 / 250",  img:"assets/clothing/phantom-zip.jpg",           desc:"Full-zip hoodie with hidden YKK metal zipper. Internal media pocket, ergonomic hood pattern with matte gold aglets.", weight:"440 gsm", fabric:"French terry" },
+    { id:106, name:"Reverie Heavyweight",   cat:"Hoodie",   price:479, edition:"32 / 250",  img:"assets/clothing/reverie-heavyweight.jpg", desc:"Cropped boxy fit in stone-washed black. Made from heavy 510gsm French terry, garment-dyed for a lived-in surface.", weight:"510 gsm", fabric:"French terry, GD" }
+  ];
+  const looksHost = document.getElementById('looks');
+  if (looksHost){
+    looksHost.innerHTML = VESTMENTS.map((v, i) => {
+      const flip = i % 2 === 1 ? 'flip' : '';
+      const idx = ROMAN[i+1] || String(i+1);
+      const nameParts = v.name.split(' ');
+      const nameHtml = nameParts.length > 1
+        ? nameParts.slice(0, -1).join(' ') + ' <em>' + nameParts.slice(-1) + '</em>'
+        : v.name;
+      return `
+        <article class="look ${flip}" data-look="${v.id}">
+          <div class="look-media">
+            <img src="${v.img}" alt="${v.name}" loading="lazy"/>
+            <div class="look-tag"><b>Ed.</b> ${v.edition}</div>
+          </div>
+          <div class="look-info">
+            <span class="look-idx">Look ${idx} \u00b7 ${v.cat}</span>
+            <h3>${nameHtml}</h3>
+            <p class="desc">${v.desc}</p>
+            <div class="look-specs">
+              <div class="spec"><span class="k">Weight</span><span class="v">${v.weight}</span></div>
+              <div class="spec"><span class="k">Fabric</span><span class="v">${v.fabric}</span></div>
+              <div class="spec"><span class="k">Edition</span><span class="v"><em>${v.edition}</em></span></div>
+              <div class="spec"><span class="k">Made</span><span class="v">EU \u00b7 By hand</span></div>
+            </div>
+            <div class="look-foot">
+              <div class="look-price"><span class="cur">PLN</span>${v.price}</div>
+              <a class="btn-line solid" data-cursor="Send" href="mailto:studio@auredarte.com?subject=${encodeURIComponent('Enquiry \u00b7 ' + v.name)}&body=${encodeURIComponent('Piece: ' + v.name + '\nSize: \nShipping country: \n')}">
+                <span class="dash"></span> Enquire
+              </a>
+            </div>
+          </div>
+        </article>`;
+    }).join('');
+  }
+
+  /* ---------- Marquee of titles ---------- */
+  const marqueeTrack = document.getElementById('marqueeTrack');
+  if (marqueeTrack){
+    const items = WORKS.map((w, i) => `
+      <span class="item"><span class="no">No. ${ROMAN[i+1]}</span> <em>${w.name}</em> <span class="sep">\u2014</span></span>
+    `).join('');
+    marqueeTrack.innerHTML = items + items;
+  }
+
+  /* ---------- Concordia (alphabetical index) ---------- */
+  const concordiaHost = document.getElementById('concordiaList');
+  if (concordiaHost){
+    const worksIndex = WORKS.map((w, i) => ({ t: w.name, p: 'Plate \u00b7 No. ' + ROMAN[i+1], href: '#work-' + w.id, id: w.id, kind: 'plate' }));
+    const vestIndex  = VESTMENTS.map((v, i) => ({ t: v.name, p: 'Vestment \u00b7 Look ' + (ROMAN[i+1] || String(i+1)), href: '#vestments', id: v.id, kind: 'vestment' }));
+    const all = worksIndex.concat(vestIndex).sort((a, b) => a.t.localeCompare(b.t));
+    concordiaHost.innerHTML = all.map(r => `
+      <a class="concordia-row" href="${r.href}" data-cursor="See"><span class="t">${r.t}</span><span class="p">${r.p}</span></a>
+    `).join('');
+    concordiaHost.querySelectorAll('.concordia-row').forEach(row => {
+      const href = row.getAttribute('href');
+      if (href && href.startsWith('#work-')){
+        row.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = parseInt(href.replace('#work-',''), 10);
+          const btn = document.querySelector('[data-open="' + id + '"]');
+          if (btn) btn.click();
+        });
+      }
+    });
+  }
+
+  /* ---------- Command bar (Cmd/Ctrl + K) ---------- */
+  const cmdk = document.getElementById('cmdk');
+  const cmdkInput = document.getElementById('cmdkInput');
+  const cmdkResults = document.getElementById('cmdkResults');
+  const CMDK_ITEMS = WORKS.map((w, i) => ({
+    no: 'No. ' + ROMAN[i+1], name: w.name, meta: 'Plate \u00b7 ' + w.category, kind: 'plate', id: w.id
+  })).concat(VESTMENTS.map((v, i) => ({
+    no: 'Look ' + (ROMAN[i+1] || String(i+1)), name: v.name, meta: 'Vestment \u00b7 ' + v.cat, kind: 'vestment', id: v.id
+  })));
+
+  function renderCmdk(query){
+    if (!cmdkResults) return;
+    const q = (query || '').trim().toLowerCase();
+    const rows = q === ''
+      ? CMDK_ITEMS.slice(0, 12)
+      : CMDK_ITEMS.filter(it => (it.name + ' ' + it.meta).toLowerCase().includes(q)).slice(0, 20);
+    if (!rows.length){
+      cmdkResults.innerHTML = '<div class="cmdk-empty">Nothing matches. Try another word.</div>';
+      return;
+    }
+    cmdkResults.innerHTML = rows.map((it, i) => `
+      <button type="button" class="cmdk-item${i===0?' sel':''}" data-kind="${it.kind}" data-id="${it.id}" data-cursor="Open">
+        <span class="no">${it.no}</span>
+        <span class="name">${it.name}</span>
+        <span class="meta">${it.meta}</span>
+      </button>`).join('');
+    cmdkResults.querySelectorAll('.cmdk-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const kind = btn.dataset.kind;
+        const id = parseInt(btn.dataset.id, 10);
+        closeCmdk();
+        if (kind === 'plate'){
+          const opener = document.querySelector('[data-open="' + id + '"]');
+          if (opener) opener.click();
+        } else {
+          const section = document.getElementById('vestments');
+          if (section) section.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  }
+  function openCmdk(){
+    if (!cmdk) return;
+    cmdk.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    renderCmdk('');
+    setTimeout(() => cmdkInput && cmdkInput.focus(), 40);
+  }
+  function closeCmdk(){
+    if (!cmdk) return;
+    cmdk.classList.remove('open');
+    document.body.style.overflow = '';
+    if (cmdkInput) cmdkInput.value = '';
+  }
+  if (cmdkInput){
+    cmdkInput.addEventListener('input', (e) => renderCmdk(e.target.value));
+  }
+  document.addEventListener('keydown', (e) => {
+    const isK = e.key && e.key.toLowerCase() === 'k';
+    if ((e.metaKey || e.ctrlKey) && isK){
+      e.preventDefault();
+      if (cmdk && cmdk.classList.contains('open')) closeCmdk();
+      else openCmdk();
+    }
+    if (e.key === 'Escape' && cmdk && cmdk.classList.contains('open')){
+      closeCmdk();
+    }
+  });
+  if (cmdk){
+    cmdk.addEventListener('click', (e) => { if (e.target === cmdk) closeCmdk(); });
+  }
+
+  /* ---------- Intro cinema overlay ---------- */
+  const intro = document.getElementById('intro');
+  const introVideo = document.getElementById('introVideo');
+  const introSkip = document.getElementById('introSkip');
+  const introEnter = document.getElementById('introEnter');
+  const introProgress = document.getElementById('introProgress');
+  const INTRO_KEY = 'aure_intro_seen';
+
+  function dismissIntro(){
+    if (!intro) return;
+    intro.classList.add('gone');
+    document.body.style.overflow = '';
+    try { localStorage.setItem(INTRO_KEY, '1'); } catch(_){}
+    if (introVideo){ try { introVideo.pause(); } catch(_){} }
+  }
+
+  if (intro){
+    let seen = false;
+    try { seen = localStorage.getItem(INTRO_KEY) === '1'; } catch(_){}
+    if (seen || prefersReducedMotion){
+      dismissIntro();
+    } else {
+      document.body.style.overflow = 'hidden';
+      if (introVideo){
+        introVideo.addEventListener('ended', dismissIntro);
+        introVideo.addEventListener('timeupdate', () => {
+          if (!introProgress || !introVideo.duration) return;
+          introProgress.style.width = ((introVideo.currentTime / introVideo.duration) * 100).toFixed(2) + '%';
+        });
+      }
+      if (introSkip)  introSkip.addEventListener('click', dismissIntro);
+      if (introEnter) introEnter.addEventListener('click', dismissIntro);
+      document.addEventListener('keydown', (e) => {
+        if (intro.classList.contains('gone')) return;
+        if (e.key === 'Escape' || e.key === 'Enter'){ e.preventDefault(); dismissIntro(); }
+      });
+    }
+  }
+
 
 })();
 </script>
