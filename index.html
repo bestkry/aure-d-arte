@@ -2195,6 +2195,306 @@ body.konami-slowmo .egg-overlay * { animation-duration: initial !important; tran
 .filter-btn:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.15); }
 .filter-btn.active { color: var(--gold); border-color: var(--gold); }
 
+/* =============================================================
+   SHOP TOOLBAR v2 — search + sort + view + advanced filters
+   ============================================================= */
+.shop-toolbar {
+  display: flex; flex-direction: column;
+  gap: 0.85rem;
+  margin: 1.4rem auto 1.6rem;
+  max-width: 1240px;
+  padding: 0 1.5rem;
+}
+.shop-toolbar-row { display: flex; align-items: center; gap: 1rem; }
+.shop-toolbar-primary { justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; }
+.shop-toolbar-secondary {
+  justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.shop-toolbar-count {
+  padding-top: 0.4rem;
+  justify-content: center;
+}
+.shop-toolbar .shop-filters {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+  margin: 0; padding: 0;
+}
+.shop-toolbar .filter-btn { padding: 0.4rem 0.9rem; font-size: 0.68rem; }
+
+.shop-search-wrap {
+  position: relative; flex: 1;
+  min-width: 260px; max-width: 420px;
+  display: flex; align-items: center;
+}
+.shop-search-ico {
+  position: absolute; left: 0.85rem;
+  color: var(--text-muted, #a29d90);
+  pointer-events: none;
+}
+.shop-search {
+  width: 100%;
+  padding: 0.7rem 2.4rem 0.7rem 2.3rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.shop-search::placeholder { color: var(--text-muted, #6d675d); font-style: italic; }
+.shop-search:focus {
+  border-color: var(--gold);
+  background: rgba(201,169,110,0.03);
+}
+.shop-search-clear {
+  position: absolute; right: 0.6rem;
+  background: transparent; border: none;
+  color: var(--text-muted, #a29d90);
+  cursor: pointer;
+  font-size: 1.1rem;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s;
+}
+.shop-search-clear:hover { color: var(--gold); }
+
+.shop-toolbar-actions { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+.shop-view-toggle {
+  display: inline-flex;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.shop-view-btn {
+  all: unset; cursor: pointer;
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted, #a29d90);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  transition: color 0.2s, background 0.2s;
+}
+.shop-view-btn:last-child { border-right: none; }
+.shop-view-btn:hover { color: var(--text-primary); }
+.shop-view-btn.active { color: var(--gold); background: rgba(201,169,110,0.06); }
+
+.shop-sort-wrap { display: flex; align-items: center; gap: 0.5rem; }
+.shop-sort-label {
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem;
+  color: var(--text-muted, #a29d90);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.shop-sort {
+  padding: 0.5rem 2rem 0.5rem 0.7rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23a29d90' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  transition: border-color 0.2s;
+}
+.shop-sort:focus { border-color: var(--gold); }
+
+.shop-adv-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.shop-chip {
+  all: unset; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted, #a29d90);
+  font-family: 'Courier New', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.shop-chip:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.18); }
+.shop-chip[data-active="true"] {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(201,169,110,0.05);
+}
+.shop-chip-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #d96b6b;
+  box-shadow: 0 0 6px rgba(217,107,107,0.6);
+}
+
+.shop-result-info {
+  font-family: 'Courier New', monospace;
+  font-size: 0.66rem;
+  color: var(--text-muted, #a29d90);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.shop-result-count {
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  margin-right: 0.4rem;
+}
+
+.shop-empty {
+  max-width: 480px; margin: 4rem auto;
+  text-align: center; padding: 3rem 2rem;
+  border: 1px dashed rgba(255,255,255,0.08);
+}
+.shop-empty-kicker {
+  font-family: 'Courier New', monospace;
+  font-size: 0.62rem; color: var(--gold);
+  letter-spacing: 0.32em; text-transform: uppercase;
+  margin: 0 0 0.8rem;
+}
+.shop-empty-title {
+  font-family: var(--font-display); font-weight: 300;
+  color: var(--text-primary); font-size: 1.5rem;
+  margin: 0 0 0.6rem;
+}
+.shop-empty-lede {
+  font-family: var(--font-display); font-style: italic;
+  color: var(--text-muted, #a29d90); font-size: 0.9rem;
+  margin: 0 0 1.4rem; line-height: 1.6;
+}
+.shop-empty-reset {
+  all: unset; cursor: pointer;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-body);
+  font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase;
+  color: #0a0a0a; background: var(--gold);
+  transition: background 0.2s;
+}
+.shop-empty-reset:hover { background: #d4b47a; }
+
+/* View mode variations */
+.shop-grid.view-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.shop-grid.view-grid-4 { grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+.shop-grid.view-grid-4 .shop-item-name { font-size: 0.95rem; }
+.shop-grid.view-grid-4 .shop-item-live { display: none; }
+.shop-grid.view-list {
+  display: flex; flex-direction: column; gap: 0.6rem;
+}
+.shop-grid.view-list .shop-item {
+  display: grid; grid-template-columns: 180px 1fr auto;
+  gap: 1.2rem; align-items: center;
+  background: rgba(255,255,255,0.015);
+  padding: 0.6rem;
+}
+.shop-grid.view-list .shop-item-image { height: 200px; }
+.shop-grid.view-list .shop-item-info { padding: 0 0.4rem; }
+.shop-grid.view-list .shop-item-name { font-size: 1.4rem; }
+.shop-grid.view-list .shop-item-live { display: flex; }
+.shop-grid.view-list .shop-item-quick { display: none; }
+
+@media (max-width: 900px) {
+  .shop-grid.view-grid-3, .shop-grid.view-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .shop-grid.view-list .shop-item { grid-template-columns: 120px 1fr; }
+  .shop-grid.view-list .shop-item-name { font-size: 1.15rem; }
+  .shop-toolbar-actions { width: 100%; justify-content: space-between; }
+  .shop-search-wrap { min-width: unset; max-width: unset; width: 100%; }
+}
+@media (max-width: 600px) {
+  .shop-grid.view-grid-3, .shop-grid.view-grid-4 { grid-template-columns: 1fr; }
+  .shop-view-toggle .shop-view-btn[data-view="grid-4"] { display: none; }
+}
+
+/* =============================================================
+   Quick actions (hover) — replaces old .shop-item-quick text
+   ============================================================= */
+.shop-quick-row {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex; gap: 4px; padding: 8px;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.75));
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.28s, transform 0.28s;
+  pointer-events: none;
+  z-index: 3;
+}
+.shop-item:hover .shop-quick-row { opacity: 1; transform: none; pointer-events: auto; }
+.shop-quick-btn {
+  all: unset; cursor: pointer;
+  flex: 1;
+  padding: 0.5rem 0.4rem;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.35rem;
+  background: rgba(20,20,18,0.88);
+  color: #f4efe4;
+  border: 1px solid rgba(255,255,255,0.08);
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.shop-quick-btn:hover {
+  background: var(--gold);
+  color: #0a0a0a;
+  border-color: var(--gold);
+}
+.shop-quick-btn.primary { background: rgba(201,169,110,0.92); color: #0a0a0a; }
+.shop-quick-btn.primary:hover { background: var(--gold); }
+.shop-quick-btn svg { display: block; }
+
+.shop-item-cine-badge {
+  position: absolute;
+  bottom: 12px; left: 12px;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 8px;
+  background: rgba(10,10,10,0.75);
+  color: var(--gold);
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: 1px solid rgba(201,169,110,0.35);
+  backdrop-filter: blur(6px);
+  z-index: 2;
+  transition: opacity 0.24s;
+}
+.shop-item:hover .shop-item-cine-badge { opacity: 0; }
+
+.shop-item-sold-out {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,10,0.55);
+  backdrop-filter: blur(2px);
+  z-index: 4;
+  pointer-events: none;
+}
+.shop-item-sold-out span {
+  padding: 0.5rem 1.2rem;
+  background: rgba(10,10,10,0.85);
+  color: #d96b6b;
+  border: 1px solid #d96b6b;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+/* Cinemagraph video that plays on hover */
+.shop-item-cine-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.shop-item.cine-playing .shop-item-cine-video { opacity: 1; }
+
 /* Shop Grid */
 .shop-grid {
   display: grid; grid-template-columns: repeat(3, 1fr);
@@ -4527,14 +4827,71 @@ video.modal-cinemagraph {
       <h1 class="letter-reveal" data-letter-reveal><span data-lang="en">The Collection</span><span data-lang="pl">Kolekcja</span></h1>
       <p><span data-lang="en">15 curated works · Limited editions of 250</span><span data-lang="pl">15 wyselekcjonowanych dzieł · Limitowane edycje po 250</span></p>
     </div>
-    <div class="shop-filters">
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="Dark Art">Dark Art</button>
-      <button class="filter-btn" data-filter="Surrealism">Surrealism</button>
-      <button class="filter-btn" data-filter="Portrait">Portrait</button>
-      <button class="filter-btn" data-filter="Abstract">Abstract</button>
+    <div class="shop-toolbar">
+      <div class="shop-toolbar-row shop-toolbar-primary">
+        <div class="shop-search-wrap">
+          <svg class="shop-search-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" class="shop-search" id="shopSearch" placeholder="Search the collection…" autocomplete="off" />
+          <button type="button" class="shop-search-clear" id="shopSearchClear" aria-label="Clear" style="display:none;">×</button>
+        </div>
+        <div class="shop-toolbar-actions">
+          <div class="shop-view-toggle" role="group" aria-label="View mode">
+            <button type="button" class="shop-view-btn active" data-view="grid-3" title="3 columns"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+            <button type="button" class="shop-view-btn" data-view="grid-4" title="4 columns"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="4" height="4"/><rect x="10" y="2" width="4" height="4"/><rect x="18" y="2" width="4" height="4"/><rect x="2" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/><rect x="18" y="10" width="4" height="4"/><rect x="2" y="18" width="4" height="4"/><rect x="10" y="18" width="4" height="4"/><rect x="18" y="18" width="4" height="4"/></svg></button>
+            <button type="button" class="shop-view-btn" data-view="list" title="List"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>
+          </div>
+          <div class="shop-sort-wrap">
+            <label for="shopSort" class="shop-sort-label"><span data-lang="en">Sort</span><span data-lang="pl">Sortuj</span></label>
+            <select class="shop-sort" id="shopSort">
+              <option value="curated">Curator's order</option>
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="scarcity">Nearly sold out</option>
+              <option value="popular">Most viewed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="shop-toolbar-row shop-toolbar-secondary">
+        <div class="shop-filters" id="shopFilters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="Dark Art">Dark Art</button>
+          <button class="filter-btn" data-filter="Surrealism">Surrealism</button>
+          <button class="filter-btn" data-filter="Portrait">Portrait</button>
+          <button class="filter-btn" data-filter="Abstract">Abstract</button>
+        </div>
+        <div class="shop-adv-filters">
+          <button type="button" class="shop-chip" id="shopChipCine" data-active="false" title="Only pieces with animated version">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Animated</span>
+          </button>
+          <button type="button" class="shop-chip" id="shopChipLow" data-active="false" title="Only pieces nearly sold out">
+            <span class="shop-chip-dot"></span>
+            <span>Almost gone</span>
+          </button>
+          <button type="button" class="shop-chip" id="shopChipReset" title="Reset all filters">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 0115.5-6.3L21 8"/><path d="M21 3v5h-5"/></svg>
+            <span>Reset</span>
+          </button>
+        </div>
+      </div>
+      <div class="shop-toolbar-row shop-toolbar-count">
+        <div class="shop-result-info">
+          <span class="shop-result-count" id="shopResultCount">15</span>
+          <span class="shop-result-label" data-lang="en">pieces in the catalogue</span>
+          <span class="shop-result-label" data-lang="pl">prac w katalogu</span>
+        </div>
+      </div>
     </div>
-    <div class="shop-grid" id="shopGrid"></div>
+    <div class="shop-grid view-grid-3" id="shopGrid"></div>
+    <div class="shop-empty" id="shopEmpty" style="display:none;">
+      <p class="shop-empty-kicker">Void</p>
+      <h3 class="shop-empty-title">No pieces match your search</h3>
+      <p class="shop-empty-lede">Try adjusting the filters or clear them to see the full catalogue again.</p>
+      <button type="button" class="shop-empty-reset" onclick="ShopFilter.reset()">Clear all filters</button>
+    </div>
   </div>
 </div>
 
@@ -5331,6 +5688,8 @@ let allArtworks = [
   { id:14, name:"Burning Serenade",    category:"Dark Art",    price:489, edition:"41/250",  seed:"burning-serenade", desc:"Music made visible through flame. Each note leaves a trail of fire across the composition.", images: ["assets/burning-serenade.jpg"] },
   { id:15, name:"Eternal Revenant",    category:"Surrealism",  price:579, edition:"27/250",  seed:"eternal-revenant", desc:"Returning endlessly, never arriving. The revenant walks through layers of time, each step a new epoch.", images: ["assets/eternal-revenant.jpg"], cinemagraph: { mp4: "assets/cinemagraph/cinemagraph-eternal-revenant.mp4", webm: "assets/cinemagraph/cinemagraph-eternal-revenant.webm", poster: "assets/cinemagraph/cinemagraph-eternal-revenant-poster.jpg" } },
 ];
+/* Expose immediately so ShopFilter and other early consumers can read the catalog */
+window.allArtworks = allArtworks;
 
 /* ========== CLOTHING DATA (6 hoodies) ========== */
 // id offset 100 so it never collides with artwork ids
@@ -5552,7 +5911,16 @@ function buildShopCardInner(art) {
       <button class="shop-item-fav${isFavB ? ' active' : ''}" data-fav="${art.id}" aria-label="Toggle favorite">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
       </button>
-      <div class="shop-item-quick"><span>Quick View</span></div>
+      <div class="shop-quick-row">
+        <button class="shop-quick-btn primary" data-action="cart" type="button" title="Add bundle to cart">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span>Add</span>
+        </button>
+        <button class="shop-quick-btn" data-action="view" type="button" title="Open bundle">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>View</span>
+        </button>
+      </div>
     </div>
     <div class="shop-item-info">
       <h3 class="shop-item-name">${art.name}</h3>
@@ -5578,7 +5946,23 @@ function buildShopCardInner(art) {
       <button class="shop-item-fav${isFav ? ' active' : ''}" data-fav="${art.id}" aria-label="Toggle favorite">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
       </button>
-      <div class="shop-item-quick"><span>Quick View</span></div>
+      ${art.cinemagraph ? `<video class="shop-item-cine-video" muted loop playsinline preload="none" poster="${art.cinemagraph.poster || ''}"></video>` : ''}
+      ${art.cinemagraph ? `<span class="shop-item-cine-badge"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Animated</span>` : ''}
+      ${remaining <= 0 ? `<div class="shop-item-sold-out"><span>Sold out</span></div>` : ''}
+      <div class="shop-quick-row">
+        <button class="shop-quick-btn primary" data-action="cart" type="button" title="Add to cart">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span>Add</span>
+        </button>
+        <button class="shop-quick-btn" data-action="wall" type="button" title="See on your wall">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="1"/><rect x="7" y="7" width="10" height="10" rx="0.5"/></svg>
+          <span>Wall</span>
+        </button>
+        <button class="shop-quick-btn" data-action="view" type="button" title="Quick view">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>View</span>
+        </button>
+      </div>
     </div>
     <div class="shop-item-info">
       <h3 class="shop-item-name">${art.name}</h3>
@@ -5604,18 +5988,130 @@ function buildShopCardInner(art) {
     </div>`;
 }
 
-function renderShopGrid(filter) {
-  const shopGrid = document.getElementById('shopGrid');
-  shopGrid.innerHTML = '';
-  const filtered = filter === 'all' ? allArtworks : allArtworks.filter(a => a.category === filter);
-  filtered.forEach(art => {
-    const item = document.createElement('div');
-    item.className = 'shop-item' + (art.isDraft ? ' is-draft' : '');
-    item.onclick = (e) => {
-      if (e.target.closest('.shop-item-fav')) return;
-      openProductModal(art.id);
-    };
-    item.innerHTML = buildShopCardInner(art);
+/* ============================================================
+   SHOP FILTER v2 — search, sort, view mode, URL sync
+   ============================================================ */
+const ShopFilter = (function () {
+  const state = {
+    q: '',
+    cat: 'all',
+    sort: 'curated',
+    view: 'grid-3',
+    onlyCine: false,
+    onlyLow: false,
+  };
+
+  function fromURL() {
+    try {
+      const u = new URL(location.href);
+      const q = u.searchParams.get('q'); if (q) state.q = q;
+      const c = u.searchParams.get('cat'); if (c) state.cat = c;
+      const s = u.searchParams.get('sort'); if (s) state.sort = s;
+      const v = u.searchParams.get('view'); if (v) state.view = v;
+      if (u.searchParams.get('cine') === '1') state.onlyCine = true;
+      if (u.searchParams.get('low') === '1') state.onlyLow = true;
+    } catch {}
+  }
+  function toURL() {
+    try {
+      const u = new URL(location.href);
+      state.q ? u.searchParams.set('q', state.q) : u.searchParams.delete('q');
+      state.cat && state.cat !== 'all' ? u.searchParams.set('cat', state.cat) : u.searchParams.delete('cat');
+      state.sort && state.sort !== 'curated' ? u.searchParams.set('sort', state.sort) : u.searchParams.delete('sort');
+      state.view && state.view !== 'grid-3' ? u.searchParams.set('view', state.view) : u.searchParams.delete('view');
+      state.onlyCine ? u.searchParams.set('cine', '1') : u.searchParams.delete('cine');
+      state.onlyLow ? u.searchParams.set('low', '1') : u.searchParams.delete('low');
+      history.replaceState({}, '', u.pathname + (u.search ? u.search : '') + u.hash);
+    } catch {}
+  }
+
+  function apply() {
+    let list = (window.allArtworks || (typeof allArtworks !== 'undefined' ? allArtworks : []) || []).slice();
+    if (state.cat !== 'all') list = list.filter(a => a.category === state.cat);
+    if (state.q) {
+      const q = state.q.toLowerCase().trim();
+      list = list.filter(a => {
+        const hay = [a.name, a.category, a.desc, (a.tags || []).join(' ')].filter(Boolean).join(' ').toLowerCase();
+        return hay.includes(q);
+      });
+    }
+    if (state.onlyCine) list = list.filter(a => a.cinemagraph);
+    if (state.onlyLow) list = list.filter(a => {
+      if (!a.edition) return false;
+      const sold = parseInt(a.edition.split('/')[0], 10) || 0;
+      return (250 - sold) <= 30;
+    });
+
+    const cmp = {
+      'curated':    (a, b) => (a.id || 0) - (b.id || 0),
+      'newest':     (a, b) => (b.id || 0) - (a.id || 0),
+      'oldest':     (a, b) => (a.id || 0) - (b.id || 0),
+      'price-asc':  (a, b) => (a.price || 0) - (b.price || 0),
+      'price-desc': (a, b) => (b.price || 0) - (a.price || 0),
+      'scarcity':   (a, b) => {
+        const sa = a.edition ? parseInt(a.edition.split('/')[0], 10) : 0;
+        const sb = b.edition ? parseInt(b.edition.split('/')[0], 10) : 0;
+        return sb - sa;
+      },
+      'popular':    (a, b) => {
+        const va = (window.LiveSignals && window.LiveSignals.getViewing) ? window.LiveSignals.getViewing(a.id) : 0;
+        const vb = (window.LiveSignals && window.LiveSignals.getViewing) ? window.LiveSignals.getViewing(b.id) : 0;
+        return vb - va;
+      },
+    }[state.sort] || cmp.curated;
+    list.sort(cmp);
+    return list;
+  }
+
+  function reset() {
+    state.q = ''; state.cat = 'all'; state.sort = 'curated';
+    state.onlyCine = false; state.onlyLow = false;
+    // keep view
+    const inp = document.getElementById('shopSearch'); if (inp) inp.value = '';
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === 'all'));
+    const sortEl = document.getElementById('shopSort'); if (sortEl) sortEl.value = 'curated';
+    document.getElementById('shopChipCine')?.setAttribute('data-active', 'false');
+    document.getElementById('shopChipLow')?.setAttribute('data-active', 'false');
+    document.getElementById('shopSearchClear').style.display = 'none';
+    render();
+  }
+
+  function render() {
+    const grid = document.getElementById('shopGrid');
+    const empty = document.getElementById('shopEmpty');
+    const count = document.getElementById('shopResultCount');
+    if (!grid) return;
+    grid.className = 'shop-grid view-' + state.view;
+    const list = apply();
+    if (count) count.textContent = list.length;
+
+    if (list.length === 0) {
+      grid.innerHTML = '';
+      if (empty) empty.style.display = 'block';
+      toURL();
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+
+    grid.innerHTML = '';
+    list.forEach(art => {
+      const item = document.createElement('div');
+      item.className = 'shop-item' + (art.isDraft ? ' is-draft' : '');
+      item.onclick = (e) => {
+        if (e.target.closest('.shop-item-fav')) return;
+        if (e.target.closest('.shop-quick-btn')) return;
+        openProductModal(art.id);
+      };
+      item.innerHTML = buildShopCardInner(art);
+      // Wire buttons within card
+      wireCard(item, art);
+      grid.appendChild(item);
+    });
+    if (window.initCardTilt) initCardTilt();
+    toURL();
+  }
+
+  function wireCard(item, art) {
     const favBtn = item.querySelector('.shop-item-fav');
     if (favBtn) {
       favBtn.addEventListener('click', (e) => {
@@ -5628,11 +6124,117 @@ function renderShopGrid(filter) {
         updateFavCountUI();
       });
     }
-    shopGrid.appendChild(item);
-  });
-  if (window.initCardTilt) initCardTilt();
+    // Quick actions
+    item.querySelectorAll('.shop-quick-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = btn.dataset.action;
+        if (action === 'cart') {
+          if (typeof addToCartQuick === 'function') addToCartQuick(art.id);
+          else openProductModal(art.id);
+          btn.classList.add('added');
+          setTimeout(() => btn.classList.remove('added'), 900);
+        } else if (action === 'wall') {
+          if (typeof openWallVisualizer === 'function') {
+            window.__wallArtOverride = art.id;
+            openWallVisualizer('shop');
+          }
+        } else if (action === 'view') {
+          openProductModal(art.id);
+        }
+      });
+    });
+    // Cinemagraph hover
+    if (art.cinemagraph) {
+      const vid = item.querySelector('.shop-item-cine-video');
+      const img = item.querySelector('.shop-item-image');
+      if (vid && img) {
+        item.addEventListener('mouseenter', () => {
+          if (vid.dataset.loaded !== '1') {
+            const src = art.cinemagraph.mp4 || art.cinemagraph.webm;
+            if (src) { vid.src = src; vid.dataset.loaded = '1'; }
+          }
+          vid.play().catch(() => {});
+          item.classList.add('cine-playing');
+        });
+        item.addEventListener('mouseleave', () => {
+          vid.pause();
+          item.classList.remove('cine-playing');
+        });
+      }
+    }
+  }
+
+  function bind() {
+    fromURL();
+    // Restore UI from state
+    const inp = document.getElementById('shopSearch');
+    if (inp && state.q) { inp.value = state.q; document.getElementById('shopSearchClear').style.display = ''; }
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === state.cat));
+    const sortEl = document.getElementById('shopSort'); if (sortEl) sortEl.value = state.sort;
+    if (state.onlyCine) document.getElementById('shopChipCine')?.setAttribute('data-active', 'true');
+    if (state.onlyLow)  document.getElementById('shopChipLow')?.setAttribute('data-active', 'true');
+    document.querySelectorAll('.shop-view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
+
+    // Search input
+    if (inp) {
+      let t = null;
+      inp.addEventListener('input', () => {
+        state.q = inp.value;
+        document.getElementById('shopSearchClear').style.display = state.q ? '' : 'none';
+        clearTimeout(t); t = setTimeout(render, 140);
+      });
+    }
+    document.getElementById('shopSearchClear')?.addEventListener('click', () => {
+      if (inp) inp.value = '';
+      state.q = '';
+      document.getElementById('shopSearchClear').style.display = 'none';
+      render();
+    });
+    // Sort
+    sortEl?.addEventListener('change', () => { state.sort = sortEl.value; render(); });
+    // View
+    document.querySelectorAll('.shop-view-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.shop-view-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        state.view = b.dataset.view;
+        render();
+      });
+    });
+    // Category filter
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+        btn.classList.add('active');
+        state.cat = btn.dataset.filter;
+        render();
+      });
+    });
+    // Adv chips
+    document.getElementById('shopChipCine')?.addEventListener('click', function () {
+      state.onlyCine = !state.onlyCine;
+      this.setAttribute('data-active', String(state.onlyCine));
+      render();
+    });
+    document.getElementById('shopChipLow')?.addEventListener('click', function () {
+      state.onlyLow = !state.onlyLow;
+      this.setAttribute('data-active', String(state.onlyLow));
+      render();
+    });
+    document.getElementById('shopChipReset')?.addEventListener('click', reset);
+  }
+
+  return { bind, render, reset, state };
+})();
+window.ShopFilter = ShopFilter;
+// Legacy function name preserved as alias for other code that may call it
+function renderShopGrid(filter) {
+  if (filter && filter !== 'all') ShopFilter.state.cat = filter;
+  ShopFilter.render();
 }
-renderShopGrid('all');
+ShopFilter.bind();
+ShopFilter.render();
 
 /* Clothing grid */
 function renderClothingGrid() {
@@ -5703,14 +6305,7 @@ function renderSavedGrid() {
   if (window.initCardTilt) initCardTilt();
 }
 
-/* Filters */
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderShopGrid(btn.dataset.filter);
-  });
-});
+/* Filters — handled by ShopFilter.bind() above */
 
 /* ========== VIEW SWITCHING with CURTAIN TRANSITION ========== */
 let _viewTransitioning = false;
