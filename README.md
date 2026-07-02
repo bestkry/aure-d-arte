@@ -1,53 +1,85 @@
-# AURE D'ARTE — Exclusive AI Art · Limited Editions
+# Aure d'Arte — Volume I · *Apparitions*
 
-Premium AI art brand website featuring limited edition prints.
+A quiet monograph in four cinematic plates and fifteen editioned prints.
+Editorial redesign — dark, museum-grade, art-object-first.
 
-## Live Site
+**Live:** [https://bestkry.github.io/aure-d-arte/](https://bestkry.github.io/aure-d-arte/)
 
-Visit: [https://krystianstraczek.github.io/aure-d-arte/](https://krystianstraczek.github.io/aure-d-arte/)
+---
 
-## Features
+## About this branch (`fable-redesign`)
 
-- **Dark gallery aesthetic** — full dark mode with #0a0a0a base, inspired by luxury art galleries
-- **Limited edition urgency** — edition counters, progress bars, and "Limited Edition" badges throughout
-- **8 curated artworks** in a responsive grid gallery with hover overlays
-- **Featured artwork section** with animated edition progress bar
-- **GSAP + ScrollTrigger animations** — parallax hero, scroll reveals, count-up stats, letter-by-letter title
-- **Custom cursor** — gold dot + tracking ring (desktop only)
-- **Film grain overlay** via SVG feTurbulence
-- **Marquee ticker** with infinite scroll
-- **EN/PL language toggle**
-- **Fully responsive** — 375px, 768px, 1280px+ breakpoints
-- **Respects `prefers-reduced-motion`**
+A full rebuild from a blank page. The site was previously ≈10,500 lines of single-file HTML that had accrued a decade of features on top of the actual product. This branch strips the site back to what a limited-edition art house should be: a catalogue you read, four plates you sit with, and a way to write for what you want.
 
-## Tech Stack
+The result is one file (`index.html`, ~1,530 lines), zero frameworks, zero build step, and no third-party JS. Deploys to GitHub Pages / Cloudflare Pages as-is.
 
-- Vanilla HTML, CSS, JS — zero frameworks
-- Cormorant Garamond (Google Fonts) + Satoshi (Fontshare)
-- GSAP 3 + ScrollTrigger (CDN)
-- Splitting.js for text animations (CDN)
-- Semantic HTML5 with ARIA labels
+## Structure
 
-## Design System
+1. **Masthead** — publication-style opener. Volume, issue, roman numerals, one word set to full viewport width.
+2. **§ I · The Four Plates** — full-viewport cinemagraph plates, each with its own roman index (I–IV), studio label, and a single serif study button.
+3. **§ II · The Catalogue** — all 15 works as a museum wall-label list. On desktop, hovering a row loads that work into a sticky viewer opposite; on mobile, each row shows its own image.
+4. **§ III · A Note on Provenance** — an editorial about-the-house column set as a two-column drop-cap read.
+5. **§ IV · Write to Acquire** — no cart, no checkout. A mailto correspondence flow, per-plate.
+6. **Colophon** — studio address, correspondence, edition specifics, typographic imprint.
+
+## Design system
 
 | Token | Value |
-|-------|-------|
-| Background Main | `#0a0a0a` |
-| Background Elevated | `#111111` |
-| Background Card | `#141414` |
-| Text Primary | `#f0efe8` |
-| Text Muted | `#7a7975` |
-| Gold Accent | `#c9a96e` |
-| Border | `rgba(255,255,255,0.06)` |
+|---|---|
+| Paper (page) | `#0a0a09` |
+| Void (footer/modal) | `#070706` |
+| Ink | `#f2ede1` (paper-warm off-white) |
+| Ink dim | `#a29d90` |
+| Gold accent | `#c9a96e` |
+| Display | Cormorant Garamond, italic-forward |
+| Body | Satoshi 300/500 |
+| Grid | 12-col responsive; hairline rules; `clamp()`-driven scale |
+
+## Bold moves
+
+- **Custom crosshair cursor** with contextual gold labels ("Open", "View", "Send") and difference blend for legibility over both light and dark plates.
+- **Film grain overlay** using SVG `feTurbulence` with a 6-step displacement animation.
+- **Vignette overlay** to focus attention centrally on every viewport.
+- **Word-by-word masthead reveal** — "Appari" + italic gold *"tions"* rise from the baseline.
+- **Sticky catalogue viewer** — the list is a read; the wall opposite is the gaze. Hover to change what's on the wall.
+- **Editorial numerals** — every section, plate, and catalogue entry is roman-numbered.
+- **Drop caps** on provenance and every modal description.
+- **Cinematic modal** with per-plate mailto correspondence: subject and body prefilled, ready to send.
+- **Reduced-motion respected** everywhere — cinemagraphs pause, grain freezes, word animation is skipped.
+
+## What was removed
+
+- ≈9,000 lines of legacy CSS/JS
+- Fake checkout & cart flow, wishlist, recently-viewed, promo banners, discount codes
+- Admin panel (v1–v5), CMS, image upload, drafts, live chat widget, affiliates, bundle builder
+- WebGL hero canvas, chromatic-split shader, image-crossfade OGL
+- Clothing/hoodie catalogue (6 items) — Aure d'Arte is an art house, not a merch line
+- "Build Your Wall" visualizer, scene picker, PNG export
+- "In Your Space" testimonials, FAQ section, newsletter
+- Language toggle & Polish copy — the volume is issued in one language
+- Light-mode theme (the aesthetic is dark)
+- Konami easter egg, gold cursor trail, card tilt, rotatable frame
+- Intro video, buffering progress bar, volume slider
+- Manifesto page (7 principles) — replaced by a single provenance column
+- Legal pages, single-artwork page, 404 page — the site is now short enough not to need them
+
+## What was kept
+
+- The four cinemagraphs (`velvet-abyss`, `crimson-reverie`, `void-architect`, `eternal-revenant`) — now full-viewport plates
+- 15 artwork stills and their names, descriptions, prices, editions
+- Dark aesthetic + `#c9a96e` warm gold
+- Cormorant Garamond × Satoshi type pair
+- Vanilla HTML/CSS/JS · deployable to GitHub Pages
 
 ## Setup
 
-No build step required. Open `index.html` in a browser or serve with any static server:
+No build. Open `index.html` or:
 
 ```bash
 npx serve .
 ```
 
-## License
+## Colophon
 
-© 2026 Aure D'arte. All rights reserved.
+Set in Cormorant Garamond & Satoshi. Deposited & catalogued in Kraków.
+© MMXXVI Aure d'Arte. All impressions reserved.
