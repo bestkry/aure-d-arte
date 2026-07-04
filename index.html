@@ -1618,6 +1618,270 @@ body.konami-slowmo .egg-overlay * { animation-duration: initial !important; tran
     linear-gradient(135deg, rgba(255,255,255,0) 55%, rgba(255,255,255,0.05) 75%, rgba(0,0,0,0.15) 100%);
 }
 
+/* ============================================================
+   v4 — AMBIENT LIGHTING (Daylight / Golden / Spot / Night)
+   ============================================================ */
+.wall2-stage[data-ambient="daylight"] .wall2-scene { filter: brightness(1) saturate(1); }
+.wall2-stage[data-ambient="daylight"] .wall2-scene-spotlight {
+  background: radial-gradient(circle at var(--spot-x, 50%) var(--spot-y, 38%),
+    rgba(255,232,190,0.20) 0%, rgba(255,232,190,0.10) 15%, rgba(0,0,0,0) 55%);
+}
+
+.wall2-stage[data-ambient="golden"] .wall2-scene {
+  filter: brightness(0.95) saturate(1.15) sepia(0.12) hue-rotate(-5deg);
+}
+.wall2-stage[data-ambient="golden"] .wall2-scene-spotlight {
+  background: radial-gradient(circle at var(--spot-x, 50%) var(--spot-y, 38%),
+    rgba(255,190,120,0.32) 0%, rgba(255,170,90,0.16) 20%, rgba(0,0,0,0) 60%);
+}
+.wall2-stage[data-ambient="golden"] .wall2-frame::before {
+  filter: brightness(1.05);
+}
+
+.wall2-stage[data-ambient="spot"] .wall2-scene {
+  filter: brightness(0.55) saturate(0.85) contrast(1.08);
+}
+.wall2-stage[data-ambient="spot"] .wall2-scene-spotlight {
+  background: radial-gradient(ellipse 40% 55% at var(--art-x, 50%) var(--art-y, 40%),
+    rgba(255,240,210,0.55) 0%, rgba(255,235,200,0.28) 15%, rgba(255,230,180,0.08) 35%, rgba(0,0,0,0) 60%);
+}
+.wall2-stage[data-ambient="spot"] .wall2-frame {
+  filter: brightness(1.15) contrast(1.05);
+}
+
+.wall2-stage[data-ambient="night"] .wall2-scene {
+  filter: brightness(0.32) saturate(0.65) contrast(1.1) hue-rotate(8deg);
+}
+.wall2-stage[data-ambient="night"] .wall2-scene-spotlight {
+  background: radial-gradient(ellipse 55% 65% at var(--art-x, 50%) var(--art-y, 40%),
+    rgba(255,210,150,0.35) 0%, rgba(230,180,130,0.16) 25%, rgba(0,0,0,0) 65%);
+}
+.wall2-stage[data-ambient="night"] .wall2-frame {
+  filter: brightness(0.92) contrast(1.02);
+}
+/* Night overlay — cool moonlight tint everywhere except spot */
+.wall2-stage[data-ambient="night"]::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(20,30,60,0.28) 0%, rgba(10,15,30,0.35) 100%);
+  pointer-events: none;
+  z-index: 2;
+  mix-blend-mode: multiply;
+}
+
+/* Ambient chip grid — same layout as frame chips but 4 items */
+.wall2-ambient-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+.wall2-ambient-chip {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  padding: 0.7rem 0.3rem 0.55rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  color: rgba(255,255,255,0.55);
+  font: 500 0.6rem/1 'Satoshi', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.wall2-ambient-chip:hover {
+  border-color: rgba(201,169,110,0.35);
+  color: rgba(255,255,255,0.85);
+  transform: translateY(-1px);
+}
+.wall2-ambient-chip.active {
+  border-color: var(--gold);
+  background: rgba(201,169,110,0.08);
+  color: var(--gold);
+}
+.wall2-achip-icon {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.wall2-achip-icon.daylight {
+  background: radial-gradient(circle, #fff4d4 0%, #f2c56a 60%, #b08040 100%);
+  box-shadow: 0 0 8px rgba(255,220,140,0.4);
+}
+.wall2-achip-icon.golden {
+  background: radial-gradient(circle, #ffbb6a 0%, #d47a2a 60%, #6a3810 100%);
+  box-shadow: 0 0 10px rgba(255,150,80,0.35);
+}
+.wall2-achip-icon.spot {
+  background: radial-gradient(circle at 50% 40%, #fff5d2 0%, #d2ac66 30%, #201810 75%);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+.wall2-achip-icon.night {
+  background: radial-gradient(circle at 60% 40%, #5a6a90 0%, #1a2340 55%, #0a0e1c 100%);
+  box-shadow: inset 0 0 4px rgba(180,200,255,0.2);
+}
+
+/* ============================================================
+   v4 — HUMAN SCALE reference silhouette
+   ============================================================ */
+.wall2-human {
+  position: absolute;
+  bottom: 4%;
+  left: calc(var(--human-x, 30%));
+  transform: translateX(-50%);
+  height: var(--human-h, 175px);
+  width: auto;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 3;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+}
+.wall2-stage.show-human .wall2-human { opacity: 0.72; }
+.wall2-human svg { height: 100%; width: auto; display: block; }
+
+.wall2-human-label {
+  position: absolute;
+  bottom: calc(4% + var(--human-h, 175px) + 8px);
+  left: calc(var(--human-x, 30%));
+  transform: translateX(-50%);
+  font-family: var(--font-body); font-size: 0.58rem;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  padding: 4px 10px;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.08);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 3;
+  white-space: nowrap;
+}
+.wall2-stage.show-human .wall2-human-label { opacity: 1; }
+
+/* ============================================================
+   v4 — COMPOSITION (Diptych / Triptych)
+   ============================================================ */
+/* Secondary frames — reuse main .wall2-frame styling via .wall2-frame class */
+.wall2-frame.secondary,
+.wall2-frame.tertiary {
+  z-index: 4;
+}
+/* When composition is set, spacing is applied through --comp-gap */
+.wall2-stage[data-comp="2"] .wall2-frame,
+.wall2-stage[data-comp="3"] .wall2-frame {
+  /* positioning driven by JS via --art-x/-y for each frame */
+}
+
+/* Composition row picker */
+.wall2-comp-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+.wall2-comp-chip {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  padding: 0.7rem 0.3rem 0.55rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  color: rgba(255,255,255,0.55);
+  font: 500 0.62rem/1 'Satoshi', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.wall2-comp-chip:hover {
+  border-color: rgba(201,169,110,0.35);
+  color: rgba(255,255,255,0.85);
+  transform: translateY(-1px);
+}
+.wall2-comp-chip.active {
+  border-color: var(--gold);
+  background: rgba(201,169,110,0.08);
+  color: var(--gold);
+}
+.wall2-cchip-icon {
+  display: flex; gap: 3px; align-items: center;
+  height: 26px;
+}
+.wall2-cchip-icon span {
+  display: block;
+  width: 12px; height: 18px;
+  background: linear-gradient(160deg, #2a2622 0%, #100e0c 100%);
+  border: 1px solid rgba(201,169,110,0.35);
+  border-radius: 1px;
+}
+.wall2-cchip-icon.single span:nth-child(n+2) { display: none; }
+.wall2-cchip-icon.duo span:nth-child(n+3) { display: none; }
+.wall2-cchip-icon.trio span { display: block; }
+
+/* ============================================================
+   v4 — ROOM DIMENSIONS row
+   ============================================================ */
+.wall2-room-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+}
+.wall2-room-label {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.62);
+}
+.wall2-room-input {
+  width: 70px;
+  padding: 0.35rem 0.5rem;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(201,169,110,0.25);
+  border-radius: 3px;
+  color: var(--gold);
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s ease;
+  -moz-appearance: textfield;
+}
+.wall2-room-input::-webkit-outer-spin-button,
+.wall2-room-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.wall2-room-input:focus {
+  border-color: var(--gold);
+  background: rgba(0,0,0,0.55);
+}
+.wall2-room-unit {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em;
+}
+
+/* Human-scale toggle row (compact) */
+.wall2-human-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+.wall2-human-row-label {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.62);
+}
+
+
 /* Mobile — frame grid becomes 5 in one row still (small chips) */
 @media (max-width: 768px) {
   .wall2-frame-grid { gap: 0.4rem; }
@@ -4332,17 +4596,37 @@ video.modal-cinemagraph {
   <div class="wall2-shell" id="wall2Shell">
 
     <!-- Stage -->
-    <section class="wall2-stage" id="wall2Stage">
+    <section class="wall2-stage" id="wall2Stage" data-ambient="daylight" data-comp="1">
       <button class="wall2-close" id="wall2Close" aria-label="Close">&times;</button>
       <img class="wall2-scene" id="wall2Scene" src="assets/scenes/scene-living.jpg" alt="Interior scene">
       <div class="wall2-scene-spotlight" id="wall2Spotlight"></div>
       <div class="wall2-scene-vignette"></div>
 
-      <div class="wall2-frame" id="wall2Frame">
+      <div class="wall2-frame" id="wall2Frame" data-frame="classic">
         <div class="wall2-frame-shadow"></div>
         <img id="wall2ArtImg" src="" alt="Artwork preview" crossorigin="anonymous" draggable="false">
         <div class="wall2-frame-glare"></div>
       </div>
+
+      <div class="wall2-frame secondary" id="wall2Frame2" data-frame="classic" style="display:none">
+        <div class="wall2-frame-shadow"></div>
+        <img id="wall2ArtImg2" src="" alt="Artwork preview 2" crossorigin="anonymous" draggable="false">
+        <div class="wall2-frame-glare"></div>
+      </div>
+
+      <div class="wall2-frame tertiary" id="wall2Frame3" data-frame="classic" style="display:none">
+        <div class="wall2-frame-shadow"></div>
+        <img id="wall2ArtImg3" src="" alt="Artwork preview 3" crossorigin="anonymous" draggable="false">
+        <div class="wall2-frame-glare"></div>
+      </div>
+
+      <!-- v4 — human scale reference (1.75 m silhouette) -->
+      <div class="wall2-human" id="wall2Human" aria-hidden="true">
+        <svg viewBox="0 0 40 175" xmlns="http://www.w3.org/2000/svg">
+          <path fill="rgba(15,15,15,0.92)" d="M20 0c-4.5 0-8 3.5-8 8s3.5 8 8 8 8-3.5 8-8-3.5-8-8-8zm-8 18c-3 0-5 2-5 5v25c0 2 1 3 2 3l1 20c0 1 0 2 1 3l-2 45c0 2 1 3 3 3h4c2 0 3-1 3-3l1-30c0 0 0 0 1 0l1 30c0 2 1 3 3 3h4c2 0 3-1 3-3l-2-45c1-1 1-2 1-3l1-20c1 0 2-1 2-3V23c0-3-2-5-5-5-1 0-2 1-3 1-1 1-2 1-3 1h-2c-1 0-2 0-3-1-1 0-2-1-3-1z"/>
+        </svg>
+      </div>
+      <div class="wall2-human-label" id="wall2HumanLabel">175 cm · 1.75 m</div>
 
       <div class="wall2-size-label" id="wall2SizeLabel">50 × 70 cm</div>
       <div class="wall2-tune-hint">Drag the frame to reposition</div>
@@ -4435,9 +4719,41 @@ video.modal-cinemagraph {
                 </button>
               </div>
             </div>
+
+            <!-- v4 Step: Ambient lighting -->
+            <div class="wall2-step">
+              <div class="wall2-step-head">
+                <span class="wall2-step-num">4</span>
+                <span class="wall2-step-label" data-lang="en">AMBIENT LIGHT</span>
+                <span class="wall2-step-label" data-lang="pl" style="display:none">OŚWIETLENIE</span>
+              </div>
+              <div class="wall2-ambient-grid" id="wall2AmbientGrid">
+                <button type="button" class="wall2-ambient-chip active" data-ambient="daylight" aria-label="Daylight">
+                  <span class="wall2-achip-icon daylight"></span>
+                  <span data-lang="en">Daylight</span>
+                  <span data-lang="pl" style="display:none">Dzień</span>
+                </button>
+                <button type="button" class="wall2-ambient-chip" data-ambient="golden" aria-label="Golden hour">
+                  <span class="wall2-achip-icon golden"></span>
+                  <span data-lang="en">Golden</span>
+                  <span data-lang="pl" style="display:none">Zachód</span>
+                </button>
+                <button type="button" class="wall2-ambient-chip" data-ambient="spot" aria-label="Gallery spot">
+                  <span class="wall2-achip-icon spot"></span>
+                  <span data-lang="en">Spot</span>
+                  <span data-lang="pl" style="display:none">Reflektor</span>
+                </button>
+                <button type="button" class="wall2-ambient-chip" data-ambient="night" aria-label="Night">
+                  <span class="wall2-achip-icon night"></span>
+                  <span data-lang="en">Night</span>
+                  <span data-lang="pl" style="display:none">Noc</span>
+                </button>
+              </div>
+            </div>
+
             <div class="wall2-step">
           <div class="wall2-step-head">
-            <span class="wall2-step-num">4</span>
+            <span class="wall2-step-num">5</span>
             <span class="wall2-step-label"><span data-lang="en">Set the size</span><span data-lang="pl">Ustaw rozmiar</span></span>
           </div>
           <div class="wall2-size-row" id="wall2SizeRow">
@@ -4464,6 +4780,57 @@ video.modal-cinemagraph {
             <button type="button" class="wall2-switch" id="wall2TuneSwitch" aria-label="Toggle fine tune" aria-pressed="false"></button>
           </div>
         </div>
+
+        <!-- v4 Step: Composition -->
+        <div class="wall2-step">
+          <div class="wall2-step-head">
+            <span class="wall2-step-num">6</span>
+            <span class="wall2-step-label" data-lang="en">COMPOSITION</span>
+            <span class="wall2-step-label" data-lang="pl" style="display:none">KOMPOZYCJA</span>
+          </div>
+          <div class="wall2-comp-row" id="wall2CompRow">
+            <button type="button" class="wall2-comp-chip active" data-comp="1" aria-label="Single">
+              <span class="wall2-cchip-icon single"><span></span><span></span><span></span></span>
+              <span data-lang="en">Single</span>
+              <span data-lang="pl" style="display:none">Pojedynczy</span>
+            </button>
+            <button type="button" class="wall2-comp-chip" data-comp="2" aria-label="Diptych">
+              <span class="wall2-cchip-icon duo"><span></span><span></span><span></span></span>
+              <span data-lang="en">Diptych</span>
+              <span data-lang="pl" style="display:none">Dyptyk</span>
+            </button>
+            <button type="button" class="wall2-comp-chip" data-comp="3" aria-label="Triptych">
+              <span class="wall2-cchip-icon trio"><span></span><span></span><span></span></span>
+              <span data-lang="en">Triptych</span>
+              <span data-lang="pl" style="display:none">Tryptyk</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- v4 Step: Room dimensions + human scale -->
+        <div class="wall2-step">
+          <div class="wall2-step-head">
+            <span class="wall2-step-num">7</span>
+            <span class="wall2-step-label" data-lang="en">YOUR ROOM</span>
+            <span class="wall2-step-label" data-lang="pl" style="display:none">TWÓJ POKÓJ</span>
+          </div>
+          <div class="wall2-room-row">
+            <span class="wall2-room-label">
+              <span data-lang="en">Wall width</span>
+              <span data-lang="pl" style="display:none">Szerokość ściany</span>
+            </span>
+            <input type="number" class="wall2-room-input" id="wall2RoomWidth" min="1.5" max="10" step="0.1" value="3.5">
+            <span class="wall2-room-unit">m</span>
+          </div>
+          <div class="wall2-human-row">
+            <span class="wall2-human-row-label">
+              <span data-lang="en">Human reference (1.75 m)</span>
+              <span data-lang="pl" style="display:none">Skala człowieka (1,75 m)</span>
+            </span>
+            <button type="button" class="wall2-switch" id="wall2HumanSwitch" aria-label="Toggle human reference" aria-pressed="false"></button>
+          </div>
+        </div>
+
       </div>
 
       <div class="wall2-panel-foot">
@@ -8736,7 +9103,17 @@ function initWallV2() {
   const scene       = document.getElementById('wall2Scene');
   const spotlight   = document.getElementById('wall2Spotlight');
   const frame       = document.getElementById('wall2Frame');
+  const frame2      = document.getElementById('wall2Frame2');
+  const frame3      = document.getElementById('wall2Frame3');
   const artImg      = document.getElementById('wall2ArtImg');
+  const artImg2     = document.getElementById('wall2ArtImg2');
+  const artImg3     = document.getElementById('wall2ArtImg3');
+  const humanEl     = document.getElementById('wall2Human');
+  const humanLabel  = document.getElementById('wall2HumanLabel');
+  const humanSwitch = document.getElementById('wall2HumanSwitch');
+  const roomWidthInput = document.getElementById('wall2RoomWidth');
+  const ambientGrid = document.getElementById('wall2AmbientGrid');
+  const compRow     = document.getElementById('wall2CompRow');
   const sizeLabel   = document.getElementById('wall2SizeLabel');
   const artName     = document.getElementById('wall2ArtName');
   const closeBtn    = document.getElementById('wall2Close');
@@ -8772,7 +9149,14 @@ function initWallV2() {
     autoY: 40,
     // v3 additions
     frameStyle: 'classic',  // 'none' | 'thin' | 'classic' | 'gold' | 'wood'
-    imgAspect: 0.714  // natural h/w of the artwork; default 5:7 portrait
+    imgAspect: 0.714, // natural h/w of the artwork; default 5:7 portrait
+    // v4 additions
+    ambient: 'daylight',      // 'daylight' | 'golden' | 'spot' | 'night'
+    composition: 1,           // 1 | 2 | 3 (single / diptych / triptych)
+    wallWidthM: 3.5,          // real wall width shown in scene, meters
+    showHuman: false,         // toggle 1.75 m silhouette
+    // sequence for multi-frame comp: pool of artworks to fill secondary/tertiary
+    artPool: []
   };
 
   const SIZES = {
@@ -8803,40 +9187,95 @@ function initWallV2() {
 
   /* ---------- Rendering ---------- */
   function computeArtSize() {
-    // Convert cm → pixels. Scene image spans full stage height = REAL_WALL_HEIGHT_CM.
-    const stageH = stage.clientHeight || 500;
-    const pxPerCm = stageH / REAL_WALL_HEIGHT_CM;
+    // v4: scale by wall width (user-adjustable). Scene image spans wallWidthM meters horizontally.
+    // Fallback to old height-based mapping if stage width missing.
+    const stageW = stage.clientWidth || 900;
+    const wallWidthCm = (state.wallWidthM || 3.5) * 100;
+    const pxPerCm = stageW / wallWidthCm;
     const s = SIZES[state.size];
-    // Preserve the diagonal / area of the chosen "size" but use natural aspect
-    // so the frame no longer forces a fixed 5:7 crop.
     const ar = state.imgAspect || (s.h / s.w);
-    // Anchor the LONGER dimension to the chosen size preset for consistent scale.
     let wCm, hCm;
     if (ar >= 1) { // portrait
       hCm = s.h;
       wCm = s.h / ar;
     } else { // landscape / square
-      wCm = s.w > s.h ? s.w : s.h; // use longer edge
+      wCm = s.w > s.h ? s.w : s.h;
       hCm = wCm * ar;
     }
-    const h = Math.round(hCm * pxPerCm);
-    const w = Math.round(wCm * pxPerCm);
-    return { w, h };
+    // Composition scale — shrink each piece slightly for diptych/triptych
+    const compScale = state.composition === 3 ? 0.68 : (state.composition === 2 ? 0.8 : 1);
+    const h = Math.round(hCm * pxPerCm * compScale);
+    const w = Math.round(wCm * pxPerCm * compScale);
+    return { w, h, pxPerCm };
+  }
+
+  function updateHumanScale() {
+    if (!humanEl) return;
+    // 1.75 m person scaled to same pxPerCm as artwork
+    const { pxPerCm } = computeArtSize();
+    const humanHpx = Math.round(175 * pxPerCm);
+    humanEl.style.setProperty('--human-h', humanHpx + 'px');
+    // Position: left of the artwork, comfortable spacing
+    // Anchor human ~12% from left edge, but keep visible in narrow stages
+    const humanX = 15;
+    humanEl.style.setProperty('--human-x', humanX + '%');
+    if (humanLabel) {
+      humanLabel.style.setProperty('--human-h', humanHpx + 'px');
+      humanLabel.style.setProperty('--human-x', humanX + '%');
+    }
   }
 
   function updateFramePosition() {
     const { w, h } = computeArtSize();
-    frame.style.setProperty('--art-w', w + 'px');
-    frame.style.setProperty('--art-h', h + 'px');
-    frame.style.setProperty('--art-x', state.posX + '%');
-    frame.style.setProperty('--art-y', state.posY + '%');
-    frame.style.setProperty('--art-half-h', (h / 2) + 'px');
+    // Compute per-frame X for composition. Center each piece with gap.
+    const gapPx = 24; // gap between pieces (px)
+    const stageW = stage.clientWidth || 900;
+    const gapPct = (gapPx / stageW) * 100;
+    const centerX = state.posX;
 
-    // Update size label + position it below frame
+    const positions = [];
+    if (state.composition === 1) {
+      positions.push(centerX);
+    } else if (state.composition === 2) {
+      const halfSpanPct = ((w / stageW) * 100 + gapPct) / 2;
+      positions.push(centerX - halfSpanPct);
+      positions.push(centerX + halfSpanPct);
+    } else if (state.composition === 3) {
+      const spanUnit = ((w / stageW) * 100 + gapPct);
+      positions.push(centerX - spanUnit);
+      positions.push(centerX);
+      positions.push(centerX + spanUnit);
+    }
+
+    const frames = [frame, frame2, frame3];
+    frames.forEach((f, i) => {
+      if (!f) return;
+      if (i < state.composition) {
+        f.style.display = '';
+        f.style.setProperty('--art-w', w + 'px');
+        f.style.setProperty('--art-h', h + 'px');
+        f.style.setProperty('--art-x', positions[i] + '%');
+        f.style.setProperty('--art-y', state.posY + '%');
+        f.style.setProperty('--art-half-h', (h / 2) + 'px');
+      } else {
+        f.style.display = 'none';
+      }
+    });
+
+    // Update size label + position it below MAIN frame (or under whole composition)
     const s = SIZES[state.size];
     sizeLabel.textContent = s.label;
+    // For composition, anchor label under the CENTER piece
+    const labelX = state.composition === 3 ? centerX : centerX;
     sizeLabel.style.top = `calc(${state.posY}% + ${(h / 2) + 22}px)`;
-    sizeLabel.style.left = `${state.posX}%`;
+    sizeLabel.style.left = `${labelX}%`;
+
+    // Expose art position to stage for spot/night ambient to follow
+    stage.style.setProperty('--art-x', centerX + '%');
+    stage.style.setProperty('--art-y', state.posY + '%');
+
+    // Update human scale
+    updateHumanScale();
   }
 
   function updateSpotlight() {
@@ -8846,6 +9285,7 @@ function initWallV2() {
 
   function renderArtGrid() {
     const list = pickArtworks();
+    state.artPool = list; // v4: pool for diptych/triptych
     if (!list.length) { artGrid.innerHTML = ''; return; }
     artGrid.innerHTML = list.map((a, i) => `
       <button class="wall2-art-chip ${state.art && state.art.id === a.id ? 'active' : (i === 0 && !state.art ? 'active' : '')}"
@@ -8881,6 +9321,16 @@ function initWallV2() {
     }
     updateFramePosition();
     updateArtName();
+    updateCompositionArtworks();
+  }
+
+  function updateCompositionArtworks() {
+    // Fill secondary/tertiary frames from artPool (skipping current selection)
+    if (!state.artPool || !state.artPool.length) return;
+    const currentId = state.art && state.art.id;
+    const others = state.artPool.filter(a => a.id !== currentId);
+    if (artImg2 && others[0]) artImg2.src = artworkSrc(others[0]);
+    if (artImg3 && others[1]) artImg3.src = artworkSrc(others[1]);
   }
 
   function updateArtName() {
@@ -8892,8 +9342,73 @@ function initWallV2() {
 
     /* ---------- Frame style ---------- */
   function applyFrameStyle() {
-    if (!frame) return;
-    frame.setAttribute('data-frame', state.frameStyle || 'classic');
+    const style = state.frameStyle || 'classic';
+    [frame, frame2, frame3].forEach(f => { if (f) f.setAttribute('data-frame', style); });
+  }
+
+  /* ---------- v4: Ambient lighting ---------- */
+  function applyAmbient() {
+    if (!stage) return;
+    stage.setAttribute('data-ambient', state.ambient || 'daylight');
+  }
+
+  function wireAmbientGrid() {
+    if (!ambientGrid) return;
+    ambientGrid.querySelectorAll('.wall2-ambient-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        state.ambient = chip.dataset.ambient;
+        ambientGrid.querySelectorAll('.wall2-ambient-chip').forEach(c => c.classList.toggle('active', c === chip));
+        applyAmbient();
+      });
+    });
+  }
+
+  /* ---------- v4: Composition ---------- */
+  function applyComposition() {
+    if (!stage) return;
+    stage.setAttribute('data-comp', String(state.composition));
+    updateFramePosition();
+    updateCompositionArtworks();
+  }
+
+  function wireCompRow() {
+    if (!compRow) return;
+    compRow.querySelectorAll('.wall2-comp-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        state.composition = parseInt(chip.dataset.comp, 10) || 1;
+        compRow.querySelectorAll('.wall2-comp-chip').forEach(c => c.classList.toggle('active', c === chip));
+        applyComposition();
+      });
+    });
+  }
+
+  /* ---------- v4: Room width ---------- */
+  function wireRoomWidth() {
+    if (!roomWidthInput) return;
+    roomWidthInput.addEventListener('input', () => {
+      const v = parseFloat(roomWidthInput.value);
+      if (!isFinite(v) || v < 1.5 || v > 10) return;
+      state.wallWidthM = v;
+      updateFramePosition();
+    });
+  }
+
+  /* ---------- v4: Human scale toggle ---------- */
+  function applyHuman() {
+    stage.classList.toggle('show-human', !!state.showHuman);
+    if (humanSwitch) {
+      humanSwitch.classList.toggle('on', !!state.showHuman);
+      humanSwitch.setAttribute('aria-pressed', state.showHuman ? 'true' : 'false');
+    }
+    updateHumanScale();
+  }
+
+  function wireHumanSwitch() {
+    if (!humanSwitch) return;
+    humanSwitch.addEventListener('click', () => {
+      state.showHuman = !state.showHuman;
+      applyHuman();
+    });
   }
 
   function wireFrameGrid() {
@@ -9029,6 +9544,21 @@ function initWallV2() {
     if (mChip) selectSize(mChip);
     // tune off
     if (state.tune) toggleTune();
+    // v4 — reset ambient, composition, room, human, frame
+    state.ambient = 'daylight';
+    if (ambientGrid) ambientGrid.querySelectorAll('.wall2-ambient-chip').forEach(c => c.classList.toggle('active', c.dataset.ambient === 'daylight'));
+    applyAmbient();
+    state.composition = 1;
+    if (compRow) compRow.querySelectorAll('.wall2-comp-chip').forEach(c => c.classList.toggle('active', c.dataset.comp === '1'));
+    applyComposition();
+    state.wallWidthM = 3.5;
+    if (roomWidthInput) roomWidthInput.value = '3.5';
+    state.showHuman = false;
+    applyHuman();
+    state.frameStyle = 'classic';
+    const fGrid = document.getElementById('wall2FrameGrid');
+    if (fGrid) fGrid.querySelectorAll('.wall2-frame-chip').forEach(c => c.classList.toggle('active', c.dataset.frame === 'classic'));
+    applyFrameStyle();
     // pick first artwork
     const arts = pickArtworks();
     if (arts.length) {
@@ -9038,7 +9568,39 @@ function initWallV2() {
     }
   }
 
-  /* ---------- Download ---------- */
+  /* ---------- Download (v4 — respects ambient, composition, human) ---------- */
+  // Frame style spec for canvas rendering
+  const FRAME_SPEC = {
+    'none':    { pad: 0,  fill: null, stroke: null },
+    'thin':    { pad: 4,  fill: [ [0,'#0e0d0b'], [1,'#050504'] ], stroke: 'rgba(201,169,110,0.15)' },
+    'classic': { pad: 14, fill: [ [0,'#1f1c17'], [1,'#0a0908'] ], stroke: 'rgba(201,169,110,0.5)' },
+    'gold':    { pad: 16, fill: [ [0,'#d4b57e'], [0.5,'#8b6f3b'], [1,'#5a4520'] ], stroke: 'rgba(255,235,180,0.5)' },
+    'wood':    { pad: 12, fill: [ [0,'#5a3f2a'], [0.5,'#3d2818'], [1,'#22150c'] ], stroke: 'rgba(90,60,35,0.6)' }
+  };
+
+  const AMBIENT_SPEC = {
+    'daylight': { sceneFilter: null,                                     tint: null },
+    'golden':   { sceneFilter: 'brightness(0.95) saturate(1.15) sepia(0.12) hue-rotate(-5deg)',  tint: null },
+    'spot':     { sceneFilter: 'brightness(0.55) saturate(0.85) contrast(1.08)',                 tint: null },
+    'night':    { sceneFilter: 'brightness(0.32) saturate(0.65) contrast(1.1) hue-rotate(8deg)', tint: 'rgba(15,25,50,0.32)' }
+  };
+
+  async function drawFrameAt(ctx, style, fx, fy, w, h) {
+    const spec = FRAME_SPEC[style] || FRAME_SPEC.classic;
+    const pad = spec.pad;
+    if (pad > 0 && spec.fill) {
+      const grad = ctx.createLinearGradient(fx - pad, fy - pad, fx + w + pad, fy + h + pad);
+      spec.fill.forEach(([stop, col]) => grad.addColorStop(stop, col));
+      ctx.fillStyle = grad;
+      ctx.fillRect(fx - pad, fy - pad, w + pad * 2, h + pad * 2);
+    }
+    if (spec.stroke && pad > 0) {
+      ctx.strokeStyle = spec.stroke;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(fx - pad + 0.5, fy - pad + 0.5, w + pad * 2 - 1, h + pad * 2 - 1);
+    }
+  }
+
   async function download() {
     showLoading(true);
     try {
@@ -9049,53 +9611,104 @@ function initWallV2() {
       canvas.height = Math.round(rect.height * dpr);
       const ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
-      // Scene
+
+      // Scene with ambient filter
+      const amb = AMBIENT_SPEC[state.ambient] || AMBIENT_SPEC.daylight;
+      if (amb.sceneFilter) ctx.filter = amb.sceneFilter;
       await drawImage(ctx, scene.src, 0, 0, rect.width, rect.height);
-      // Spotlight
-      const grad = ctx.createRadialGradient(
-        rect.width * (parseFloat(state.spotX) / 100),
-        rect.height * (parseFloat(state.spotY) / 100),
-        0,
-        rect.width * (parseFloat(state.spotX) / 100),
-        rect.height * (parseFloat(state.spotY) / 100),
-        Math.max(rect.width, rect.height) * 0.55
-      );
-      grad.addColorStop(0, 'rgba(255,232,190,0.20)');
-      grad.addColorStop(0.15, 'rgba(255,232,190,0.10)');
-      grad.addColorStop(0.55, 'rgba(0,0,0,0)');
+      ctx.filter = 'none';
+
+      // Night tint overlay
+      if (amb.tint) {
+        ctx.fillStyle = amb.tint;
+        ctx.fillRect(0, 0, rect.width, rect.height);
+      }
+
+      // Spotlight — follows art position for spot/night, scene center for daylight/golden
+      const spotX = (state.ambient === 'spot' || state.ambient === 'night')
+        ? rect.width * (state.posX / 100)
+        : rect.width * (parseFloat(state.spotX) / 100);
+      const spotY = (state.ambient === 'spot' || state.ambient === 'night')
+        ? rect.height * (state.posY / 100)
+        : rect.height * (parseFloat(state.spotY) / 100);
+      const spotRad = Math.max(rect.width, rect.height) * (state.ambient === 'spot' ? 0.35 : 0.55);
+      const grad = ctx.createRadialGradient(spotX, spotY, 0, spotX, spotY, spotRad);
+      if (state.ambient === 'spot') {
+        grad.addColorStop(0, 'rgba(255,240,210,0.55)');
+        grad.addColorStop(0.25, 'rgba(255,235,200,0.20)');
+        grad.addColorStop(0.7, 'rgba(0,0,0,0)');
+      } else if (state.ambient === 'golden') {
+        grad.addColorStop(0, 'rgba(255,190,120,0.32)');
+        grad.addColorStop(0.2, 'rgba(255,170,90,0.16)');
+        grad.addColorStop(0.6, 'rgba(0,0,0,0)');
+      } else if (state.ambient === 'night') {
+        grad.addColorStop(0, 'rgba(255,210,150,0.35)');
+        grad.addColorStop(0.3, 'rgba(230,180,130,0.16)');
+        grad.addColorStop(0.7, 'rgba(0,0,0,0)');
+      } else {
+        grad.addColorStop(0, 'rgba(255,232,190,0.20)');
+        grad.addColorStop(0.15, 'rgba(255,232,190,0.10)');
+        grad.addColorStop(0.55, 'rgba(0,0,0,0)');
+      }
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, rect.width, rect.height);
-      // Frame + art
+
+      // Frames + artwork (composition-aware)
       const { w, h } = computeArtSize();
-      const cx = rect.width * (state.posX / 100);
-      const cy = rect.height * (state.posY / 100);
-      const fx = cx - w / 2;
-      const fy = cy - h / 2;
-      // frame border (dark) with padding 14px
-      const pad = 14;
-      ctx.fillStyle = '#0a0908';
-      ctx.fillRect(fx - pad, fy - pad, w + pad * 2, h + pad * 2);
-      // gradient overlay on border
-      const bgrad = ctx.createLinearGradient(fx - pad, fy - pad, fx + w + pad, fy + h + pad);
-      bgrad.addColorStop(0, 'rgba(31,28,23,1)');
-      bgrad.addColorStop(1, 'rgba(10,9,8,1)');
-      ctx.fillStyle = bgrad;
-      ctx.fillRect(fx - pad, fy - pad, w + pad * 2, h + pad * 2);
-      // gold inner border stroke
-      ctx.strokeStyle = 'rgba(201,169,110,0.5)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(fx - pad + 0.5, fy - pad + 0.5, w + pad * 2 - 1, h + pad * 2 - 1);
-      // artwork
-      try {
-        await drawImage(ctx, artImg.src, fx, fy, w, h, true);
-      } catch { /* ignore CORS */ }
-      // subtle glare
-      const glare = ctx.createLinearGradient(fx, fy, fx + w, fy + h);
-      glare.addColorStop(0, 'rgba(255,255,255,0.1)');
-      glare.addColorStop(0.4, 'rgba(255,255,255,0)');
-      glare.addColorStop(1, 'rgba(0,0,0,0.2)');
-      ctx.fillStyle = glare;
-      ctx.fillRect(fx, fy, w, h);
+      const gapPct = (24 / rect.width) * 100;
+      const centerXpct = state.posX;
+      const positions = [];
+      if (state.composition === 1) positions.push(centerXpct);
+      else if (state.composition === 2) {
+        const half = ((w / rect.width) * 100 + gapPct) / 2;
+        positions.push(centerXpct - half, centerXpct + half);
+      } else {
+        const unit = (w / rect.width) * 100 + gapPct;
+        positions.push(centerXpct - unit, centerXpct, centerXpct + unit);
+      }
+      const arts = [artImg, artImg2, artImg3];
+      const style = state.frameStyle || 'classic';
+      for (let i = 0; i < state.composition; i++) {
+        const cx = rect.width * (positions[i] / 100);
+        const cy = rect.height * (state.posY / 100);
+        const fx = cx - w / 2;
+        const fy = cy - h / 2;
+        await drawFrameAt(ctx, style, fx, fy, w, h);
+        // artwork
+        try {
+          if (arts[i] && arts[i].src) await drawImage(ctx, arts[i].src, fx, fy, w, h, true);
+        } catch { /* ignore CORS */ }
+        // glare
+        const glare = ctx.createLinearGradient(fx, fy, fx + w, fy + h);
+        glare.addColorStop(0, 'rgba(255,255,255,0.1)');
+        glare.addColorStop(0.4, 'rgba(255,255,255,0)');
+        glare.addColorStop(1, 'rgba(0,0,0,0.2)');
+        ctx.fillStyle = glare;
+        ctx.fillRect(fx, fy, w, h);
+      }
+
+      // Human silhouette
+      if (state.showHuman) {
+        const { pxPerCm } = computeArtSize();
+        const humanH = 175 * pxPerCm;
+        const humanW = humanH * (40 / 175);
+        const humanX = rect.width * 0.15;
+        const humanY = rect.height * 0.96 - humanH;
+        // shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.beginPath();
+        ctx.ellipse(humanX, humanY + humanH, humanW * 0.6, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // silhouette body
+        ctx.fillStyle = 'rgba(15,15,15,0.85)';
+        const svgPath = 'M20 0c-4.5 0-8 3.5-8 8s3.5 8 8 8 8-3.5 8-8-3.5-8-8-8zm-8 18c-3 0-5 2-5 5v25c0 2 1 3 2 3l1 20c0 1 0 2 1 3l-2 45c0 2 1 3 3 3h4c2 0 3-1 3-3l1-30c0 0 0 0 1 0l1 30c0 2 1 3 3 3h4c2 0 3-1 3-3l-2-45c1-1 1-2 1-3l1-20c1 0 2-1 2-3V23c0-3-2-5-5-5-1 0-2 1-3 1-1 1-2 1-3 1h-2c-1 0-2 0-3-1-1 0-2-1-3-1z';
+        const p = new Path2D(svgPath);
+        ctx.save();
+        ctx.translate(humanX - humanW / 2, humanY);
+        ctx.scale(humanW / 40, humanH / 175);
+        ctx.fill(p);
+        ctx.restore();
+      }
 
       // Download
       canvas.toBlob(blob => {
@@ -9103,7 +9716,7 @@ function initWallV2() {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         const name = (state.art && state.art.name || 'aure-wall').replace(/[^a-z0-9-]/gi, '-').toLowerCase();
-        a.download = `${name}-${state.size}cm.png`;
+        a.download = `${name}-${state.size}cm-${state.ambient}.png`;
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(a.href), 1000);
         showLoading(false);
@@ -9175,6 +9788,15 @@ function initWallV2() {
   // v3 — wire frame grid + apply initial style
   wireFrameGrid();
   applyFrameStyle();
+
+  // v4 — wire new controls
+  wireAmbientGrid();
+  wireCompRow();
+  wireRoomWidth();
+  wireHumanSwitch();
+  applyAmbient();
+  applyComposition();
+  applyHuman();
 
   /* ---------- Wire events ---------- */
   closeBtn.addEventListener('click', closeWall);
