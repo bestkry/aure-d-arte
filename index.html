@@ -1882,6 +1882,263 @@ body.konami-slowmo .egg-overlay * { animation-duration: initial !important; tran
 }
 
 
+/* ============================================================
+   v5 — SLOT SELECTION (click-to-target for composition)
+   ============================================================ */
+.wall2-frame { cursor: pointer; }
+.wall2-frame.active-slot::before,
+.wall2-frame.active-slot::after {
+  box-shadow: inset 0 0 0 1px rgba(201,169,110,0.15),
+              0 0 0 2px var(--gold),
+              0 0 0 5px rgba(201,169,110,0.25),
+              0 26px 50px rgba(0,0,0,0.7);
+}
+.wall2-frame.active-slot {
+  z-index: 6;
+}
+.wall2-frame::before {
+  transition: box-shadow 0.25s ease;
+}
+/* Slot badge — small "1/2/3" chip above active frame */
+.wall2-slot-badge {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  padding: 3px 8px;
+  background: var(--gold);
+  color: #0a0908;
+  font: 700 0.58rem/1 'Satoshi', sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.wall2-frame.active-slot .wall2-slot-badge {
+  opacity: 1;
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-slot-badge {
+  display: none;
+}
+
+/* Slot indicator strip under panel head — shows which slot is being edited */
+.wall2-slot-indicator {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  margin-top: 0.4rem;
+  background: rgba(201,169,110,0.08);
+  border: 1px solid rgba(201,169,110,0.28);
+  border-radius: 4px;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.68rem;
+  color: var(--gold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.wall2-slot-indicator.visible { display: flex; }
+.wall2-slot-indicator-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 6px rgba(201,169,110,0.6);
+  animation: slotPulse 1.6s ease-in-out infinite;
+}
+@keyframes slotPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+.wall2-slot-clear {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(201,169,110,0.3);
+  color: var(--gold);
+  padding: 3px 8px;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.wall2-slot-clear:hover {
+  background: rgba(201,169,110,0.14);
+  border-color: var(--gold);
+}
+
+/* Composition hint above scene when in multi-piece mode */
+.wall2-comp-hint {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(10,10,10,0.72);
+  border: 1px solid rgba(201,169,110,0.3);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+  white-space: nowrap;
+}
+.wall2-stage[data-comp="2"] .wall2-comp-hint,
+.wall2-stage[data-comp="3"] .wall2-comp-hint {
+  opacity: 1;
+}
+
+/* ============================================================
+   v5 — BLUEPRINT AMBIENT MODE (architectural / scale reference)
+   ============================================================ */
+.wall2-stage[data-ambient="blueprint"] {
+  background: #0a1929;
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-scene {
+  opacity: 0.08;
+  filter: brightness(0.3) contrast(1.4) grayscale(1) invert(0.9) hue-rotate(200deg);
+  transition: opacity 0.4s ease;
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-scene-spotlight,
+.wall2-stage[data-ambient="blueprint"] .wall2-scene-vignette { display: none; }
+
+/* Blueprint grid overlay (50 cm major, 10 cm minor) — CSS-only */
+.wall2-blueprint-overlay {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 2;
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-blueprint-overlay {
+  opacity: 1;
+}
+.wall2-blueprint-overlay::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(120,200,255,0.10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(120,200,255,0.10) 1px, transparent 1px);
+  background-size: var(--grid-minor, 20px) var(--grid-minor, 20px);
+}
+.wall2-blueprint-overlay::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(140,220,255,0.35) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(140,220,255,0.35) 1px, transparent 1px);
+  background-size: var(--grid-major, 100px) var(--grid-major, 100px);
+}
+
+/* Blueprint frames — cyan wireframe look */
+.wall2-stage[data-ambient="blueprint"] .wall2-frame::before {
+  background: rgba(140,220,255,0.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(140,220,255,0.85),
+    0 0 20px rgba(80,180,240,0.2);
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-frame::after { display: none; }
+.wall2-stage[data-ambient="blueprint"] .wall2-frame-shadow { display: none; }
+.wall2-stage[data-ambient="blueprint"] .wall2-frame-glare { display: none; }
+.wall2-stage[data-ambient="blueprint"] .wall2-frame img {
+  opacity: 0.25;
+  filter: grayscale(1) contrast(1.2) hue-rotate(180deg) brightness(1.4);
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-frame.active-slot::before {
+  box-shadow:
+    inset 0 0 0 1px rgba(255,220,150,0.6),
+    0 0 0 2px var(--gold),
+    0 0 20px rgba(201,169,110,0.4);
+}
+
+/* Blueprint dimension labels (rendered by JS but styled here) */
+.wall2-dim-label {
+  position: absolute;
+  font-family: 'Satoshi', 'Courier New', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  color: rgba(140,220,255,0.85);
+  background: rgba(10,25,41,0.85);
+  padding: 2px 6px;
+  border: 1px solid rgba(140,220,255,0.4);
+  border-radius: 2px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 3;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-dim-label { opacity: 1; }
+
+/* Blueprint ruler at bottom */
+.wall2-blueprint-ruler {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 12px;
+  height: 20px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 3;
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-blueprint-ruler { opacity: 1; }
+
+/* Blueprint eyebrow — big number top-left */
+.wall2-blueprint-eyebrow {
+  position: absolute;
+  top: 18px; left: 20px;
+  font-family: 'Satoshi', 'Courier New', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  color: rgba(140,220,255,0.7);
+  text-transform: uppercase;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 3;
+}
+.wall2-stage[data-ambient="blueprint"] .wall2-blueprint-eyebrow { opacity: 1; }
+
+/* Blueprint ambient chip icon */
+.wall2-achip-icon.blueprint {
+  background:
+    linear-gradient(to right, rgba(140,220,255,0.35) 1px, transparent 1px) 0 0 / 6px 6px,
+    linear-gradient(to bottom, rgba(140,220,255,0.35) 1px, transparent 1px) 0 0 / 6px 6px,
+    #0a1929;
+  box-shadow: inset 0 0 4px rgba(140,220,255,0.3);
+}
+
+/* Ambient grid becomes 5-col to fit Blueprint */
+.wall2-ambient-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+@media (max-width: 768px) {
+  .wall2-ambient-grid { gap: 0.35rem; }
+  .wall2-ambient-chip { padding: 0.5rem 0.15rem 0.4rem; font-size: 0.52rem; }
+  .wall2-achip-icon { width: 22px; height: 22px; }
+}
+
+/* When Blueprint is active, hide size label + tune hint (they clutter the grid) */
+.wall2-stage[data-ambient="blueprint"] .wall2-size-label { opacity: 0.3; }
+.wall2-stage[data-ambient="blueprint"] .wall2-tune-hint { display: none; }
+
+/* Blueprint human silhouette becomes wireframe */
+.wall2-stage[data-ambient="blueprint"] .wall2-human svg path {
+  fill: rgba(140,220,255,0.15);
+  stroke: rgba(140,220,255,0.7);
+  stroke-width: 0.6;
+}
+
+
 /* Mobile — frame grid becomes 5 in one row still (small chips) */
 @media (max-width: 768px) {
   .wall2-frame-grid { gap: 0.4rem; }
@@ -4602,22 +4859,25 @@ video.modal-cinemagraph {
       <div class="wall2-scene-spotlight" id="wall2Spotlight"></div>
       <div class="wall2-scene-vignette"></div>
 
-      <div class="wall2-frame" id="wall2Frame" data-frame="classic">
+      <div class="wall2-frame" id="wall2Frame" data-frame="classic" data-slot="1">
         <div class="wall2-frame-shadow"></div>
         <img id="wall2ArtImg" src="" alt="Artwork preview" crossorigin="anonymous" draggable="false">
         <div class="wall2-frame-glare"></div>
+        <span class="wall2-slot-badge">Slot 1</span>
       </div>
 
-      <div class="wall2-frame secondary" id="wall2Frame2" data-frame="classic" style="display:none">
+      <div class="wall2-frame secondary" id="wall2Frame2" data-frame="classic" data-slot="2" style="display:none">
         <div class="wall2-frame-shadow"></div>
         <img id="wall2ArtImg2" src="" alt="Artwork preview 2" crossorigin="anonymous" draggable="false">
         <div class="wall2-frame-glare"></div>
+        <span class="wall2-slot-badge">Slot 2</span>
       </div>
 
-      <div class="wall2-frame tertiary" id="wall2Frame3" data-frame="classic" style="display:none">
+      <div class="wall2-frame tertiary" id="wall2Frame3" data-frame="classic" data-slot="3" style="display:none">
         <div class="wall2-frame-shadow"></div>
         <img id="wall2ArtImg3" src="" alt="Artwork preview 3" crossorigin="anonymous" draggable="false">
         <div class="wall2-frame-glare"></div>
+        <span class="wall2-slot-badge">Slot 3</span>
       </div>
 
       <!-- v4 — human scale reference (1.75 m silhouette) -->
@@ -4628,7 +4888,17 @@ video.modal-cinemagraph {
       </div>
       <div class="wall2-human-label" id="wall2HumanLabel">175 cm · 1.75 m</div>
 
+      <!-- v5 — Blueprint overlay -->
+      <div class="wall2-blueprint-overlay" id="wall2BlueprintOverlay"></div>
+      <div class="wall2-blueprint-ruler" id="wall2BlueprintRuler"></div>
+      <div class="wall2-blueprint-eyebrow" id="wall2BlueprintEyebrow">SCALE 1:20 · WALL 3.5 M</div>
+      <div id="wall2BlueprintLabels"></div>
+
       <div class="wall2-size-label" id="wall2SizeLabel">50 × 70 cm</div>
+      <div class="wall2-comp-hint">
+        <span data-lang="en">Click any artwork to change it</span>
+        <span data-lang="pl" style="display:none">Kliknij obraz aby go zmienić</span>
+      </div>
       <div class="wall2-tune-hint">Drag the frame to reposition</div>
       <div class="wall2-loading" id="wall2Loading">Rendering…</div>
     </section>
@@ -4653,6 +4923,19 @@ video.modal-cinemagraph {
           <div class="wall2-step-head">
             <span class="wall2-step-num">1</span>
             <span class="wall2-step-label"><span data-lang="en">Choose artwork</span><span data-lang="pl">Wybierz dzieło</span></span>
+          </div>
+          <!-- v5 slot indicator (shown only in composition mode) -->
+          <div class="wall2-slot-indicator" id="wall2SlotIndicator">
+            <span class="wall2-slot-indicator-dot"></span>
+            <span>
+              <span data-lang="en">Editing slot </span>
+              <span data-lang="pl" style="display:none">Edytujesz slot </span>
+              <span id="wall2SlotIndicatorNum">1</span>
+            </span>
+            <button type="button" class="wall2-slot-clear" id="wall2SlotClear">
+              <span data-lang="en">Change</span>
+              <span data-lang="pl" style="display:none">Zmień</span>
+            </button>
           </div>
           <div class="wall2-art-grid" id="wall2ArtGrid"></div>
         </div>
@@ -4747,6 +5030,11 @@ video.modal-cinemagraph {
                   <span class="wall2-achip-icon night"></span>
                   <span data-lang="en">Night</span>
                   <span data-lang="pl" style="display:none">Noc</span>
+                </button>
+                <button type="button" class="wall2-ambient-chip" data-ambient="blueprint" aria-label="Blueprint scale mode">
+                  <span class="wall2-achip-icon blueprint"></span>
+                  <span data-lang="en">Blueprint</span>
+                  <span data-lang="pl" style="display:none">Plan</span>
                 </button>
               </div>
             </div>
@@ -9105,6 +9393,12 @@ function initWallV2() {
   const frame       = document.getElementById('wall2Frame');
   const frame2      = document.getElementById('wall2Frame2');
   const frame3      = document.getElementById('wall2Frame3');
+  const slotIndicator = document.getElementById('wall2SlotIndicator');
+  const slotIndicatorNum = document.getElementById('wall2SlotIndicatorNum');
+  const slotClearBtn  = document.getElementById('wall2SlotClear');
+  const blueprintOverlay = document.getElementById('wall2BlueprintOverlay');
+  const blueprintEyebrow = document.getElementById('wall2BlueprintEyebrow');
+  const blueprintLabels  = document.getElementById('wall2BlueprintLabels');
   const artImg      = document.getElementById('wall2ArtImg');
   const artImg2     = document.getElementById('wall2ArtImg2');
   const artImg3     = document.getElementById('wall2ArtImg3');
@@ -9151,12 +9445,15 @@ function initWallV2() {
     frameStyle: 'classic',  // 'none' | 'thin' | 'classic' | 'gold' | 'wood'
     imgAspect: 0.714, // natural h/w of the artwork; default 5:7 portrait
     // v4 additions
-    ambient: 'daylight',      // 'daylight' | 'golden' | 'spot' | 'night'
+    ambient: 'daylight',      // 'daylight' | 'golden' | 'spot' | 'night' | 'blueprint'
     composition: 1,           // 1 | 2 | 3 (single / diptych / triptych)
     wallWidthM: 3.5,          // real wall width shown in scene, meters
     showHuman: false,         // toggle 1.75 m silhouette
     // sequence for multi-frame comp: pool of artworks to fill secondary/tertiary
-    artPool: []
+    artPool: [],
+    // v5: per-slot artworks (index 0 = slot 1, etc.) — nulls fill from pool
+    slotArts: [null, null, null],
+    activeSlot: 1             // which slot is being edited (1, 2, or 3)
   };
 
   const SIZES = {
@@ -9274,8 +9571,11 @@ function initWallV2() {
     stage.style.setProperty('--art-x', centerX + '%');
     stage.style.setProperty('--art-y', state.posY + '%');
 
-    // Update human scale
+    // Update human scale + blueprint labels
     updateHumanScale();
+    if (state.ambient === 'blueprint') {
+      updateBlueprint();
+    }
   }
 
   function updateSpotlight() {
@@ -9306,31 +9606,105 @@ function initWallV2() {
   }
 
   function setArt(art) {
-    state.art = { id: art.id, name: art.name || '', image: artworkSrc(art) };
-    artImg.src = state.art.image;
-    // Grab natural aspect once image loads → drives real frame proportions
-    artImg.onload = () => {
-      if (artImg.naturalWidth && artImg.naturalHeight) {
+    // v5: assign to the currently active slot instead of always slot 1
+    const slot = state.activeSlot || 1;
+    const idx = slot - 1;
+    state.slotArts[idx] = { id: art.id, name: art.name || '', image: artworkSrc(art) };
+
+    // Slot 1 also drives the "main" state.art for panel labels + aspect
+    if (slot === 1) {
+      state.art = state.slotArts[0];
+      artImg.src = state.slotArts[0].image;
+      artImg.onload = () => {
+        if (artImg.naturalWidth && artImg.naturalHeight) {
+          state.imgAspect = artImg.naturalHeight / artImg.naturalWidth;
+          updateFramePosition();
+        }
+      };
+      if (artImg.complete && artImg.naturalWidth) {
         state.imgAspect = artImg.naturalHeight / artImg.naturalWidth;
-        updateFramePosition();
       }
-    };
-    // If already cached and complete
-    if (artImg.complete && artImg.naturalWidth) {
-      state.imgAspect = artImg.naturalHeight / artImg.naturalWidth;
+    } else if (slot === 2 && artImg2) {
+      artImg2.src = state.slotArts[1].image;
+    } else if (slot === 3 && artImg3) {
+      artImg3.src = state.slotArts[2].image;
     }
+
     updateFramePosition();
     updateArtName();
+    // Re-fill any remaining nulls from pool
     updateCompositionArtworks();
+    updateArtGridActive();
   }
 
   function updateCompositionArtworks() {
-    // Fill secondary/tertiary frames from artPool (skipping current selection)
+    // For any slot without an explicit choice, fill from artPool (skipping selected ids)
     if (!state.artPool || !state.artPool.length) return;
-    const currentId = state.art && state.art.id;
-    const others = state.artPool.filter(a => a.id !== currentId);
-    if (artImg2 && others[0]) artImg2.src = artworkSrc(others[0]);
-    if (artImg3 && others[1]) artImg3.src = artworkSrc(others[1]);
+    const selectedIds = new Set(state.slotArts.filter(Boolean).map(a => a.id));
+    const spare = state.artPool.filter(a => !selectedIds.has(a.id));
+    let spi = 0;
+    [artImg, artImg2, artImg3].forEach((img, i) => {
+      if (!img) return;
+      if (!state.slotArts[i]) {
+        const fallback = spare[spi++];
+        if (fallback) {
+          state.slotArts[i] = { id: fallback.id, name: fallback.name || '', image: artworkSrc(fallback), _auto: true };
+          img.src = state.slotArts[i].image;
+          if (i === 0) {
+            state.art = state.slotArts[0];
+            if (img.complete && img.naturalWidth) {
+              state.imgAspect = img.naturalHeight / img.naturalWidth;
+            }
+          }
+        }
+      } else {
+        img.src = state.slotArts[i].image;
+      }
+    });
+  }
+
+  function updateArtGridActive() {
+    // Highlight the artwork currently in the active slot
+    const idx = (state.activeSlot || 1) - 1;
+    const active = state.slotArts[idx];
+    if (!active) return;
+    artGrid.querySelectorAll('.wall2-art-chip').forEach(chip => {
+      chip.classList.toggle('active', parseInt(chip.dataset.id, 10) === active.id);
+    });
+  }
+
+  /* ---------- v5: Slot selection ---------- */
+  function setActiveSlot(n) {
+    state.activeSlot = n;
+    // Frame highlights
+    [frame, frame2, frame3].forEach((f, i) => {
+      if (!f) return;
+      f.classList.toggle('active-slot', (i + 1) === n);
+    });
+    // Slot indicator visibility + number
+    if (slotIndicator) {
+      const show = state.composition > 1;
+      slotIndicator.classList.toggle('visible', show);
+      if (slotIndicatorNum) slotIndicatorNum.textContent = String(n);
+    }
+    updateArtGridActive();
+  }
+
+  function wireFrameSlotClicks() {
+    [frame, frame2, frame3].forEach((f) => {
+      if (!f) return;
+      f.addEventListener('click', (e) => {
+        // Ignore clicks during drag (fine tune mode)
+        if (state.tune) return;
+        const slot = parseInt(f.dataset.slot, 10) || 1;
+        setActiveSlot(slot);
+        // Bring artwork grid into view smoothly
+        if (artGrid && artGrid.scrollIntoView) {
+          artGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        e.stopPropagation();
+      });
+    });
   }
 
   function updateArtName() {
@@ -9346,10 +9720,66 @@ function initWallV2() {
     [frame, frame2, frame3].forEach(f => { if (f) f.setAttribute('data-frame', style); });
   }
 
-  /* ---------- v4: Ambient lighting ---------- */
+  /* ---------- v4/v5: Ambient lighting (+ blueprint) ---------- */
   function applyAmbient() {
     if (!stage) return;
     stage.setAttribute('data-ambient', state.ambient || 'daylight');
+    updateBlueprint();
+  }
+
+  /* ---------- v5: Blueprint overlay ---------- */
+  function updateBlueprint() {
+    if (!stage || !blueprintOverlay) return;
+    const stageW = stage.clientWidth || 900;
+    const wallWidthCm = (state.wallWidthM || 3.5) * 100;
+    const pxPerCm = stageW / wallWidthCm;
+    // Major grid = 50 cm, minor = 10 cm
+    const gridMajor = Math.round(pxPerCm * 50);
+    const gridMinor = Math.round(pxPerCm * 10);
+    blueprintOverlay.style.setProperty('--grid-major', gridMajor + 'px');
+    blueprintOverlay.style.setProperty('--grid-minor', gridMinor + 'px');
+    if (blueprintEyebrow) {
+      const scaleDenom = Math.round(100 / pxPerCm);
+      blueprintEyebrow.textContent = `Scale 1:${scaleDenom} · Wall ${state.wallWidthM.toFixed(1)} m`;
+    }
+    renderBlueprintLabels();
+  }
+
+  function renderBlueprintLabels() {
+    if (!blueprintLabels) return;
+    if (state.ambient !== 'blueprint') { blueprintLabels.innerHTML = ''; return; }
+    const rect = stage.getBoundingClientRect();
+    const { w, h, pxPerCm } = computeArtSize();
+    const s = SIZES[state.size];
+    const gapPct = (24 / rect.width) * 100;
+    const centerXpct = state.posX;
+    const posArr = [];
+    if (state.composition === 1) posArr.push(centerXpct);
+    else if (state.composition === 2) {
+      const half = ((w / rect.width) * 100 + gapPct) / 2;
+      posArr.push(centerXpct - half, centerXpct + half);
+    } else {
+      const unit = (w / rect.width) * 100 + gapPct;
+      posArr.push(centerXpct - unit, centerXpct, centerXpct + unit);
+    }
+    // Compose dimension labels: one under each frame + one wall-width ruler
+    let html = '';
+    posArr.forEach((xpct, i) => {
+      const cx = rect.width * (xpct / 100);
+      const cy = rect.height * (state.posY / 100);
+      const fx = cx - w / 2;
+      const fy = cy - h / 2;
+      // Width label under frame
+      html += `<span class="wall2-dim-label" style="left:${fx}px;top:${fy + h + 8}px;">${s.w} cm</span>`;
+      // Height label right of frame
+      html += `<span class="wall2-dim-label" style="left:${fx + w + 6}px;top:${fy + h/2 - 8}px;">${Math.round(s.h * (h / (s.h * pxPerCm)))} cm</span>`;
+      // Slot number top-left
+      html += `<span class="wall2-dim-label" style="left:${fx}px;top:${fy - 22}px;background:rgba(201,169,110,0.15);border-color:rgba(201,169,110,0.5);color:var(--gold)">Slot ${i+1}</span>`;
+    });
+    // Wall-width ruler at bottom
+    const wallPx = rect.width;
+    html += `<span class="wall2-dim-label" style="left:50%;transform:translateX(-50%);bottom:36px;top:auto;">← ${state.wallWidthM.toFixed(1)} m →</span>`;
+    blueprintLabels.innerHTML = html;
   }
 
   function wireAmbientGrid() {
@@ -9369,6 +9799,14 @@ function initWallV2() {
     stage.setAttribute('data-comp', String(state.composition));
     updateFramePosition();
     updateCompositionArtworks();
+    // v5: reset active slot to 1 if composition shrunk below it
+    if (state.activeSlot > state.composition) {
+      setActiveSlot(1);
+    } else {
+      // Refresh indicator visibility on comp change
+      if (slotIndicator) slotIndicator.classList.toggle('visible', state.composition > 1);
+      updateArtGridActive();
+    }
   }
 
   function wireCompRow() {
@@ -9559,6 +9997,10 @@ function initWallV2() {
     const fGrid = document.getElementById('wall2FrameGrid');
     if (fGrid) fGrid.querySelectorAll('.wall2-frame-chip').forEach(c => c.classList.toggle('active', c.dataset.frame === 'classic'));
     applyFrameStyle();
+    // v5 — reset slots
+    state.slotArts = [null, null, null];
+    state.activeSlot = 1;
+    setActiveSlot(1);
     // pick first artwork
     const arts = pickArtworks();
     if (arts.length) {
@@ -9612,16 +10054,46 @@ function initWallV2() {
       const ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
 
-      // Scene with ambient filter
+      // Scene with ambient filter — special-case Blueprint
       const amb = AMBIENT_SPEC[state.ambient] || AMBIENT_SPEC.daylight;
-      if (amb.sceneFilter) ctx.filter = amb.sceneFilter;
-      await drawImage(ctx, scene.src, 0, 0, rect.width, rect.height);
-      ctx.filter = 'none';
-
-      // Night tint overlay
-      if (amb.tint) {
-        ctx.fillStyle = amb.tint;
+      if (state.ambient === 'blueprint') {
+        // Dark navy background
+        ctx.fillStyle = '#0a1929';
         ctx.fillRect(0, 0, rect.width, rect.height);
+        // Grid lines
+        const wallWidthCm = (state.wallWidthM || 3.5) * 100;
+        const pxPerCmDl = rect.width / wallWidthCm;
+        const gridMajor = pxPerCmDl * 50;
+        const gridMinor = pxPerCmDl * 10;
+        ctx.strokeStyle = 'rgba(120,200,255,0.10)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < rect.width; x += gridMinor) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, rect.height); ctx.stroke();
+        }
+        for (let y = 0; y < rect.height; y += gridMinor) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(rect.width, y); ctx.stroke();
+        }
+        ctx.strokeStyle = 'rgba(140,220,255,0.35)';
+        for (let x = 0; x < rect.width; x += gridMajor) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, rect.height); ctx.stroke();
+        }
+        for (let y = 0; y < rect.height; y += gridMajor) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(rect.width, y); ctx.stroke();
+        }
+        // Scale eyebrow
+        ctx.fillStyle = 'rgba(140,220,255,0.7)';
+        ctx.font = '10px "Satoshi", monospace';
+        const scaleDenom = Math.round(100 / pxPerCmDl);
+        ctx.fillText(`SCALE 1:${scaleDenom} · WALL ${state.wallWidthM.toFixed(1)} M`, 18, 28);
+      } else {
+        if (amb.sceneFilter) ctx.filter = amb.sceneFilter;
+        await drawImage(ctx, scene.src, 0, 0, rect.width, rect.height);
+        ctx.filter = 'none';
+        // Night tint overlay
+        if (amb.tint) {
+          ctx.fillStyle = amb.tint;
+          ctx.fillRect(0, 0, rect.width, rect.height);
+        }
       }
 
       // Spotlight — follows art position for spot/night, scene center for daylight/golden
@@ -9797,6 +10269,19 @@ function initWallV2() {
   applyAmbient();
   applyComposition();
   applyHuman();
+
+  // v5 — slot selection wiring
+  wireFrameSlotClicks();
+  if (slotClearBtn) {
+    slotClearBtn.addEventListener('click', () => {
+      const idx = (state.activeSlot || 1) - 1;
+      // Clear this slot so it re-fills from pool
+      state.slotArts[idx] = null;
+      updateCompositionArtworks();
+      updateArtGridActive();
+    });
+  }
+  setActiveSlot(1);
 
   /* ---------- Wire events ---------- */
   closeBtn.addEventListener('click', closeWall);
