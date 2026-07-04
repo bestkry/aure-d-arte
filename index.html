@@ -1487,6 +1487,145 @@ body.konami-slowmo .egg-overlay * { animation-duration: initial !important; tran
 }
 .wall2-shell.is-tuning .wall2-tune-hint { opacity: 1; }
 
+/* v3 — frame chip selector */
+.wall2-frame-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+.wall2-frame-chip {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  padding: 0.6rem 0.3rem 0.5rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  color: rgba(255,255,255,0.55);
+  font: 500 0.62rem/1 'Satoshi', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.wall2-frame-chip:hover {
+  border-color: rgba(201,169,110,0.35);
+  color: rgba(255,255,255,0.85);
+  transform: translateY(-1px);
+}
+.wall2-frame-chip.active {
+  border-color: var(--gold);
+  background: rgba(201,169,110,0.08);
+  color: var(--gold);
+}
+.wall2-fchip-preview {
+  width: 30px; height: 40px;
+  background: linear-gradient(160deg, #2a2622 0%, #100e0c 100%);
+  position: relative;
+  border-radius: 1px;
+}
+.wall2-fchip-preview::after {
+  content: ''; position: absolute; inset: 4px;
+  background: linear-gradient(140deg, #6b5a3f 0%, #2f2618 100%);
+  border-radius: 1px;
+}
+.wall2-fchip-preview.none {
+  background: transparent;
+  border: 1px dashed rgba(255,255,255,0.15);
+}
+.wall2-fchip-preview.none::after {
+  inset: 2px;
+  background: linear-gradient(140deg, #6b5a3f 0%, #2f2618 100%);
+  opacity: 0.85;
+}
+.wall2-fchip-preview.thin::before {
+  content: ''; position: absolute; inset: 0;
+  background: #0a0908;
+  border-radius: 1px;
+}
+.wall2-fchip-preview.thin::after {
+  inset: 2px;
+}
+.wall2-fchip-preview.classic {
+  /* default styling matches */
+}
+.wall2-fchip-preview.gold {
+  background: linear-gradient(160deg, #d4b57e 0%, #8b6f3b 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,220,150,0.4);
+}
+.wall2-fchip-preview.wood {
+  background: linear-gradient(160deg, #5a3f2a 0%, #2e1e12 100%);
+}
+
+/* v3 — frame style variants applied to .wall2-frame */
+.wall2-frame[data-frame="none"]::before { display: none; }
+.wall2-frame[data-frame="none"]::after { display: none; }
+.wall2-frame[data-frame="none"] .wall2-frame-shadow { display: none; }
+
+.wall2-frame[data-frame="thin"]::before {
+  inset: -4px;
+  background: linear-gradient(160deg, #0e0d0b 0%, #050504 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(201,169,110,0.15),
+    0 14px 30px rgba(0,0,0,0.6),
+    0 4px 10px rgba(0,0,0,0.4);
+}
+
+.wall2-frame[data-frame="classic"]::before {
+  /* default, unchanged */
+}
+
+.wall2-frame[data-frame="gold"]::before {
+  inset: -16px;
+  background:
+    linear-gradient(160deg, #d4b57e 0%, #8b6f3b 45%, #5a4520 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,235,180,0.5),
+    inset 0 2px 6px rgba(255,220,150,0.25),
+    inset 0 -2px 4px rgba(0,0,0,0.4),
+    0 26px 50px rgba(0,0,0,0.7),
+    0 8px 20px rgba(0,0,0,0.55);
+}
+.wall2-frame[data-frame="gold"]::after {
+  inset: -3px;
+  outline: 1px solid rgba(0,0,0,0.4);
+}
+
+.wall2-frame[data-frame="wood"]::before {
+  inset: -12px;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.08) 0%, transparent 3%, transparent 97%, rgba(0,0,0,0.1) 100%),
+    linear-gradient(160deg, #5a3f2a 0%, #3d2818 50%, #22150c 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(90,60,35,0.6),
+    inset 0 2px 3px rgba(180,130,80,0.15),
+    inset 0 -2px 3px rgba(0,0,0,0.4),
+    0 22px 42px rgba(0,0,0,0.7),
+    0 6px 16px rgba(0,0,0,0.5);
+}
+
+/* Enhanced cast shadow — softer, more directional */
+.wall2-frame-shadow {
+  inset: -20px -20px -32px -20px;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0) 70%),
+    radial-gradient(ellipse at 35% 105%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 55%);
+  filter: blur(1px);
+}
+
+/* Enhanced glare — subtle glass reflection */
+.wall2-frame-glare {
+  background:
+    linear-gradient(115deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.02) 22%, rgba(255,255,255,0) 45%),
+    linear-gradient(135deg, rgba(255,255,255,0) 55%, rgba(255,255,255,0.05) 75%, rgba(0,0,0,0.15) 100%);
+}
+
+/* Mobile — frame grid becomes 5 in one row still (small chips) */
+@media (max-width: 768px) {
+  .wall2-frame-grid { gap: 0.4rem; }
+  .wall2-fchip-preview { width: 24px; height: 32px; }
+  .wall2-frame-chip { padding: 0.5rem 0.2rem 0.4rem; font-size: 0.55rem; }
+}
+
+
 /* ---- Panel (right) ---- */
 .wall2-panel {
   position: relative; height: 100vh;
@@ -4263,8 +4402,42 @@ video.modal-cinemagraph {
 
         <!-- Step 3: Size -->
         <div class="wall2-step">
+              <div class="wall2-step-head">
+                <span class="wall2-step-num">3</span>
+                <span class="wall2-step-label" data-lang="en">CHOOSE THE FRAME</span>
+                <span class="wall2-step-label" data-lang="pl" style="display:none">WYBIERZ RAMĘ</span>
+              </div>
+              <div class="wall2-frame-grid" id="wall2FrameGrid">
+                <button type="button" class="wall2-frame-chip" data-frame="none" aria-label="No frame">
+                  <span class="wall2-fchip-preview none"></span>
+                  <span class="wall2-fchip-name" data-lang="en">None</span>
+                  <span class="wall2-fchip-name" data-lang="pl" style="display:none">Brak</span>
+                </button>
+                <button type="button" class="wall2-frame-chip" data-frame="thin" aria-label="Thin black frame">
+                  <span class="wall2-fchip-preview thin"></span>
+                  <span class="wall2-fchip-name" data-lang="en">Thin</span>
+                  <span class="wall2-fchip-name" data-lang="pl" style="display:none">Cienka</span>
+                </button>
+                <button type="button" class="wall2-frame-chip active" data-frame="classic" aria-label="Classic black frame">
+                  <span class="wall2-fchip-preview classic"></span>
+                  <span class="wall2-fchip-name" data-lang="en">Classic</span>
+                  <span class="wall2-fchip-name" data-lang="pl" style="display:none">Klasyczna</span>
+                </button>
+                <button type="button" class="wall2-frame-chip" data-frame="gold" aria-label="Gold frame">
+                  <span class="wall2-fchip-preview gold"></span>
+                  <span class="wall2-fchip-name" data-lang="en">Gold</span>
+                  <span class="wall2-fchip-name" data-lang="pl" style="display:none">Złota</span>
+                </button>
+                <button type="button" class="wall2-frame-chip" data-frame="wood" aria-label="Wood frame">
+                  <span class="wall2-fchip-preview wood"></span>
+                  <span class="wall2-fchip-name" data-lang="en">Wood</span>
+                  <span class="wall2-fchip-name" data-lang="pl" style="display:none">Drewno</span>
+                </button>
+              </div>
+            </div>
+            <div class="wall2-step">
           <div class="wall2-step-head">
-            <span class="wall2-step-num">3</span>
+            <span class="wall2-step-num">4</span>
             <span class="wall2-step-label"><span data-lang="en">Set the size</span><span data-lang="pl">Ustaw rozmiar</span></span>
           </div>
           <div class="wall2-size-row" id="wall2SizeRow">
@@ -8596,7 +8769,10 @@ function initWallV2() {
     spotY: '38%',
     // per-scene auto placement
     autoX: 50,
-    autoY: 40
+    autoY: 40,
+    // v3 additions
+    frameStyle: 'classic',  // 'none' | 'thin' | 'classic' | 'gold' | 'wood'
+    imgAspect: 0.714  // natural h/w of the artwork; default 5:7 portrait
   };
 
   const SIZES = {
@@ -8608,6 +8784,11 @@ function initWallV2() {
   /* ---------- Utilities ---------- */
   function artworkSrc(art) {
     if (!art) return '';
+    // Prefer images[0] (main artwork), then legacy .image, then cinemagraph poster
+    if (Array.isArray(art.images) && art.images.length) {
+      // Pick first non-print image; index 0 is always the master shot
+      return art.images[0];
+    }
     if (art.image) return art.image;
     if (art.cinemagraph && art.cinemagraph.poster) return art.cinemagraph.poster;
     return '';
@@ -8626,8 +8807,20 @@ function initWallV2() {
     const stageH = stage.clientHeight || 500;
     const pxPerCm = stageH / REAL_WALL_HEIGHT_CM;
     const s = SIZES[state.size];
-    const h = Math.round(s.h * pxPerCm);
-    const w = Math.round(s.w * pxPerCm);
+    // Preserve the diagonal / area of the chosen "size" but use natural aspect
+    // so the frame no longer forces a fixed 5:7 crop.
+    const ar = state.imgAspect || (s.h / s.w);
+    // Anchor the LONGER dimension to the chosen size preset for consistent scale.
+    let wCm, hCm;
+    if (ar >= 1) { // portrait
+      hCm = s.h;
+      wCm = s.h / ar;
+    } else { // landscape / square
+      wCm = s.w > s.h ? s.w : s.h; // use longer edge
+      hCm = wCm * ar;
+    }
+    const h = Math.round(hCm * pxPerCm);
+    const w = Math.round(wCm * pxPerCm);
     return { w, h };
   }
 
@@ -8675,6 +8868,18 @@ function initWallV2() {
   function setArt(art) {
     state.art = { id: art.id, name: art.name || '', image: artworkSrc(art) };
     artImg.src = state.art.image;
+    // Grab natural aspect once image loads → drives real frame proportions
+    artImg.onload = () => {
+      if (artImg.naturalWidth && artImg.naturalHeight) {
+        state.imgAspect = artImg.naturalHeight / artImg.naturalWidth;
+        updateFramePosition();
+      }
+    };
+    // If already cached and complete
+    if (artImg.complete && artImg.naturalWidth) {
+      state.imgAspect = artImg.naturalHeight / artImg.naturalWidth;
+    }
+    updateFramePosition();
     updateArtName();
   }
 
@@ -8683,6 +8888,25 @@ function initWallV2() {
     const s = SIZES[state.size];
     artName.innerHTML = `<span data-lang="en">${escHtml(state.art.name || 'Artwork')} · ~${s.label}</span><span data-lang="pl">${escHtml(state.art.name || 'Dzieło')} · ~${s.label}</span>`;
     if (typeof window.applyLanguage === 'function') window.applyLanguage();
+  }
+
+    /* ---------- Frame style ---------- */
+  function applyFrameStyle() {
+    if (!frame) return;
+    frame.setAttribute('data-frame', state.frameStyle || 'classic');
+  }
+
+  function wireFrameGrid() {
+    const grid = document.getElementById('wall2FrameGrid');
+    if (!grid) return;
+    grid.querySelectorAll('.wall2-frame-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const f = chip.dataset.frame;
+        state.frameStyle = f;
+        grid.querySelectorAll('.wall2-frame-chip').forEach(c => c.classList.toggle('active', c === chip));
+        applyFrameStyle();
+      });
+    });
   }
 
   /* ---------- Scene selection ---------- */
@@ -8947,6 +9171,10 @@ function initWallV2() {
   }
 
   window.openWallVisualizer = openWall;
+
+  // v3 — wire frame grid + apply initial style
+  wireFrameGrid();
+  applyFrameStyle();
 
   /* ---------- Wire events ---------- */
   closeBtn.addEventListener('click', closeWall);
